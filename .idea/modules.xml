@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/piria.iml" filepath="$PROJECT_DIR$/.idea/piria.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/virtual-museum.test.iml" filepath="$PROJECT_DIR$/.idea/modules/virtual-museum.test.iml" />
+    </modules>
+  </component>
+</project>
