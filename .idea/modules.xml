@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/piria.iml" filepath="$PROJECT_DIR$/.idea/piria.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/virtual-museum.test.iml" filepath="$PROJECT_DIR$/.idea/modules/virtual-museum.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/virtual-museum.iml" filepath="$PROJECT_DIR$/.idea/modules/virtual-museum.iml" />
     </modules>
   </component>
 </project>

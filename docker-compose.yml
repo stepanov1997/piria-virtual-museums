@@ -30,10 +30,7 @@ services:
     environment:
       EXPO_TOKEN: 'NDlfa_ij1jEqtsUsCefkl4DhAvjeXtAwZqLQ0ZYR'
     entrypoint: [ "sh", "-c" ]
-    # command: [ "npm install && npx expo start --web --tunnel" ]
-    command: [ "npx expo start --web --tunnel" ]
-    volumes:
-      - ./virtual-museum-ui/node_modules:/app/node_modules
+    command: [ "npx expo start --web --lan" ]
     ports:
       - '0.0.0.0:19006:19006'
     depends_on:
