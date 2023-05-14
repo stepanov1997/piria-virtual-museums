@@ -4,30 +4,33 @@ import com.virtual.museum.model.User
 import com.virtual.museum.service.UserService
 import com.virtual.museum.util.JwtTokenUtil
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.DisabledException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 import java.io.Serializable
 
-
-
-
-
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(originPatterns = ["*"])
 class UserApi(private val userService: UserService) {
 
     @Autowired
     private lateinit var authenticationManager : AuthenticationManager;
 
     @Autowired
-    private lateinit var jwtTokenUtil : JwtTokenUtil;
+    private lateinit var jwtTokenUtil : JwtTokenUtil
 
-    @PostMapping("/authenticate")
+    @Autowired
+    private lateinit var passwordEncoder: PasswordEncoder
+
+    @PostMapping("/authenticate", consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
     fun createAuthenticationToken(@RequestBody authenticationRequest:JwtRequest): ResponseEntity<*> {
 
         if(authenticationRequest.username.isNullOrEmpty()) {
@@ -50,7 +53,9 @@ class UserApi(private val userService: UserService) {
 
     fun authenticate(username:String, password:String) {
         try {
-            authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
+            val authentication = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
+            SecurityContextHolder.getContext().authentication = authentication;
+            authentication.principal
         } catch (e: DisabledException) {
             throw Exception("USER_DISABLED", e);
         } catch (e: BadCredentialsException) {
@@ -62,7 +67,10 @@ class UserApi(private val userService: UserService) {
     fun getAllUsers(): List<User> = userService.getAllUsers()
 
     @PostMapping
-    fun saveUser(@RequestBody user: User): User = userService.saveUser(user)
+    fun saveUser(@RequestBody user: User): User {
+        user.secret = passwordEncoder.encode(user.secret)
+        return userService.saveUser(user)
+    }
 
     @DeleteMapping("/{id}")
     fun deleteUserById(@PathVariable id: Long) = userService.deleteUserById(id)

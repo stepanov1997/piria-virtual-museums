@@ -1,15 +1,14 @@
 package com.virtual.museum.util
 
 import io.jsonwebtoken.*
-import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.io.Serializable
-import java.security.Key
 import java.util.*
 import java.util.function.Function
+import javax.crypto.SecretKey
 
 
 @Component
@@ -35,13 +34,12 @@ class JwtTokenUtil : Serializable {
     }
 
     //for retrieveing any information from token we will need the secret key
-    private fun getAllClaimsFromToken(token: String?) : Claims {
-        return Jwts.parserBuilder()
-            .requireAudience("string")
+    private fun getAllClaimsFromToken(token: String?) : Claims  = Jwts
+            .parserBuilder()
+            .setSigningKey(generateKey())
             .build()
             .parse(token)
             .body as Claims
-    }
 
     //check if the token has expired
     private fun isTokenExpired(token: String?): Boolean {
@@ -60,19 +58,16 @@ class JwtTokenUtil : Serializable {
     //2. Sign the JWT using the HS512 algorithm and secret key.
     //3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
     //   compaction of the JWT to a URL-safe string
-    private fun doGenerateToken(claims: Map<String, Any?>, subject: String): String {
-        val keyBytes = Decoders.BASE64.decode(secret)
-        val key: Key = Keys.hmacShaKeyFor(keyBytes)
-
-        return Jwts
+    private fun doGenerateToken(claims: Map<String, Any?>, subject: String): String = Jwts
             .builder()
             .setClaims(claims)
             .setSubject(subject)
             .setIssuedAt(Date(System.currentTimeMillis()))
             .setExpiration(Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-            .signWith(key, SignatureAlgorithm.HS512)
+            .signWith(generateKey())
             .compact()
-    }
+
+    private fun generateKey(): SecretKey? = Keys.hmacShaKeyFor(secret!!.toByteArray(Charsets.UTF_8))
 
     //validate token
     fun validateToken(token: String?, userDetails: UserDetails): Boolean {
