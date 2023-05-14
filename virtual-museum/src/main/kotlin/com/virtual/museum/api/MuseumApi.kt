@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/museums")
-@CrossOrigin("*")
+@CrossOrigin(originPatterns = ["*"])
 data class MuseumApi(private val museumService: MuseumService) {
 
     @GetMapping
