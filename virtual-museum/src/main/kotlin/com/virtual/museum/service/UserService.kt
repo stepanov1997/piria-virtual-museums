@@ -14,7 +14,6 @@ class UserService(private val userRepository: UserRepository) : UserDetailsServi
             ?: throw UsernameNotFoundException("User '$username' not found")
 
     fun createUser(user: User): User = userRepository.save(user)
-
     fun getAllUsers(): List<User> = userRepository.findAll()
     fun saveUser(user: User): User = userRepository.save(user)
     fun deleteUserById(id: Long) = userRepository.deleteById(id)

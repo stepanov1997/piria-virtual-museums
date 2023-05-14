@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface MuseumRepository : JpaRepository<Museum, Long> {
-    fun findAllByCity(city: String): List<Museum>
+    fun findAllByNameContainsIgnoreCase(name: String): List<Museum>
+    fun findAllByCityContainsIgnoreCase(city: String): List<Museum>
     fun findByType(type: String): List<Museum>
 }
