@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.0.6"
+    id("org.springframework.boot") version "3.1.0"
     id("io.spring.dependency-management") version "1.1.0"
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
@@ -27,17 +27,21 @@ dependencies {
     implementation("org.jdom:jdom2:2.0.6.1")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("mysql:mysql-connector-java:8.0.33")
-    implementation("org.springframework.boot:spring-boot-starter-security:3.0.6")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.mysql:mysql-connector-j:8.0.33")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-tomcat:3.0.6")
-    implementation("org.springframework.boot:spring-boot-starter-web:3.0.6")
-    implementation("org.springframework.boot:spring-boot-starter-webflux:3.0.6")
+    implementation("org.springframework.boot:spring-boot-starter-tomcat")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    testImplementation("org.springframework.boot:spring-boot-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.springframework.boot:spring-boot-testcontainers")
+    implementation("org.springframework.boot:spring-boot-devtools")
+    implementation("org.testcontainers:mysql:1.18.3")
     testImplementation("io.projectreactor:reactor-test")
     implementation(kotlin("stdlib"))
 }
