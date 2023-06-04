@@ -35,7 +35,8 @@ class SecurityConfig(val userService: UserService) {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeHttpRequests {
                 it.requestMatchers( HttpMethod.POST, "/api/users/authenticate").permitAll()
-                  .requestMatchers( HttpMethod.POST, "/api/users").permitAll()
+                  .requestMatchers( HttpMethod.POST, "/api/users/register").permitAll()
+                  .requestMatchers( HttpMethod.GET, "/api/users/**").permitAll()
                   .anyRequest().authenticated();
             }
             .authenticationProvider(authProvider)
