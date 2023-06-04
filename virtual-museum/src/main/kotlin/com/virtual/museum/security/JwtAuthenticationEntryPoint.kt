@@ -20,7 +20,9 @@ class JwtAuthenticationEntryPoint : AuthenticationEntryPoint, Serializable {
         authException: AuthenticationException?
     ) {
         logger.error { authException?.stackTraceToString() }
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
+        if(response.status == 401) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
+        }
     }
     companion object {
         private const val serialVersionUID = -7858869558953243875L

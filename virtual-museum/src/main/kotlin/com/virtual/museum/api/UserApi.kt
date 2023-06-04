@@ -1,9 +1,14 @@
 package com.virtual.museum.api
 
+import com.virtual.museum.model.Response.*
+import com.virtual.museum.model.Response.Companion.generateCreatedResponse
+import com.virtual.museum.model.Response.Companion.generateErrorResponse
+import com.virtual.museum.model.Response.Companion.generateValidResponse
 import com.virtual.museum.model.User
 import com.virtual.museum.service.UserService
 import com.virtual.museum.util.JwtTokenUtil
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
@@ -14,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.Serializable
 
 @RestController
@@ -34,11 +40,11 @@ class UserApi(private val userService: UserService) {
     fun createAuthenticationToken(@RequestBody authenticationRequest:JwtRequest): ResponseEntity<*> {
 
         if(authenticationRequest.username.isNullOrEmpty()) {
-            return ResponseEntity.badRequest().body(mapOf("error" to "Username should not be null or empty."))
+            return generateErrorResponse(status = BAD_REQUEST, error = "Username should not be null or empty.")
         }
 
         if(authenticationRequest.password.isNullOrEmpty()) {
-            return ResponseEntity.badRequest().body(mapOf("error" to "Password should not be null or empty."))
+            return generateErrorResponse(status = BAD_REQUEST, error = "Password should not be null or empty.")
         }
 
         authenticate(authenticationRequest.username, authenticationRequest.password);
@@ -51,7 +57,7 @@ class UserApi(private val userService: UserService) {
         return ResponseEntity.ok(JwtResponse(token));
     }
 
-    fun authenticate(username:String, password:String) {
+    private fun authenticate(username:String, password:String) {
         try {
             val authentication = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
             SecurityContextHolder.getContext().authentication = authentication;
@@ -64,16 +70,29 @@ class UserApi(private val userService: UserService) {
     }
 
     @GetMapping
-    fun getAllUsers(): List<User> = userService.getAllUsers()
+    fun getAllUsers(): ResponseEntity<ValidResponse> = generateValidResponse(userService.getAllUsers())
 
-    @PostMapping
-    fun saveUser(@RequestBody user: User): User {
+    @PostMapping("/register", consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
+    fun saveUser(@RequestBody user: User): ResponseEntity<*> {
+        if (userService.userExists(user.username)) {
+            return generateErrorResponse(
+                status = CONFLICT,
+                error = "User with username '${user.username}' already exists."
+            )
+        }
         user.secret = passwordEncoder.encode(user.secret)
-        return userService.saveUser(user)
+        val savedUser = userService.saveUser(user)
+        val userUrl = ServletUriComponentsBuilder.fromCurrentServletMapping()
+            .path("/api/users/${savedUser.id}")
+            .toUriString();
+        return generateCreatedResponse(resourceUrl = userUrl, content = savedUser)
     }
 
+    @GetMapping("/{id}")
+    fun getUserById(@PathVariable id: Long): ResponseEntity<ValidResponse> = generateValidResponse(userService.getUserById(id))
+
     @DeleteMapping("/{id}")
-    fun deleteUserById(@PathVariable id: Long) = userService.deleteUserById(id)
+    fun deleteUserById(@PathVariable id: Long): ResponseEntity<ValidResponse> = generateValidResponse(userService.deleteUserById(id))
 
 
     data class JwtRequest(
@@ -91,7 +110,5 @@ class UserApi(private val userService: UserService) {
             private const val serialVersionUID = -8091879091924046844L
         }
     }
-
-
 }
 
