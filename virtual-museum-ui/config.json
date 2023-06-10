@@ -1,0 +1,10 @@
+{
+  "SERVER_URL": "http://localhost:8080",
+  "MUSEUM_API_GET_ALL_ENDPOINT": "api/museums",
+  "MUSEUM_API_GET_ALL_BY_NAME_ENDPOINT": "api/museums/name",
+  "MUSEUM_API_GET_ALL_BY_CITY_ENDPOINT": "api/museums/city",
+  "USER_API_GET_ALL_ENDPOINT": "api/users",
+  "USER_API_POST_LOGIN_ENDPOINT": "api/users/authenticate",
+  "USER_API_POST_REGISTER_ENDPOINT": "api/users/register",
+  "NEWS_API_GET_ALL_ENDPOINT": "api/news"
+}
