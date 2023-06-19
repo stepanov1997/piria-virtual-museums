@@ -51,20 +51,23 @@ export const MuseumsFeedComponent = () => {
                 <Button onPress={getAllMuseumsByCity} title={"Search by city"}/>
             </View>
 
+
             { museums ?
                 (
                     // <Text>{museums[0]?.name}</Text>
-                    <FlatList
-                        data={museums}
-                        renderItem={({item}) => (
-                            <View>
-                                <Link to={{ screen: 'Museum', params: { museum: item } }}>
-                                    {item.name}
-                                </Link>
-                            </View>
-                        )}
-                        keyExtractor={museum => museum.id.toString()}
-                    />
+                    <View>
+                        <FlatList
+                            data={museums}
+                            renderItem={({item}) => (
+                                <View>
+                                    <Link to={{ screen: 'Museum', params: { museum: item } }}>
+                                        {item.name}
+                                    </Link>
+                                </View>
+                            )}
+                            keyExtractor={museum => museum.id.toString()}
+                        />
+                    </View>
                 ) : (
                     <View>
                         <Text>No data</Text>

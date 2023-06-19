@@ -1,3 +1,9 @@
+# Users
+#   - username: stepanov
+#   - password: pass
+INSERT INTO museum.users (id, email, first_name, last_name, password, username) VALUES (1, 'kristijan.stepanov95@gmail.com', 'Kristijan', 'Stepanov', '$2a$10$JuoYVcKJCB53KqwVAxRLzOX.NDMQG/LIp5YeofaBt4/2e9l4hnaAy', 'stepanov');
+
+# Museums
 INSERT INTO museum.museums (id, address, city, country, latitude, longitude, name, phone_number, type) VALUES (1, '1 Avenue of the Arts', 'Philadelphia', 'USA', 39.95308, -75.164871, 'Philadelphia Museum of Art', '215-763-8100', 'Art Museum');
 INSERT INTO museum.museums (id, address, city, country, latitude, longitude, name, phone_number, type) VALUES (2, '1000 5th Ave', 'New York', 'USA', 40.779436, -73.963244, 'Metropolitan Museum of Art', '212-535-7710', 'Art Museum');
 INSERT INTO museum.museums (id, address, city, country, latitude, longitude, name, phone_number, type) VALUES (3, 'Champ de Mars, 5 Avenue Anatole France', 'Paris', 'France', 48.858444, 2.294555, 'Musée du Louvre', '+33 (0)1 40 20 53 17', 'Art Museum');
