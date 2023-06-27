@@ -4,6 +4,14 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/demo" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/demo" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
         <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/virtual-museum" />
         <option name="gradleHome" value="$USER_HOME$/.gradle/gradle-8.1.1" />
