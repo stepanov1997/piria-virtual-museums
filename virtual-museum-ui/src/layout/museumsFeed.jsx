@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
-import {FlatList, View, Text, TextInput, Button} from 'react-native'
+import {Button, FlatList, Text, TextInput, View} from 'react-native'
 import museumClient from '../api_clients/museumClient'
 import {useSessionStorageJwt} from "../util/jwtHook";
-import { Link } from '@react-navigation/native';
+import {Link} from '@react-navigation/native';
 
 export const MuseumsFeedComponent = () => {
     const [museums, setMuseums] = useState([])
@@ -25,9 +25,10 @@ export const MuseumsFeedComponent = () => {
         const retrievedMuseums = await museumClient.getAllMuseumsByCity(getJwt(), searchKeyByCity);
         setMuseums(retrievedMuseums)
     }
+
     useEffect(() => {
         (async function () {
-            if(searchKeyByName || searchKeyByCity) {
+            if (searchKeyByName || searchKeyByCity) {
                 return;
             }
             const retrievedMuseums = await museumClient.getAllMuseums(getJwt());
@@ -35,36 +36,35 @@ export const MuseumsFeedComponent = () => {
         })()
     }, [searchKeyByName, searchKeyByCity])
 
-    async function openMuseumDetails(id) {
-        return Promise.resolve(undefined);
-    }
-
     return (
         <View>
             <h1>List of Museums</h1>
             <View>
-                <TextInput placeholder="Search by name" value={searchKeyByName} onChangeText={setSearchKeyByName}></TextInput>
+                <TextInput placeholder="Search by name" value={searchKeyByName}
+                           onChangeText={setSearchKeyByName}></TextInput>
                 <Button onPress={getAllMuseumsByName} title={"Search by name"}/>
             </View>
             <View>
-                <TextInput placeholder="Search by city" value={searchKeyByCity} onChangeText={setSearchKeyByCity}></TextInput>
+                <TextInput placeholder="Search by city" value={searchKeyByCity}
+                           onChangeText={setSearchKeyByCity}></TextInput>
                 <Button onPress={getAllMuseumsByCity} title={"Search by city"}/>
             </View>
 
 
-            { museums ?
+            {museums ?
                 (
                     // <Text>{museums[0]?.name}</Text>
                     <View>
                         <FlatList
                             data={museums}
-                            renderItem={({item}) => (
-                                <View>
-                                    <Link to={{ screen: 'Museum', params: { museum: item } }}>
-                                        {item.name}
-                                    </Link>
-                                </View>
-                            )}
+                            renderItem={({item}) =>
+                                (
+                                    <View>
+                                        <Link to={{screen: 'Museum', params: {museum: item}}}>
+                                            {item.name}
+                                        </Link>
+                                    </View>
+                                )}
                             keyExtractor={museum => museum.id.toString()}
                         />
                     </View>

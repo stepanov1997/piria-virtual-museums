@@ -14,6 +14,9 @@ import org.testcontainers.containers.MySQLContainer
 class VirtualMuseumApplication
 
 fun main(args: Array<String>) {
+    System.setProperty("javax.net.ssl.trustStore", "C:\\Users\\stepa\\IdeaProjects\\piria\\virtual-museum\\src\\main\\resources\\bank-server.jks");
+    System.setProperty("javax.net.ssl.trustStorePassword", "sigurnost");
+
     SpringApplication
         .from { runApplication<VirtualMuseumApplication>() }
         .with(TestContainersConfiguration::class.java)

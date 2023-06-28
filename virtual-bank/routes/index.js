@@ -6,6 +6,139 @@ const {TokenExpiredError} = require("jsonwebtoken");
 
 const secretKey = 'my-secret-key';
 
+router.post('/authenticatePayment', async (req, res) => {
+    // Simulate payment processing logic
+    const {cardHolderFirstName, cardHolderSurname, cardNumber, cardType, cardExpiration, pin} = req.body;
+
+    // Perform necessary validation and processing
+    if (cardHolderFirstName && cardHolderSurname && cardNumber && cardType && cardExpiration && pin) {
+
+        if (!cardType in ["MASTERCARD", "VISA", "AMERICAN EXPRESS"]) {
+            res.status(400).json({message: 'Card type is not ok.'});
+            return
+        }
+
+        try {
+            if (!validateCardExpiration(cardExpiration)) {
+                res.status(400).json({message: 'Card expired.'});
+                return
+            }
+        } catch (ex) {
+            res.status(400).json({message: 'Card expiration date format is not ok. Use MM/YY format.'});
+            return
+        }
+
+        if (!/^\d{4}$/.test(pin)) {
+            res.status(400).json({message: 'Pin format is not ok. Use four numbers.'});
+            return
+        }
+
+        if(!checkCardLength(cardNumber, cardType)) {
+            res.status(400).json({message: 'Card number length is not ok.'});
+        }
+
+        const payload = {
+            cardHolderFirstName, cardHolderSurname, cardNumber, cardType, cardExpiration, pin
+        }
+        const clients = await retrieveClientsFromDatabase()
+        if (!clients) {
+            res.status(400).json({message: 'Data is wrong.'});
+            return
+        }
+
+        const client = clients.find(e => {
+            return e.name === cardHolderFirstName
+                && e.surname === cardHolderSurname
+                && e.cardNumber === cardNumber
+                && e.cardType === cardType
+                && e.cardExpire === cardExpiration
+                && e.pin === pin
+        })
+
+        if (!client) {
+            res.status(400).json({message: 'Payment authentication failed'});
+            return
+        }
+
+        const token = jwt.sign({id: client.id}, secretKey, {expiresIn: '1m'});
+
+        // Payment successful
+        res.status(200).json({
+            message: 'Payment authentication successful',
+            jwtPaymentToken: token
+        });
+
+    } else {
+        // Payment failed
+        res.status(400).json({message: 'Payment authentication failed'});
+    }
+});
+
+router.post('/payment', async (req, res) => {
+    // Simulate payment processing logic
+    const {receiverCardNumber, amount} = req.body;
+
+    try {
+        // Payment successful
+        const paymentToken = exportTokenFromRequest(req);
+        const decoded = await jwt.verify(paymentToken, secretKey);
+        console.log('Decoded token:', decoded);
+
+        const clients = await retrieveClientsFromDatabase()
+        const receiverAccountId = clients.find(e => e.cardNumber === receiverCardNumber).id
+
+        if (!receiverAccountId) {
+            // Payment failed
+            res.status(400).json({message: 'Receiver card is not valid.'});
+            return
+        }
+
+        const errorMessage = await sendAmount(decoded.id, receiverAccountId, amount)
+
+        if (errorMessage) {
+            // Payment failed
+            res.status(400).json({message: errorMessage});
+            return
+        }
+
+        res.status(200).json({message: 'Payment successful.'});
+
+    } catch (error) {
+
+        // Payment failed
+        if (error instanceof TokenExpiredError) {
+            res.status(400).json({message: 'Token expired.'});
+        }
+
+        console.error('Invalid token:', error.message);
+        res.status(400).json({message: 'Payment failed'});
+    }
+});
+
+function exportTokenFromRequest(req) {
+    const authorizationHeader = req.headers['authorization'];
+    if (!authorizationHeader) {
+        return undefined
+    }
+    const [authType, token] = authorizationHeader.split(' ');
+    if (authType.toLowerCase() !== 'bearer' || !token) {
+        throw new Error("Invalid token");
+    }
+    return token;
+}
+
+function validateCardExpiration(expirationDate) {
+    const currentDate = new Date();
+    const [enteredMonth, enteredYear] = expirationDate.split('/').map(Number);
+    const currentYear = currentDate.getFullYear() % 100;
+    const currentMonth = currentDate.getMonth() + 1;
+
+    return (
+        enteredYear > currentYear ||
+        (enteredYear === currentYear && enteredMonth >= currentMonth)
+    );
+}
+
 function retrieveClientsFromDatabase() {
     return new Promise((resolve, reject) => {
         db.all("SELECT * FROM main.'CLIENT'", [], (err, rows) => {
@@ -19,43 +152,15 @@ function retrieveClientsFromDatabase() {
     });
 }
 
-router.post('/authenticatePayment', async (req, res) => {
-    // Simulate payment processing logic
-    const {cardHolderFirstname, cardHolderSurname, cardNumber, cardType, cardExpiration, pin} = req.body;
+function checkCardLength(cardNumber, cardType) {
+    const cardLengths = {
+        VISA: [13, 16],
+        MASTERCARD: [16],
+        AMERICAN_EXPRESS: [15],
+    };
 
-    // Perform necessary validation and processing
-    if (cardHolderFirstname && cardHolderSurname && cardNumber && cardType && cardExpiration && pin) {
-        const payload = {cardHolderFirstname, cardHolderSurname, cardNumber, cardType, cardExpiration, pin}
-        const clients = await retrieveClientsFromDatabase()
-        if(!clients) {
-            res.status(400).json({message: 'Data is wrong.'});
-            return
-        }
-
-        const client = clients.find(e => {
-            return e.name === cardHolderFirstname
-                && e.surname === cardHolderSurname
-                && e.cardNumber === cardNumber
-                && e.cardType === cardType
-                && e.cardExpire === cardExpiration
-                && e.pin === pin
-        })
-        if (!!client) {
-            const token = jwt.sign({id:client.id}, secretKey, {expiresIn: '1m'});
-
-            // Payment successful
-            res.status(200).json({
-                message: 'Payment authentication successful',
-                jwtPaymentToken: token
-            });
-        } else {
-            res.status(400).json({message: 'Payment authentication failed'});
-        }
-    } else {
-        // Payment failed
-        res.status(400).json({message: 'Payment authentication failed'});
-    }
-});
+    return cardLengths[cardType]?.includes(cardNumber.length) || false;
+}
 
 function sendAmount(senderAccountId, receiverAccountId, amount) {
     return new Promise((resolve, reject) => {
@@ -121,52 +226,6 @@ function sendAmount(senderAccountId, receiverAccountId, amount) {
             });
         });
     });
-}
-
-
-router.post('/payment', async (req, res) => {
-    // Simulate payment processing logic
-    const {receiverCardNumber, amount} = req.body;
-
-    try {
-        // Payment successful
-        const paymentToken = exportTokenFromRequest(req);
-        const decoded = await jwt.verify(paymentToken, secretKey);
-        console.log('Decoded token:', decoded);
-
-        const clients = await retrieveClientsFromDatabase()
-        const receiverAccountId = clients.find(e => e.cardNumber === receiverCardNumber).id
-        if(!receiverAccountId) {
-            // Payment failed
-            res.status(400).json({message: 'Receiver card is not valid.'});
-        }
-        const errorMessage = await sendAmount(decoded.id, receiverAccountId, amount)
-        if(!errorMessage) {
-            res.status(200).json({message: 'Payment successful.'});
-            return
-        }
-        // Payment failed
-        res.status(400).json({message: errorMessage});
-    } catch (error) {
-        // Payment failed
-        if(error instanceof TokenExpiredError) {
-            res.status(400).json({message: 'Token expired.'});
-        }
-        console.error('Invalid token:', error.message);
-        res.status(400).json({message: 'Payment failed'});
-    }
-});
-
-function exportTokenFromRequest(req) {
-    const authorizationHeader = req.headers['authorization'];
-    if (!authorizationHeader) {
-        return undefined
-    }
-    const [authType, token] = authorizationHeader.split(' ');
-    if (authType.toLowerCase() !== 'bearer' || !token) {
-        throw new Error("Invalid token");
-    }
-    return token;
 }
 
 module.exports = router;
