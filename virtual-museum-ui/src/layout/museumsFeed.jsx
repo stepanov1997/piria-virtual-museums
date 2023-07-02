@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Button, FlatList, Text, TextInput, View} from 'react-native'
+import {Button, FlatList, Text, TextInput, View, ScrollView} from 'react-native'
 import museumClient from '../api_clients/museumClient'
 import {useSessionStorageJwt} from "../util/jwtHook";
 import {Link} from '@react-navigation/native';
@@ -14,7 +14,7 @@ export const MuseumsFeedComponent = () => {
         if (!searchKeyByName) {
             return;
         }
-        const retrievedMuseums = await museumClient.getAllMuseumsByName(getJwt(), searchKeyByName);
+        const retrievedMuseums = await museumClient.getAllMuseumsByName(await getJwt(), searchKeyByName);
         setMuseums(retrievedMuseums)
     }
 
@@ -22,7 +22,7 @@ export const MuseumsFeedComponent = () => {
         if (!searchKeyByCity) {
             return;
         }
-        const retrievedMuseums = await museumClient.getAllMuseumsByCity(getJwt(), searchKeyByCity);
+        const retrievedMuseums = await museumClient.getAllMuseumsByCity(await getJwt(), searchKeyByCity);
         setMuseums(retrievedMuseums)
     }
 
@@ -31,14 +31,14 @@ export const MuseumsFeedComponent = () => {
             if (searchKeyByName || searchKeyByCity) {
                 return;
             }
-            const retrievedMuseums = await museumClient.getAllMuseums(getJwt());
+            const retrievedMuseums = await museumClient.getAllMuseums(await getJwt());
             setMuseums(retrievedMuseums)
         })()
     }, [searchKeyByName, searchKeyByCity])
 
     return (
-        <View>
-            <h1>List of Museums</h1>
+        <ScrollView>
+            <Text>List of Museums</Text>
             <View>
                 <TextInput placeholder="Search by name" value={searchKeyByName}
                            onChangeText={setSearchKeyByName}></TextInput>
@@ -76,6 +76,6 @@ export const MuseumsFeedComponent = () => {
 
             }
 
-        </View>
+        </ScrollView>
     )
 }

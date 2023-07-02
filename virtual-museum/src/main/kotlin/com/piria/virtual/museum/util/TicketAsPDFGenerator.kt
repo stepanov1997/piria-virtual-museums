@@ -11,6 +11,8 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.common.PDRectangle
 import org.apache.pdfbox.pdmodel.font.PDType1Font
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject
+import org.springframework.core.io.ByteArrayResource
+import org.springframework.stereotype.Component
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -19,129 +21,102 @@ import java.time.Instant
 import java.util.*
 import javax.imageio.ImageIO
 
-fun main() {
-    generate(Museum(
-        id=1,
-        name="Philadelphia Museum of Art",
-        address="1 Avenue of the Arts",
-        phoneNumber="215-763-8100",
-        city="Philadelphia",
-        country="USA",
-        latitude=39.95308,
-        longitude=-75.164871,
-        type="Art Museum"
-    ))
-}
+@Component
+class TicketAsPDFGenerator {
+    fun generate(ticketId: String, museum: Museum): ByteArrayResource {
+        try {
+            val document = PDDocument()
 
-fun generate(museum: Museum) {
-    try {
-        // Kreiranje praznog dokumenta
-        val document = PDDocument()
+            val page = PDPage(PDRectangle.A4)
+            document.addPage(page)
 
-        // Dodavanje nove stranice
-        val page = PDPage(PDRectangle.A4)
-        document.addPage(page)
+            PDPageContentStream(document, page).apply {
 
-        // Inicijalizacija sadržajnog toka za crtanje
-        val contentStream = PDPageContentStream(document, page)
+                setFont(PDType1Font.HELVETICA_BOLD, 12F)
 
-        // Postavljanje fonta
-        contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12F)
+                beginText()
+                newLineAtOffset(50F, 700F)
+                showText("Museum ticket")
+                endText()
 
-        // Postavljanje naslova
-        contentStream.beginText()
-        contentStream.newLineAtOffset(50F, 700F)
-        contentStream.showText("Museum ticket")
-        contentStream.endText()
+                beginText()
+                setFont(PDType1Font.HELVETICA, 10F)
+                newLineAtOffset(50F, 680F)
+                showText("Museum: ${museum.name}")
+                newLineAtOffset(0F, -20F) // Pomeranje na novu liniju
+                showText("Location: ${museum.address}, ${museum.city}, ${museum.country}".take(48))
+                newLineAtOffset(0F, -20F) // Pomeranje na novu liniju
+                showText("Date: ${SimpleDateFormat("dd.MM.yyyy.").format(Date.from(Instant.now()))}")
+                endText()
 
-        // Postavljanje informacija o muzeju
-        contentStream.beginText()
-        contentStream.setFont(PDType1Font.HELVETICA, 10F)
-        contentStream.newLineAtOffset(50F, 680F)
-        contentStream.showText("Museum: ${museum.name}")
-        contentStream.newLineAtOffset(0F, -20F) // Pomeranje na novu liniju
-        contentStream.showText("Location: ${museum.address}, ${museum.city}, ${museum.country}".take(48))
-        contentStream.newLineAtOffset(0F, -20F) // Pomeranje na novu liniju
-        contentStream.showText("Date: ${SimpleDateFormat("dd.MM.yyyy.").format(Date.from(Instant.now()))}")
-        contentStream.endText()
+                val qrCodeImage = generateQRCodeImage(ticketId)
+                val qrCodeImageXObject = PDImageXObject.createFromByteArray(document, qrCodeImage, "QR Code")
 
-        // Generisanje QR koda sa UUID
-        val uuid = generateUUID()
-        val qrCodeImage = generateQRCodeImage(uuid)
+                val qrCodeWidth = 100F
+                val qrCodeHeight = 100F
+                val qrCodeX = page.mediaBox.width - qrCodeWidth - 125F
+                val qrCodeY = 637F
+                drawImage(qrCodeImageXObject, qrCodeX, qrCodeY, qrCodeWidth, qrCodeHeight)
 
-        // Učitavanje QR koda kao PDImageXObject
-        val qrCodeImageXObject = PDImageXObject.createFromByteArray(document, qrCodeImage, "QR Code")
+                val descriptionRectX = 40F
+                val descriptionRectY = 615F
+                val descriptionRectWidth = 230F
+                val descriptionRectHeight = 125F
+                addRect(descriptionRectX, descriptionRectY, descriptionRectWidth, descriptionRectHeight)
+                stroke()
 
-        // Postavljanje pozicije i veličine QR koda
-        val qrCodeWidth = 100F
-        val qrCodeHeight = 100F
-        val qrCodeX = page.mediaBox.width - qrCodeWidth - 125F
-        val qrCodeY = 637F
-        contentStream.drawImage(qrCodeImageXObject, qrCodeX, qrCodeY, qrCodeWidth, qrCodeHeight)
+                val qrCodeRectX = 270F
+                val qrCodeRectY = 615F
+                val qrCodeRectWidth = 290F
+                val qrCodeRectHeight = 125F
+                addRect(qrCodeRectX, qrCodeRectY, qrCodeRectWidth, qrCodeRectHeight)
+                stroke()
 
-        // Dodavanje okvira oko opisa muzeja
-        val descriptionRectX = 40F
-        val descriptionRectY = 615F
-        val descriptionRectWidth = 230F
-        val descriptionRectHeight = 125F
-        contentStream.addRect(descriptionRectX, descriptionRectY, descriptionRectWidth, descriptionRectHeight)
-        contentStream.stroke()
+                beginText()
+                newLineAtOffset(286F, 630F)
+                showText("Ticket number: $ticketId")
+                endText()
 
-        // Dodavanje okvira oko QR koda s UUID-om
-        val qrCodeRectX = 270F
-        val qrCodeRectY = 615F
-        val qrCodeRectWidth = 290F
-        val qrCodeRectHeight = 125F
-        contentStream.addRect(qrCodeRectX, qrCodeRectY, qrCodeRectWidth, qrCodeRectHeight)
-        contentStream.stroke()
+                close()
+            }
 
-        // Dodavanje UUID-om u okviru QR koda
-        contentStream.beginText()
-        contentStream.newLineAtOffset(286F, 630F) // Pomeranje na novu liniju
-        contentStream.showText("Ticket number: $uuid")
-        contentStream.endText()
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            document.save(byteArrayOutputStream)
 
-        // Završetak sadržajnog toka
-        contentStream.close()
+            document.close()
 
-        // Snimanje dokumenta kao PDF fajla
-        document.save("karta_muzeja.pdf")
-
-        // Zatvaranje dokumenta
-        document.close()
-
-        println("Karta muzeja je uspešno generisana.")
-    } catch (e: IOException) {
-        System.err.println("Greška prilikom generisanja karte muzeja: " + e.message)
-    }
-}
-
-fun generateUUID(): String {
-    return UUID.randomUUID().toString()
-}
-
-fun generateQRCodeImage(data: String): ByteArray {
-    val hintMap = HashMap<EncodeHintType, ErrorCorrectionLevel>()
-    hintMap[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.L
-
-    val qrCodeWriter = QRCodeWriter()
-    val bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 200, 200, hintMap)
-    val width = bitMatrix.width
-    val height = bitMatrix.height
-    val qrCodePixels = IntArray(width * height)
-
-    for (y in 0 until height) {
-        val offset = y * width
-        for (x in 0 until width) {
-            qrCodePixels[offset + x] = if (bitMatrix.get(x, y)) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()
+            return ByteArrayResource(byteArrayOutputStream.toByteArray())
+        } catch (e: IOException) {
+            System.err.println("Error generating museum map: " + e.message)
+            throw e
         }
     }
 
-    val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-    bufferedImage.setRGB(0, 0, width, height, qrCodePixels, 0, width)
+    private fun generateQRCodeImage(data: String): ByteArray {
+        val hintMap = mutableMapOf<EncodeHintType, ErrorCorrectionLevel>()
+        hintMap[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.L
 
-    val outputStream = ByteArrayOutputStream()
-    ImageIO.write(bufferedImage, "png", outputStream)
+        val qrCodeWriter = QRCodeWriter()
+        val bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 200, 200, hintMap)
+        val width = bitMatrix.width
+        val height = bitMatrix.height
+        val qrCodePixels = IntArray(width * height)
 
-    return outputStream.toByteArray()
+        for (y in 0 until height) {
+            val offset = y * width
+            for (x in 0 until width) {
+                qrCodePixels[offset + x] = if (bitMatrix.get(x, y)) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()
+            }
+        }
+
+        val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+        bufferedImage.setRGB(0, 0, width, height, qrCodePixels, 0, width)
+
+        val outputStream = ByteArrayOutputStream()
+        ImageIO.write(bufferedImage, "png", outputStream)
+
+        return outputStream.toByteArray()
+    }
 }
+
+

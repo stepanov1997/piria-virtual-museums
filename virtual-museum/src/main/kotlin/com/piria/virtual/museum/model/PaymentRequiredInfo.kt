@@ -4,7 +4,7 @@ import com.piria.virtual.museum.model.bank.CardType
 import com.piria.virtual.museum.model.bank.PaymentAuthorizationRequest
 import com.piria.virtual.museum.model.bank.PaymentRequest
 
-data class TicketRequest(
+data class PaymentRequiredInfo(
     val cardHolderFirstName: String,
     val cardHolderSurname: String,
     val cardNumber: String,

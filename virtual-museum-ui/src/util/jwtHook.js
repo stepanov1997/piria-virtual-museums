@@ -1,6 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export const useSessionStorageJwt = (key='JWT_TOKEN') => {
-    const getJwt = () => sessionStorage.getItem(key)
-    const setJwt = (token) => sessionStorage.setItem(key, token)
+    const getJwt = async () => await AsyncStorage.getItem(key)
+    const setJwt = async (token) => await AsyncStorage.setItem(key, token)
 
     return [getJwt, setJwt];
 };
