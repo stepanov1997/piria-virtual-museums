@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.1.0"
+    id("org.springframework.boot") version "3.1.1"
     id("io.spring.dependency-management") version "1.1.0"
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
@@ -29,6 +29,7 @@ dependencies {
     implementation("com.rometools:rome:1.15.0")
     implementation("org.jdom:jdom2:2.0.6.1")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("mysql:mysql-connector-java:8.0.33")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.mysql:mysql-connector-j:8.0.33")

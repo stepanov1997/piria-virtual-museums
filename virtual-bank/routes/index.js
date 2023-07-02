@@ -8,77 +8,82 @@ const secretKey = 'my-secret-key';
 
 router.post('/authenticatePayment', async (req, res) => {
     // Simulate payment processing logic
-    const {cardHolderFirstName, cardHolderSurname, cardNumber, cardType, cardExpiration, pin} = req.body;
 
-    // Perform necessary validation and processing
-    if (cardHolderFirstName && cardHolderSurname && cardNumber && cardType && cardExpiration && pin) {
+    try {
+        const {cardHolderFirstName, cardHolderSurname, cardNumber, cardType, cardExpiration, pin} = req.body;
 
-        if (!cardType in ["MASTERCARD", "VISA", "AMERICAN EXPRESS"]) {
-            res.status(400).json({message: 'Card type is not ok.'});
-            return
-        }
+        // Perform necessary validation and processing
+        if (cardHolderFirstName && cardHolderSurname && cardNumber && cardType && cardExpiration && pin) {
 
-        try {
-            if (!validateCardExpiration(cardExpiration)) {
-                res.status(400).json({message: 'Card expired.'});
+            if (!cardType in ["MASTERCARD", "VISA", "AMERICAN EXPRESS"]) {
+                res.status(200).json({status: 400, message: 'Card type is not ok.'});
                 return
             }
-        } catch (ex) {
-            res.status(400).json({message: 'Card expiration date format is not ok. Use MM/YY format.'});
-            return
+
+            try {
+                if (!validateCardExpiration(cardExpiration)) {
+                    res.status(200).json({status: 400, message: 'Card expired.'});
+                    return
+                }
+            } catch (ex) {
+                res.status(200).json({status: 400, message: 'Card expiration date format is not ok. Use MM/YY format.'});
+                return
+            }
+
+            if (!/^\d{4}$/.test(pin)) {
+                res.status(200).json({status: 400, message: 'Pin format is not ok. Use four numbers.'});
+                return
+            }
+
+            if(!checkCardLength(cardNumber, cardType)) {
+                res.status(200).json({status: 400, message: 'Card number length is not ok.'});
+            }
+
+            const payload = {
+                cardHolderFirstName, cardHolderSurname, cardNumber, cardType, cardExpiration, pin
+            }
+            const clients = await retrieveClientsFromDatabase()
+            if (!clients) {
+                res.status(200).json({status: 400, message: 'Data is wrong.'});
+                return
+            }
+
+            const client = clients.find(e => {
+                return e.name === cardHolderFirstName
+                    && e.surname === cardHolderSurname
+                    && e.cardNumber === cardNumber
+                    && e.cardType === cardType
+                    && e.cardExpire === cardExpiration
+                    && e.pin === pin
+            })
+
+            if (!client) {
+                res.status(200).json({status: 400, message: 'Payment authentication failed'});
+                return
+            }
+
+            const token = jwt.sign({id: client.id}, secretKey, {expiresIn: '1m'});
+
+            // Payment successful
+            res.status(200).json({
+                status: 200,
+                message: 'Payment authentication successful',
+                jwtPaymentToken: token
+            });
+
+        } else {
+            // Payment failed
+            res.status(200).json({status: 400, message: 'Payment authentication failed'});
         }
-
-        if (!/^\d{4}$/.test(pin)) {
-            res.status(400).json({message: 'Pin format is not ok. Use four numbers.'});
-            return
-        }
-
-        if(!checkCardLength(cardNumber, cardType)) {
-            res.status(400).json({message: 'Card number length is not ok.'});
-        }
-
-        const payload = {
-            cardHolderFirstName, cardHolderSurname, cardNumber, cardType, cardExpiration, pin
-        }
-        const clients = await retrieveClientsFromDatabase()
-        if (!clients) {
-            res.status(400).json({message: 'Data is wrong.'});
-            return
-        }
-
-        const client = clients.find(e => {
-            return e.name === cardHolderFirstName
-                && e.surname === cardHolderSurname
-                && e.cardNumber === cardNumber
-                && e.cardType === cardType
-                && e.cardExpire === cardExpiration
-                && e.pin === pin
-        })
-
-        if (!client) {
-            res.status(400).json({message: 'Payment authentication failed'});
-            return
-        }
-
-        const token = jwt.sign({id: client.id}, secretKey, {expiresIn: '1m'});
-
-        // Payment successful
-        res.status(200).json({
-            message: 'Payment authentication successful',
-            jwtPaymentToken: token
-        });
-
-    } else {
-        // Payment failed
-        res.status(400).json({message: 'Payment authentication failed'});
+    } catch (e) {
+        res.status(200).json({status: 400, message: 'Payment authentication failed'});
     }
 });
 
 router.post('/payment', async (req, res) => {
-    // Simulate payment processing logic
-    const {receiverCardNumber, amount} = req.body;
-
     try {
+        const {receiverCardNumber, amount} = req.body;
+
         // Payment successful
         const paymentToken = exportTokenFromRequest(req);
         const decoded = await jwt.verify(paymentToken, secretKey);
@@ -89,7 +94,7 @@ router.post('/payment', async (req, res) => {
 
         if (!receiverAccountId) {
             // Payment failed
-            res.status(400).json({message: 'Receiver card is not valid.'});
+            res.status(200).json({status: 400, message: 'Receiver card is not valid.'});
             return
         }
 
@@ -97,21 +102,21 @@ router.post('/payment', async (req, res) => {
 
         if (errorMessage) {
             // Payment failed
-            res.status(400).json({message: errorMessage});
+            res.status(200).json({status: 400, message: errorMessage});
             return
         }
 
-        res.status(200).json({message: 'Payment successful.'});
+        res.status(200).json({status: 200, message: 'Payment successful.'});
 
     } catch (error) {
 
         // Payment failed
         if (error instanceof TokenExpiredError) {
-            res.status(400).json({message: 'Token expired.'});
+            res.status(200).json({status: 400, message: 'Token expired.'});
+            return
         }
 
-        console.error('Invalid token:', error.message);
-        res.status(400).json({message: 'Payment failed'});
+        res.status(200).json({status: 400, message: 'Payment failed'});
     }
 });
 

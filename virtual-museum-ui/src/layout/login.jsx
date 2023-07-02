@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {View, Text, TextInput, Button} from 'react-native'
 import userClient from "../api_clients/userClient";
 import {useSessionStorageJwt} from "../util/jwtHook";
@@ -11,10 +11,14 @@ const LoginComponent = ({navigation, route}) => {
     const [errorMessage, setErrorMessage] = useState("");
     const [getJwt, setJwt] = useSessionStorageJwt()
 
-    const jwt = getJwt()
-    if(jwt){
-        navigation.push('Museums feed')
-    }
+    useEffect(() => {
+        (async function() {
+            const jwt = await getJwt()
+            if(jwt){
+                navigation.push('Museums feed')
+            }
+        })()
+    })
 
     async function login() {
         if (!username || !password) {
@@ -30,7 +34,7 @@ const LoginComponent = ({navigation, route}) => {
         }
         if(token) {
             setErrorMessage("")
-            setJwt(token)
+            await setJwt(token)
             navigation.push('Museums feed')
         }
     }
