@@ -24,7 +24,7 @@ class EmailService(private val javaMailSender: JavaMailSender) {
         MimeMessageHelper(message, attachmentData != null).apply {
             setTo(to)
             setSubject(subject)
-            setText(body)
+            setText(body, true)
             if(attachmentData != null && attachmentName != null) {
                 addAttachment(attachmentName, attachmentData)
             }

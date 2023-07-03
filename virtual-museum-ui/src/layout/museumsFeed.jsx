@@ -3,6 +3,7 @@ import {Button, FlatList, Text, TextInput, View, ScrollView} from 'react-native'
 import museumClient from '../api_clients/museumClient'
 import {useSessionStorageJwt} from "../util/jwtHook";
 import {Link} from '@react-navigation/native';
+import NewsPostsList from "../components/news-posts";
 
 export const MuseumsFeedComponent = () => {
     const [museums, setMuseums] = useState([])
@@ -38,6 +39,9 @@ export const MuseumsFeedComponent = () => {
 
     return (
         <ScrollView>
+
+            <Text>News feed</Text>
+            <NewsPostsList/>
             <Text>List of Museums</Text>
             <View>
                 <TextInput placeholder="Search by name" value={searchKeyByName}
