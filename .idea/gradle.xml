@@ -12,10 +12,7 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/virtual-museum" />
-        <option name="gradleHome" value="$USER_HOME$/.gradle/gradle-8.1.1" />
-        <option name="gradleJvm" value="18" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/virtual-museum" />

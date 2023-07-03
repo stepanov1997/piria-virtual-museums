@@ -1,12 +1,11 @@
-import {View, Text, Button, ScrollView, FlatList} from 'react-native'
+import {View, Text, Button, ScrollView} from 'react-native'
 import {useEffect, useState} from "react";
-import { RadioButton } from 'react-native-paper';
+import {RadioButton} from 'react-native-paper';
 import {generateMuseumDetails, getThreeRandomCities} from '../api_clients/chatGptClient'
 import {getForcastForThreeCities} from '../api_clients/openWeatherClient'
 import {getAllByMuseumId} from '../api_clients/virtualVisitsClient'
 import {TicketPaymentForm} from './forms/ticket-payment-form'
 import {useSessionStorageJwt} from "../util/jwtHook";
-import {VirtualVisitComponent} from "./virtual-visit";
 import {WeatherForcast} from "./weather-forcast";
 
 export const MuseumComponent = ({route}) => {
@@ -21,7 +20,7 @@ export const MuseumComponent = ({route}) => {
 
 
     useEffect(() => {
-        (async function() {
+        (async function () {
             const threeRandomCities = await getThreeRandomCities(museum.country)
             const forcastForThreeCities = await getForcastForThreeCities(threeRandomCities)
             setForcastForThreeCities(forcastForThreeCities)
@@ -29,14 +28,14 @@ export const MuseumComponent = ({route}) => {
     }, [museum])
 
     useEffect(() => {
-        (async function() {
+        (async function () {
             const gptDetails = await generateMuseumDetails(museum.name, museum.country)
             setDetails(gptDetails)
         })()
     }, [])
 
     const showVirtualVisitsFunction = async () => {
-        if(virtualVisits.length===0) {
+        if (virtualVisits.length === 0) {
             const jwt = await getJwt();
             const virtualVisits = await getAllByMuseumId(jwt, museum.id)
             setVirtualVisits(virtualVisits)
@@ -45,7 +44,7 @@ export const MuseumComponent = ({route}) => {
     }
 
     function getTicketAmount() {
-        return virtualVisits.find(e=> e.id===selectedVirtualVisit).price
+        return virtualVisits.find(e => e.id === selectedVirtualVisit).price
     }
 
     return (
@@ -57,34 +56,35 @@ export const MuseumComponent = ({route}) => {
             <Text>({museum.latitude}, {museum.longitude})</Text>
             <Text>{museum.type}</Text>
             <Text>{details}</Text>
-            <Button title={`${showVirtualVisits?"Hide":"Show"} virtual visits`} onPress={showVirtualVisitsFunction}/>
-            { showVirtualVisits && <View>
+            <Button title={`${showVirtualVisits ? "Hide" : "Show"} virtual visits`}
+                    onPress={showVirtualVisitsFunction}/>
+            {showVirtualVisits && <View>
                 <RadioButton.Group onValueChange={selectVirtualVisit} value={selectedVirtualVisit}>
-                    <FlatList
-                        data={virtualVisits}
-                        renderItem={({item}) =>
-                            (
-                                <RadioButton.Item
-                                    label={<VirtualVisitComponent id={item.id} datetime={item.datetime} duration={item.duration} price={item.price}/>}
-                                    value={item.id}>
-                                </RadioButton.Item>
-                            )}
-                        keyExtractor={museum => museum.id.toString()}
-                    />
+                    {virtualVisits.map((item, index) =>
+                        (
+                            <RadioButton.Item
+                                key={index}
+                                label={`Datetime: ${item.datetime}, duration: ${item.duration}, price: ${item.price}€`}
+                                value={item.id}>
+                            </RadioButton.Item>
+                        )
+                    )}
                 </RadioButton.Group>
                 <Text>{"\n"}</Text>
                 <Button title={"Buy ticket"} onPress={() => setBuyingTicketFormHide(prevState => !prevState)}/>
-                { (!buyingTicketFormHide) && <TicketPaymentForm selectedVirtualVisit={selectedVirtualVisit} amount={getTicketAmount()} setBuyingTicketFormHide={setBuyingTicketFormHide}/> }
+                {(!buyingTicketFormHide) &&
+                    <TicketPaymentForm selectedVirtualVisit={selectedVirtualVisit} amount={getTicketAmount()}
+                                       setBuyingTicketFormHide={setBuyingTicketFormHide}/>}
             </View>}
 
             <Text>{"\n"}</Text>
             <View>
                 <Text>Weather</Text>
-                <FlatList
-                    data={forcastForThreeCities}
-                    renderItem={({item}) => <WeatherForcast forcast={item}/>}
-                    keyExtractor={item => item.city.id}
-                />
+                {
+                    forcastForThreeCities.map((item, index) => (
+                        <WeatherForcast key={item.city.id} forcast={item}/>
+                    ))
+                }
             </View>
         </ScrollView>
     );

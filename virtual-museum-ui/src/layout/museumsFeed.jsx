@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Button, FlatList, Text, TextInput, View, ScrollView} from 'react-native'
+import {Button, Text, TextInput, View, ScrollView} from 'react-native'
 import museumClient from '../api_clients/museumClient'
 import {useSessionStorageJwt} from "../util/jwtHook";
 import {Link} from '@react-navigation/native';
@@ -59,18 +59,15 @@ export const MuseumsFeedComponent = () => {
                 (
                     // <Text>{museums[0]?.name}</Text>
                     <View>
-                        <FlatList
-                            data={museums}
-                            renderItem={({item}) =>
-                                (
-                                    <View>
-                                        <Link to={{screen: 'Museum', params: {museum: item}}}>
-                                            {item.name}
-                                        </Link>
-                                    </View>
-                                )}
-                            keyExtractor={museum => museum.id.toString()}
-                        />
+                        {
+                            museums.map((item, index) => (
+                                <View key={item.id.toString()}>
+                                    <Link to={{screen: 'Museum', params: {museum: item}}}>
+                                        {item.name}
+                                    </Link>
+                                </View>
+                            ))
+                        }
                     </View>
                 ) : (
                     <View>
