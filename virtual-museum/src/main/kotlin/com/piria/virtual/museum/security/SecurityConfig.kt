@@ -44,6 +44,7 @@ class SecurityConfig(val userService: UserService) {
                   .requestMatchers( HttpMethod.POST, "/api/users/register").permitAll()
                   .requestMatchers( HttpMethod.GET, "/api/users/**").permitAll()
                   .requestMatchers( HttpMethod.GET, "/api").permitAll()
+                  .requestMatchers( HttpMethod.GET, "/api/ticket/job/**").permitAll()
                   .anyRequest().authenticated()
             }
             .authenticationProvider(authProvider)

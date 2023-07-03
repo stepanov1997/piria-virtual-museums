@@ -1,6 +1,8 @@
 {
   "SERVER_URL": "http://192.168.100.4:8080",
   "MUSEUM_API_GET_ALL_ENDPOINT": "api/museums",
+  "VIRTUAL_VISIT_API_GET_BY_MUSEUM_ID_ENDPOINT": "api/vvs/museum",
+  "VIRTUAL_VISIT_API_GET_BY_ID_ENDPOINT": "api/vvs/",
   "MUSEUM_API_GET_ALL_BY_NAME_ENDPOINT": "api/museums/name",
   "MUSEUM_API_GET_ALL_BY_CITY_ENDPOINT": "api/museums/city",
   "USER_API_GET_ALL_ENDPOINT": "api/users",
@@ -8,6 +10,7 @@
   "USER_API_POST_REGISTER_ENDPOINT": "api/users/register",
   "NEWS_API_GET_ALL_ENDPOINT": "api/news",
   "TICKET_API_POST_ENDPOINT": "api/ticket",
+  "TICKET_API_GET_JOB_ENDPOINT": "api/ticket/job",
   "CHAT_GPT_API": "https://api.openai.com",
   "CHAT_GPT_API_COMPLETIONS_ENDPOINT": "v1/chat/completions",
   "CHAT_GPT_API_KEY": "api_key",
