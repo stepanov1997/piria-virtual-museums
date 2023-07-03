@@ -14,5 +14,10 @@
   "CHAT_GPT_API": "https://api.openai.com",
   "CHAT_GPT_API_COMPLETIONS_ENDPOINT": "v1/chat/completions",
   "CHAT_GPT_API_KEY": "api_key",
+  "OPENWEATHER_API": "http://api.openweathermap.org",
+  "OPENWEATHER_ICON": "https://openweathermap.org",
+  "OPENWEATHER_API_FORCAST_ENDPOINT": "data/2.5/forecast/daily",
+  "OPENWEATHER_API_GEOCODING_ENDPOINT": "geo/1.0/direct",
+  "OPENWEATHER_API_KEY": "api_key",
   "VIRTUAL_MUSEUM_ACCOUNT_NUMBER": "8765432187654321"
 }

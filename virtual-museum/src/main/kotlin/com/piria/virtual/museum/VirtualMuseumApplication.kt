@@ -8,13 +8,18 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.testcontainers.containers.MySQLContainer
+import java.io.File
 
 
 @SpringBootApplication
 class VirtualMuseumApplication
 
 fun main(args: Array<String>) {
-    System.setProperty("javax.net.ssl.trustStore", "C:\\Users\\stepa\\IdeaProjects\\piria\\virtual-museum\\src\\main\\resources\\bank-server.jks")
+    val truststorePath = VirtualMuseumApplication::class.java.classLoader.getResource("truststore.jks")?.path?.let {
+        File(it).absolutePath
+    }
+    println(truststorePath)
+    System.setProperty("javax.net.ssl.trustStore", truststorePath ?: throw RuntimeException("Truststore file doesn't exist."))
     System.setProperty("javax.net.ssl.trustStorePassword", "sigurnost")
 
     SpringApplication

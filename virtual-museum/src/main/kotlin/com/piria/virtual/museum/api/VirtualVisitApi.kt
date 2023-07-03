@@ -12,4 +12,6 @@ class VirtualVisitApi(private val virtualVisitService: VirtualVisitService) {
     fun getById(@PathVariable virtualVisitId: Long): VirtualVisit = virtualVisitService.getById(virtualVisitId)
     @GetMapping("/museum/{museumId}")
     fun getByMuseumId(@PathVariable museumId: Long): Set<VirtualVisit> = virtualVisitService.getAllByMuseumId(museumId)
+    @GetMapping
+    fun getAll(): List<VirtualVisit> = virtualVisitService.getAll()
 }

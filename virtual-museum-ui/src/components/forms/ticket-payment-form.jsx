@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {ScrollView, TextInput, View, Button} from 'react-native';
+import {ScrollView, TextInput, Label, View, Button, Text} from 'react-native';
 import {DatePickerInput} from 'react-native-paper-dates'
 import RNPickerSelect from 'react-native-picker-select';
 import {prepareJobToBuyTicket} from '../../api_clients/ticketClient';
@@ -7,19 +7,20 @@ import {AnimatedBuyingTicketComponent} from '../buying-ticket';
 import {VIRTUAL_MUSEUM_ACCOUNT_NUMBER} from '../../../config.json'
 import {useSessionStorageJwt} from "../../util/jwtHook";
 
-export const TicketPaymentForm = ({selectedVirtualVisit, amount}) => {
+export const TicketPaymentForm = ({selectedVirtualVisit, amount, setBuyingTicketFormHide}) => {
     const [cardHolderFirstName, setCardHolderFirstName] = useState('');
     const [cardHolderSurname, setCardHolderSurname] = useState('');
     const [cardNumber, setCardNumber] = useState('');
     const [cardType, setCardType] = useState('');
-    const [cardExpiration, setCardExpiration] = useState('');
     const [pin, setPin] = useState('');
-    const [date, setDate] = useState(new Date())
-    const [isPaymentInProgress, setIsPaymentInProgress] = useState(false)
+    const [monthExpiration, setMonthExpiration] = useState(1);
+    const [yearExpiration, setYearExpiration] = useState(24);
+    const [redMessage, setRedMessage] = useState("")
+    const [greenMessage, setGreenMessage] = useState("")
     const [getJwt,] = useSessionStorageJwt()
-    const [jobId, setJobId] = useState(undefined)
 
     const handleSubmit = async () => {
+        const cardExpiration = `${monthExpiration.toString().padStart(2, '0')}/${yearExpiration.toString().padStart(2, '0')}`
         console.log({
             cardHolderFirstName,
             cardHolderSurname,
@@ -31,22 +32,23 @@ export const TicketPaymentForm = ({selectedVirtualVisit, amount}) => {
             amount
         });
         const jwt = await getJwt()
-        const response = await prepareJobToBuyTicket(
-            jwt, selectedVirtualVisit, cardHolderFirstName, cardHolderSurname, cardNumber,
-            cardType, cardExpiration, pin, VIRTUAL_MUSEUM_ACCOUNT_NUMBER, amount
-        );
-        console.log(`********************* ${JSON.stringify(response)}`)
-        setJobId(response.jobId)
-        setIsPaymentInProgress(true)
+        try {
+            await prepareJobToBuyTicket(
+                jwt, selectedVirtualVisit, cardHolderFirstName, cardHolderSurname, cardNumber,
+                cardType, cardExpiration, pin, VIRTUAL_MUSEUM_ACCOUNT_NUMBER, amount
+            );
+            setGreenMessage("Successful payment.")
+            setTimeout(() => {
+                setBuyingTicketFormHide(true)
+            }, 2000)
+        } catch (e) {
+            console.error(`Error - ${e}`)
+            setRedMessage(`Error while paying. Error: ${e}`)
+        }
     };
 
     return (
         <ScrollView>
-            {isPaymentInProgress ? (
-                <View>
-                    <AnimatedBuyingTicketComponent jobId={jobId} setIsPaymentInProgress={setIsPaymentInProgress}/>
-                </View>
-            ) : (<View>
                     <TextInput
                         placeholder="Card Holder First Name"
                         value={cardHolderFirstName}
@@ -75,10 +77,16 @@ export const TicketPaymentForm = ({selectedVirtualVisit, amount}) => {
                             {label: 'American Express', value: 'AMERICAN_EXPRESS'}
                         ]}
                     />
-                    <DatePickerInput value={date}
-                                     onChange={setDate}
-                                     locale='en'
-                                     inputMode="start"
+                    <TextInput
+                        placeholder="MM"
+                        value={monthExpiration}
+                        onChangeText={setMonthExpiration}
+                        keyboardType="numeric"
+                    />/<TextInput
+                        placeholder="YY"
+                        value={yearExpiration}
+                        onChangeText={setYearExpiration}
+                        keyboardType="numeric"
                     />
                     <TextInput
                         placeholder="PIN"
@@ -88,9 +96,8 @@ export const TicketPaymentForm = ({selectedVirtualVisit, amount}) => {
                         keyboardType="numeric"
                     />
                     <Button title="Submit" onPress={handleSubmit}/>
-                </View>
-            )
-            }
+                    {greenMessage && <Text style={{color: 'green'}}>{greenMessage}</Text>}
+                    {redMessage && <Text style={{color: 'red'}}>{redMessage}</Text>}
         </ScrollView>
 
     );

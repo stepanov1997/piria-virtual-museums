@@ -4,7 +4,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import com.piria.virtual.museum.model.Museum
+import com.piria.virtual.museum.model.VirtualVisit
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.PDPageContentStream
@@ -20,10 +20,12 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.*
 import javax.imageio.ImageIO
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 @Component
 class TicketAsPDFGenerator {
-    fun generate(ticketId: String, museum: Museum): ByteArrayResource {
+    fun generate(ticketId: String, virtualVisit: VirtualVisit): ByteArrayResource {
         try {
             val document = PDDocument()
 
@@ -35,18 +37,20 @@ class TicketAsPDFGenerator {
                 setFont(PDType1Font.HELVETICA_BOLD, 12F)
 
                 beginText()
-                newLineAtOffset(50F, 700F)
+                newLineAtOffset(50F, 715F)
                 showText("Museum ticket")
                 endText()
 
                 beginText()
                 setFont(PDType1Font.HELVETICA, 10F)
-                newLineAtOffset(50F, 680F)
-                showText("Museum: ${museum.name}")
+                newLineAtOffset(50F, 695F)
+                showText("Museum: ${virtualVisit.museum.name}")
                 newLineAtOffset(0F, -20F) // Pomeranje na novu liniju
-                showText("Location: ${museum.address}, ${museum.city}, ${museum.country}".take(48))
+                showText("Location: ${virtualVisit.museum.address}, ${virtualVisit.museum.city}, ${virtualVisit.museum.country}".take(48))
                 newLineAtOffset(0F, -20F) // Pomeranje na novu liniju
-                showText("Date: ${SimpleDateFormat("dd.MM.yyyy.").format(Date.from(Instant.now()))}")
+                showText("Datetime: ${SimpleDateFormat("dd.MM.yyyy. HH:mm").format(Date.from(Instant.parse(virtualVisit.datetime + ".000Z")))}")
+                newLineAtOffset(0F, -20F) // Pomeranje na novu liniju
+                showText("Duration: ${Duration.parse(virtualVisit.duration!!).toInt(DurationUnit.MINUTES)} minutes")
                 endText()
 
                 val qrCodeImage = generateQRCodeImage(ticketId)
