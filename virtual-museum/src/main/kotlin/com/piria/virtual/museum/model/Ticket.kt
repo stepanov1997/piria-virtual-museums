@@ -1,5 +1,6 @@
 package com.piria.virtual.museum.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
 @Entity
@@ -9,6 +10,7 @@ data class Ticket(
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: String? = null,
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="virtualVisitId", nullable=false)
     val virtualVisit: VirtualVisit

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, FlatList } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, Image} from 'react-native';
 import {SERVER_URL, NEWS_API_GET_ALL_ENDPOINT} from '../../config.json'
 
 const NewsPostsList = () => {
@@ -19,29 +19,20 @@ const NewsPostsList = () => {
         }
     };
 
-    const renderItem = ({ item }) => {
-        console.log(item)
-        return (
-            <View>
-                <Text>Title: {item.title}</Text>
-                <Text>Link: {item.link}</Text>
-                <Text>Description: {item.description}</Text>
-                <Text>PubDate: {item.pubDate}</Text>
-                <Text>GUID: {item.guid}</Text>
-                <Text>Comments: {item.comments}</Text>
-                <Image source={{uri: item.enclosure[0]}} style={{width: 200, height: 150}}/>
-                <Text>Content: {item.content[0]}</Text>
-            </View>
-        );
-    };
-
     return (
         <View>
-            <FlatList
-                data={posts}
-                keyExtractor={(item) => item.guid}
-                renderItem={renderItem}
-            />
+            {posts.map((item, index) => (
+                <View key={item.guid}>
+                    <Text>Title: {item.title}</Text>
+                    <Text>Link: {item.link}</Text>
+                    <Text>Description: {item.description}</Text>
+                    <Text>PubDate: {item.pubDate}</Text>
+                    <Text>GUID: {item.guid}</Text>
+                    <Text>Comments: {item.comments}</Text>
+                    <Image source={{uri: item.enclosure[0]}} style={{width: 200, height: 150}}/>
+                    <Text>Content: {item.content[0]}</Text>
+                </View>
+            ))}
         </View>
     );
 };

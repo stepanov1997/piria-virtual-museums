@@ -1,5 +1,6 @@
 package com.piria.virtual.museum.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
 @Entity
@@ -17,6 +18,7 @@ class Museum(
     val longitude: Double,
     val type: String,
 
+    @JsonIgnore
     @OneToMany(mappedBy="museum", cascade = [CascadeType.ALL])
     val items: Set<VirtualVisit>
 )

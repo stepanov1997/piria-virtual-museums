@@ -3,7 +3,6 @@ import {ScrollView, TextInput, Label, View, Button, Text} from 'react-native';
 import {DatePickerInput} from 'react-native-paper-dates'
 import RNPickerSelect from 'react-native-picker-select';
 import {prepareJobToBuyTicket} from '../../api_clients/ticketClient';
-import {AnimatedBuyingTicketComponent} from '../buying-ticket';
 import {VIRTUAL_MUSEUM_ACCOUNT_NUMBER} from '../../../config.json'
 import {useSessionStorageJwt} from "../../util/jwtHook";
 
@@ -49,55 +48,57 @@ export const TicketPaymentForm = ({selectedVirtualVisit, amount, setBuyingTicket
 
     return (
         <ScrollView>
-                    <TextInput
-                        placeholder="Card Holder First Name"
-                        value={cardHolderFirstName}
-                        onChangeText={setCardHolderFirstName}
-                    />
-                    <TextInput
-                        placeholder="Card Holder Surname"
-                        value={cardHolderSurname}
-                        onChangeText={setCardHolderSurname}
-                    />
-                    <TextInput
-                        placeholder="Card Number"
-                        value={cardNumber}
-                        onChangeText={setCardNumber}
-                        keyboardType="numeric"
-                    />
-                    <RNPickerSelect
-                        placeholder={{
-                            label: 'Select Card Type...',
-                            value: null,
-                        }}
-                        onValueChange={setCardType}
-                        items={[
-                            {label: 'Visa', value: 'VISA'},
-                            {label: 'Mastercard', value: 'MASTERCARD'},
-                            {label: 'American Express', value: 'AMERICAN_EXPRESS'}
-                        ]}
-                    />
-                    <TextInput
-                        placeholder="MM"
-                        value={monthExpiration}
-                        onChangeText={setMonthExpiration}
-                        keyboardType="numeric"
-                    />/<TextInput
-                        placeholder="YY"
-                        value={yearExpiration}
-                        onChangeText={setYearExpiration}
-                        keyboardType="numeric"
-                    />
-                    <TextInput
-                        placeholder="PIN"
-                        value={pin}
-                        onChangeText={setPin}
-                        secureTextEntry
-                        keyboardType="numeric"
-                    />
-                    <Button title="Submit" onPress={handleSubmit}/>
-                    {greenMessage && <Text style={{color: 'green'}}>{greenMessage}</Text>}
-                    {redMessage && <Text style={{color: 'red'}}>{redMessage}</Text>}
+            <TextInput
+                placeholder="Card Holder First Name"
+                value={cardHolderFirstName}
+                onChangeText={setCardHolderFirstName}
+            />
+            <TextInput
+                placeholder="Card Holder Surname"
+                value={cardHolderSurname}
+                onChangeText={setCardHolderSurname}
+            />
+            <TextInput
+                placeholder="Card Number"
+                value={cardNumber}
+                onChangeText={setCardNumber}
+                keyboardType="numeric"
+            />
+            <RNPickerSelect
+                placeholder={{
+                    label: 'Select Card Type...',
+                    value: null,
+                }}
+                onValueChange={setCardType}
+                items={[
+                    {label: 'Visa', value: 'VISA'},
+                    {label: 'Mastercard', value: 'MASTERCARD'},
+                    {label: 'American Express', value: 'AMERICAN_EXPRESS'}
+                ]}
+            />
+            <TextInput
+                placeholder="MM"
+                value={monthExpiration}
+                onChangeText={setMonthExpiration}
+                keyboardType="numeric"
+            />
+            <Text>/</Text>
+            <TextInput
+                placeholder="YY"
+                value={yearExpiration}
+                onChangeText={setYearExpiration}
+                keyboardType="numeric"
+            />
+            <TextInput
+                placeholder="PIN"
+                value={pin}
+                onChangeText={setPin}
+                secureTextEntry
+                keyboardType="numeric"
+            />
+            <Button title="Submit" onPress={handleSubmit}/>
+            {greenMessage && <Text style={{color: 'green'}}>{greenMessage}</Text>}
+            {redMessage && <Text style={{color: 'red'}}>{redMessage}</Text>}
         </ScrollView>
 
     );
