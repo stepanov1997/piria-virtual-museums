@@ -9,10 +9,11 @@ const LoginComponent = ({navigation, route}) => {
     const [username, setUsername] = useState(u ?? "");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const [getJwt, setJwt] = useSessionStorageJwt()
+    const [getJwt, setJwt, removeJwt] = useSessionStorageJwt()
 
     useEffect(() => {
         (async function() {
+            await removeJwt()
             const jwt = await getJwt()
             if(jwt){
                 navigation.push('Museums feed')

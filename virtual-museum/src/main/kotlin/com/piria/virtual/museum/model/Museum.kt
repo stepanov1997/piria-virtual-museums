@@ -3,8 +3,8 @@ package com.piria.virtual.museum.model
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "museums")
-data class Museum(
+@Table(name = "museum")
+class Museum(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -15,6 +15,9 @@ data class Museum(
     val country: String,
     val latitude: Double,
     val longitude: Double,
-    val type: String
+    val type: String,
+
+    @OneToMany(mappedBy="museum", cascade = [CascadeType.ALL])
+    val items: Set<VirtualVisit>
 )
 

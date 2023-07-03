@@ -102,8 +102,8 @@ class UserApi(private val userService: UserService) {
 
 
     data class JwtRequest(
-        val username: String?,
-        val password: String?
+        val username: String? = null,
+        val password: String? = null
     ) : Serializable {
         companion object {
             private const val serialVersionUID = 5926468583005150707L

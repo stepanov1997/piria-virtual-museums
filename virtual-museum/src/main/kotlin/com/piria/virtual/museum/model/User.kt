@@ -1,3 +1,5 @@
+@file:Suppress("com.haulmont.jpb.DataClassEqualsAndHashCodeInspection")
+
 package com.piria.virtual.museum.model
 
 import com.fasterxml.jackson.annotation.JsonGetter
@@ -11,7 +13,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

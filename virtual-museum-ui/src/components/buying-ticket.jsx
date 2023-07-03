@@ -1,17 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Animated } from 'react-native';
 import EventSource from 'react-native-event-source';
-import {SERVER_URL, TICKET_API_POST_ENDPOINT} from 'config.json'
+import {SERVER_URL, TICKET_API_GET_JOB_ENDPOINT} from '../../config.json'
 
-const AnimatedBuyingTicketComponent = () => {
+export const AnimatedBuyingTicketComponent = ({jobId, setIsPaymentInProgress}) => {
     const [events, setEvents] = useState([]);
     const animatedValue = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        const eventSource = new EventSource(`${SERVER_URL}/${TICKET_API_POST_ENDPOINT}`);
+        console.log(`sssssssssssssssssssssssssssss ${jobId} - ${events}`)
+        const eventSource = new EventSource(`${SERVER_URL}/${TICKET_API_GET_JOB_ENDPOINT}/${jobId}}`);
 
         eventSource.addEventListener('message', event => {
-            const eventData = JSON.parse(event.data);
+            const eventData = event.data;
+
+            console.log(`aaaaaaaaaaaaaaaaaaaaaaaaaaaaa ${eventData}`)
             setEvents(prevEvents => [...prevEvents, eventData]);
 
             // Pokreni animaciju
@@ -28,6 +31,7 @@ const AnimatedBuyingTicketComponent = () => {
 
         return () => {
             eventSource.close();
+            setIsPaymentInProgress(false)
         };
     }, []);
 
