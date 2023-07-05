@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonProperty.Access.*
 import com.fasterxml.jackson.annotation.JsonSetter
 import jakarta.persistence.*
+import jakarta.persistence.EnumType.STRING
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -37,14 +38,18 @@ data class User(
     @Column(name="password")
     var secret: String,
 
-    @JsonIgnore(true)
-    @ElementCollection(fetch = FetchType.EAGER)
-    val roles: Set<String> = setOf("USER")
+    @JsonIgnore
+    @OneToMany(mappedBy="user", cascade = [CascadeType.ALL])
+    val activities: Set<UserActivity>,
+
+    @Column(name="role")
+    @Enumerated(STRING)
+    val role: UserType
 
 ) : UserDetails {
     @JsonIgnore(true)
     override fun getAuthorities(): Collection<GrantedAuthority> =
-        roles.map { SimpleGrantedAuthority(it) }
+        listOf(SimpleGrantedAuthority(role.name))
 
     @JsonIgnore(true)
     @JsonGetter("password")

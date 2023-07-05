@@ -1,6 +1,8 @@
 package com.piria.virtual.museum.security
 
+import com.piria.virtual.museum.service.UserActivityService
 import com.piria.virtual.museum.service.UserService
+import com.piria.virtual.museum.util.JwtTokenUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -16,11 +18,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
-class SecurityConfig(val userService: UserService) {
+class SecurityConfig(val userService: UserService,
+                     val jwtTokenUtil: JwtTokenUtil,
+                     val userActivityService: UserActivityService) : WebMvcConfigurer {
     @Autowired
     private lateinit var jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint
 
@@ -51,6 +57,10 @@ class SecurityConfig(val userService: UserService) {
             .authenticationProvider(authProvider)
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()
+
+    override fun addInterceptors(registry: InterceptorRegistry) {
+        registry.addInterceptor(ActivityInterceptor(jwtTokenUtil, userService, userActivityService))
+    }
 
     @Bean
     fun passwordEncoder() = BCryptPasswordEncoder()

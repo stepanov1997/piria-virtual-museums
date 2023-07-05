@@ -9,13 +9,13 @@ export const MuseumsFeedComponent = () => {
     const [museums, setMuseums] = useState([])
     const [searchKeyByName, setSearchKeyByName] = useState("")
     const [searchKeyByCity, setSearchKeyByCity] = useState("")
-    const [getJwt,] = useSessionStorageJwt()
+    const [getSession,] = useSessionStorageJwt()
 
     async function getAllMuseumsByName() {
         if (!searchKeyByName) {
             return;
         }
-        const retrievedMuseums = await museumClient.getAllMuseumsByName(await getJwt(), searchKeyByName);
+        const retrievedMuseums = await museumClient.getAllMuseumsByName((await getSession()).jwt, searchKeyByName);
         setMuseums(retrievedMuseums)
     }
 
@@ -23,7 +23,7 @@ export const MuseumsFeedComponent = () => {
         if (!searchKeyByCity) {
             return;
         }
-        const retrievedMuseums = await museumClient.getAllMuseumsByCity(await getJwt(), searchKeyByCity);
+        const retrievedMuseums = await museumClient.getAllMuseumsByCity((await getSession()).jwt, searchKeyByCity);
         setMuseums(retrievedMuseums)
     }
 
@@ -32,7 +32,7 @@ export const MuseumsFeedComponent = () => {
             if (searchKeyByName || searchKeyByCity) {
                 return;
             }
-            const retrievedMuseums = await museumClient.getAllMuseums(await getJwt());
+            const retrievedMuseums = await museumClient.getAllMuseums((await getSession()).jwt);
             setMuseums(retrievedMuseums)
         })()
     }, [searchKeyByName, searchKeyByCity])
@@ -60,7 +60,7 @@ export const MuseumsFeedComponent = () => {
                     // <Text>{museums[0]?.name}</Text>
                     <View>
                         {
-                            museums.map((item, index) => (
+                            museums.map((item) => (
                                 <View key={item.id.toString()}>
                                     <Link to={{screen: 'Museum', params: {museum: item}}}>
                                         {item.name}

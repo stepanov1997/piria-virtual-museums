@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {ScrollView, TextInput, Label, View, Button, Text} from 'react-native';
-import {DatePickerInput} from 'react-native-paper-dates'
 import RNPickerSelect from 'react-native-picker-select';
 import {prepareJobToBuyTicket} from '../../api_clients/ticketClient';
 import {VIRTUAL_MUSEUM_ACCOUNT_NUMBER} from '../../../config.json'
@@ -16,7 +15,7 @@ export const TicketPaymentForm = ({selectedVirtualVisit, amount, setBuyingTicket
     const [yearExpiration, setYearExpiration] = useState(24);
     const [redMessage, setRedMessage] = useState("")
     const [greenMessage, setGreenMessage] = useState("")
-    const [getJwt,] = useSessionStorageJwt()
+    const [getSession,] = useSessionStorageJwt()
 
     const handleSubmit = async () => {
         const cardExpiration = `${monthExpiration.toString().padStart(2, '0')}/${yearExpiration.toString().padStart(2, '0')}`
@@ -30,7 +29,7 @@ export const TicketPaymentForm = ({selectedVirtualVisit, amount, setBuyingTicket
             receiverCardNumber: VIRTUAL_MUSEUM_ACCOUNT_NUMBER,
             amount
         });
-        const jwt = await getJwt()
+        const {jwt} = await getSession()
         try {
             await prepareJobToBuyTicket(
                 jwt, selectedVirtualVisit, cardHolderFirstName, cardHolderSurname, cardNumber,
