@@ -5,7 +5,7 @@
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:58724/</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:58743/</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
     <data-source source="LOCAL" name="db.sqlite" uuid="3850aeb7-cf34-4488-ba40-123396e974cd">

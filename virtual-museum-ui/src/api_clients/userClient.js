@@ -1,7 +1,10 @@
 import {
     SERVER_URL,
     USER_API_POST_LOGIN_ENDPOINT,
-    USER_API_POST_REGISTER_ENDPOINT
+    USER_API_POST_REGISTER_ENDPOINT,
+    USER_API_ACTIVE_USERS_24H_ENDPOINT,
+    USER_API_ACTIVE_USERS_NOW_ENDPOINT,
+    USER_API_NON_ADMIN_USERS_ENDPOINT
 } from '../../config.json'
 
 async function authenticate(username, password) {
@@ -40,4 +43,19 @@ async function register(firstname, lastname, username, password, email) {
     return {location: location, body: await response.json()}
 }
 
-export default {register, authenticate}
+async function getActiveUsersByHour() {
+    const response = await fetch(`${SERVER_URL}/${USER_API_ACTIVE_USERS_24H_ENDPOINT}`)
+    return (await response.json()).content
+}
+
+async function getCurrentlyActiveUsers() {
+    const response = await fetch(`${SERVER_URL}/${USER_API_ACTIVE_USERS_NOW_ENDPOINT}`)
+    return (await response.json()).content
+}
+
+async function getRegisteredUsers() {
+    const response = await fetch(`${SERVER_URL}/${USER_API_NON_ADMIN_USERS_ENDPOINT}`)
+    return (await response.json()).content
+}
+
+export default {register, authenticate, getActiveUsersByHour, getCurrentlyActiveUsers, getRegisteredUsers}

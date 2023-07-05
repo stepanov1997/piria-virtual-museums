@@ -5,6 +5,8 @@ import com.piria.virtual.museum.model.Response.Companion.generateCreatedResponse
 import com.piria.virtual.museum.model.Response.Companion.generateErrorResponse
 import com.piria.virtual.museum.model.Response.Companion.generateValidResponse
 import com.piria.virtual.museum.model.User
+import com.piria.virtual.museum.model.UserType
+import com.piria.virtual.museum.service.UserActivityService
 import com.piria.virtual.museum.service.UserService
 import com.piria.virtual.museum.util.JwtTokenUtil
 import org.slf4j.LoggerFactory
@@ -17,7 +19,6 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.DisabledException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
@@ -26,7 +27,7 @@ import java.io.Serializable
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin(originPatterns = ["*"])
-class UserApi(private val userService: UserService) {
+class UserApi(private val userService: UserService, private val userActivityService: UserActivityService) {
 
     @Autowired
     private lateinit var authenticationManager : AuthenticationManager
@@ -50,9 +51,9 @@ class UserApi(private val userService: UserService) {
 
         return try {
             authenticate(authenticationRequest.username, authenticationRequest.password)
-            val userDetails: UserDetails = userService.loadUserByUsername(authenticationRequest.username)
+            val userDetails: User = userService.loadUserByUsername(authenticationRequest.username)
             val token: String = jwtTokenUtil.generateToken(userDetails)
-            ResponseEntity.ok(JwtResponse(token))
+            ResponseEntity.ok(JwtResponse(token, userDetails.role))
         } catch (ex: Exception) {
             log.warn("Error while authentication or token creation. Message: {}", ex.message)
             generateErrorResponse(BAD_REQUEST, when(ex.localizedMessage) {
@@ -77,6 +78,13 @@ class UserApi(private val userService: UserService) {
 
     @GetMapping
     fun getAllUsers(): ResponseEntity<Response.ValidResponse> = generateValidResponse(userService.getAllUsers())
+
+    @GetMapping("/uas/all")
+    fun getActiveUsersByHour(): ResponseEntity<Response.ValidResponse> = generateValidResponse(userActivityService.getActiveUsersByHour())
+    @GetMapping("/uas")
+    fun getCurrentlyActiveUsers(): ResponseEntity<Response.ValidResponse> = generateValidResponse(userActivityService.getCurrentlyActiveUsers())
+    @GetMapping("/non-admin-users")
+    fun getAllNonAdminUsers(): ResponseEntity<Response.ValidResponse> = generateValidResponse(userService.getAllNonAdminUsers())
 
     @PostMapping("/register", consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
     fun saveUser(@RequestBody user: User): ResponseEntity<*> {
@@ -111,7 +119,7 @@ class UserApi(private val userService: UserService) {
     }
 
 
-    class JwtResponse(val token: String) : Serializable {
+    class JwtResponse(val token: String, val userType: UserType) : Serializable {
         companion object {
             private const val serialVersionUID = -8091879091924046844L
         }

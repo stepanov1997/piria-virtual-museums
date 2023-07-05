@@ -14,7 +14,7 @@ export const MuseumComponent = ({route}) => {
     const [details, setDetails] = useState("")
     const [buyingTicketFormHide, setBuyingTicketFormHide] = useState(true)
     const [showVirtualVisits, setShowVirtualVisits] = useState(false)
-    const [getJwt,] = useSessionStorageJwt()
+    const [getSession,] = useSessionStorageJwt()
     const [forcastForThreeCities, setForcastForThreeCities] = useState([])
     const {museum} = route.params
 
@@ -36,7 +36,7 @@ export const MuseumComponent = ({route}) => {
 
     const showVirtualVisitsFunction = async () => {
         if (virtualVisits.length === 0) {
-            const jwt = await getJwt();
+            const {jwt} = await getSession();
             const virtualVisits = await getAllByMuseumId(jwt, museum.id)
             setVirtualVisits(virtualVisits)
         }
