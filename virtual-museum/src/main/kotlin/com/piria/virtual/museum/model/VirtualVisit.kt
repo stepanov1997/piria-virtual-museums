@@ -13,10 +13,10 @@ data class VirtualVisit(
     val id: Long? = null,
 
     @Column
-    val datetime: String?,
+    val datetime: String,
 
     @Column
-    val duration: Double?,
+    val duration: Double,
 
     @Column
     val price: Double,
@@ -27,10 +27,13 @@ data class VirtualVisit(
     val museum: Museum,
 
     @JsonIgnore
-    @OneToMany(mappedBy = "virtualVisit", cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "virtualVisit", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     val tickets: Set<Ticket> = mutableSetOf(),
 
-    @OneToOne(cascade = [CascadeType.ALL])
+    @JsonIgnore
+    @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     @JoinColumn(name = "virtual_presentation_id")
     val virtualPresentation: VirtualPresentation
-)
+) {
+
+}

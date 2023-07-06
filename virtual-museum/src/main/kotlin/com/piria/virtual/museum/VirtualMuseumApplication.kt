@@ -7,11 +7,13 @@ import org.springframework.boot.runApplication
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.testcontainers.containers.MySQLContainer
 import java.io.File
 
 
 @SpringBootApplication
+@EnableScheduling
 class VirtualMuseumApplication
 
 fun main(args: Array<String>) {
@@ -37,6 +39,7 @@ class TestContainersConfiguration {
         .withDatabaseName("museum")
         .withPassword("password")
         .withExposedPorts(3306)
+        .withCommand("--max_allowed_packet=67108864");
 }
 
 

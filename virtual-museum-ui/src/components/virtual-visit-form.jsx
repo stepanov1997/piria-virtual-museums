@@ -12,6 +12,7 @@ import YoutubePlayer from "react-native-youtube-iframe";
 import {YOUTUBE_API, YOUTUBE_API_KEY} from '../../config.json'
 import {extractIdFromUrl} from "../util/youtube";
 import { WebView } from 'react-native-webview';
+import {YtPlayer} from "./yt-player";
 
 
 export const VirtualVisitForm = () => {
@@ -71,16 +72,13 @@ export const VirtualVisitForm = () => {
         try {
             await addVirtualVisit(
                 session.jwt,
-                formData.museumId, datetime, formData.duration, formData.price
+                formData.museumId, datetime, formData.duration, formData.price,
+                images, formData.yt_link
             )
         } catch (e) {
             console.log(`Error while adding virtual visit. Error: ${e}`)
         }
     };
-
-    const togglePlaying = useCallback(() => {
-        setPlaying((prev) => !prev);
-    }, []);
 
     const handleChange = (field, value) => {
         setFormData((prevFormData) => ({
@@ -127,21 +125,7 @@ export const VirtualVisitForm = () => {
                 value={formData.yt_link}
                 onChangeText={(yt_link) => handleChange('yt_link', yt_link)}
             />
-            <View>
-                {
-                    ["ios", "android"].includes(Platform.OS) ? (
-                        <YoutubePlayer
-                            height={300}
-                            videoId={extractIdFromUrl(formData.yt_link)}
-                        />
-                    ) : (
-                        <iframe width="560" height="315" src={`https://www.youtube.com/embed/${extractIdFromUrl(formData.yt_link)}`}
-                                title="YouTube video player" frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowFullScreen></iframe>
-                    )
-                }
-            </View>
+            <YtPlayer link={formData.yt_link}/>
             <Button title="Add virtual visit" onPress={handleSubmit}/>
         </View>
     );

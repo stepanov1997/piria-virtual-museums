@@ -38,9 +38,19 @@ data class User(
     @Column(name="password")
     var secret: String,
 
+    @Column(name="isRegistrationEnabled")
+    var isRegistrationEnabled: Boolean,
+
+    @Column(name="isBlocked")
+    var isBlocked: Boolean,
+
     @JsonIgnore
     @OneToMany(mappedBy="user", cascade = [CascadeType.ALL])
     val activities: Set<UserActivity>,
+
+    @JsonIgnore
+    @OneToMany(mappedBy="user", cascade = [CascadeType.ALL])
+    val tickets: Set<Ticket>,
 
     @Column(name="role")
     @Enumerated(STRING)
@@ -64,9 +74,9 @@ data class User(
 
     override fun isAccountNonExpired(): Boolean = true
 
-    override fun isAccountNonLocked(): Boolean = true
+    override fun isAccountNonLocked(): Boolean = role==UserType.ADMIN || isRegistrationEnabled && !isBlocked
 
     override fun isCredentialsNonExpired(): Boolean = true
 
-    override fun isEnabled(): Boolean = true
+    override fun isEnabled(): Boolean = role==UserType.ADMIN || isRegistrationEnabled && !isBlocked
 }

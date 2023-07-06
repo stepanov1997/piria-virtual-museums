@@ -21,5 +21,22 @@ data class Museum(
     @JsonIgnore
     @OneToMany(mappedBy="museum", cascade = [CascadeType.ALL])
     val items: Set<VirtualVisit> = mutableSetOf()
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null) return false
+        if (other !is Museum) {
+            return false
+        }
+
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
+
+    @Override
+    override fun toString(): String {
+        return this::class.simpleName + "(id = $id )"
+    }
+}
 

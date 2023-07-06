@@ -15,8 +15,8 @@ class EmailService(private val javaMailSender: JavaMailSender) {
         to: String,
         subject: String,
         body: String,
-        attachmentData: ByteArrayResource?,
-        attachmentName: String?
+        attachmentData: ByteArrayResource? = null,
+        attachmentName: String? = null
     ) {
         val message = javaMailSender.createMimeMessage()
 

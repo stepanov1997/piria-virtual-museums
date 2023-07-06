@@ -3,6 +3,7 @@ package com.piria.virtual.museum.api
 import com.piria.virtual.museum.model.PaymentRequiredInfo
 import com.piria.virtual.museum.model.Response
 import com.piria.virtual.museum.model.Ticket
+import com.piria.virtual.museum.model.User
 import com.piria.virtual.museum.service.*
 import com.piria.virtual.museum.util.JwtTokenUtil
 import com.piria.virtual.museum.util.TicketAsPDFGenerator
@@ -60,8 +61,10 @@ data class TicketApi(
 
             log.info { "Step 4 - Creating ticket for visit..." }
 
+            val user = getUserUsingAuthorizationHeader(authorizationHeader)
+
             val virtualVisit = virtualVisitService.getById(virtualVisitId!!);
-            val ticket = ticketService.save(Ticket(virtualVisit = virtualVisit))
+            val ticket = ticketService.save(Ticket(virtualVisit = virtualVisit, user = user))
 
             val ticketId = ticket.id!!
             val ticketPdfResource = ticketAsPDFGenerator.generate(
@@ -72,7 +75,7 @@ data class TicketApi(
             log.info { "Step 5 - Sending ticket via mail..." }
 
             emailService.sendEmailWithAttachment(
-                to = getEmailUsingAuthorizationHeader(authorizationHeader),
+                to = user.email,
                 subject = "Virtual Museum Visit Ticket",
                 body = """
                     <html>
@@ -100,10 +103,9 @@ data class TicketApi(
         }
     }
 
-    private fun getEmailUsingAuthorizationHeader(authorizationHeader: String): String {
+    private fun getUserUsingAuthorizationHeader(authorizationHeader: String): User {
         val usernameFromToken = jwtTokenUtil.getUsernameFromToken(authorizationHeader.split(" ")[1])
-        val user = userService.loadUserByUsername(usernameFromToken)
-        return user.email
+        return userService.loadUserByUsername(usernameFromToken)
     }
 
     data class TicketRequest(
