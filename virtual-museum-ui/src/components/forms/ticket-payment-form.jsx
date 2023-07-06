@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {ScrollView, TextInput, Label, View, Button, Text, Platform} from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
-import {prepareJobToBuyTicket} from '../../api_clients/ticketClient';
+import {buyTicket} from '../../api_clients/ticketClient';
 import {VIRTUAL_MUSEUM_ACCOUNT_NUMBER} from '../../../config.json'
 import {useSessionStorageJwt} from "../../util/jwtHook";
 import {Picker} from "react-native-web";
@@ -32,7 +32,7 @@ export const TicketPaymentForm = ({selectedVirtualVisit, amount, setBuyingTicket
         });
         const {jwt} = await getSession()
         try {
-            await prepareJobToBuyTicket(
+            await buyTicket(
                 jwt, selectedVirtualVisit, cardHolderFirstName, cardHolderSurname, cardNumber,
                 cardType, cardExpiration, pin, VIRTUAL_MUSEUM_ACCOUNT_NUMBER, amount
             );

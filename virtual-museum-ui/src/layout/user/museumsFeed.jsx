@@ -4,6 +4,7 @@ import museumClient from '../../api_clients/museumClient'
 import {useSessionStorageJwt} from "../../util/jwtHook";
 import {Link} from '@react-navigation/native';
 import NewsPostsList from "../../components/news-posts";
+import {WatchPresentationForm} from "../../components/watch-presentation-form";
 
 export const MuseumsFeedComponent = () => {
     const [museums, setMuseums] = useState([])
@@ -37,11 +38,19 @@ export const MuseumsFeedComponent = () => {
         })()
     }, [searchKeyByName, searchKeyByCity])
 
+
+
     return (
         <ScrollView>
+            <Link to={{screen: 'Home'}}>
+                Home
+            </Link>
+            <Text>Watch presentation</Text>
+            <WatchPresentationForm/>
 
             <Text>News feed</Text>
             <NewsPostsList/>
+
             <Text>List of Museums</Text>
             <View>
                 <TextInput placeholder="Search by name" value={searchKeyByName}
@@ -57,7 +66,6 @@ export const MuseumsFeedComponent = () => {
 
             {museums ?
                 (
-                    // <Text>{museums[0]?.name}</Text>
                     <View>
                         {
                             museums.map((item) => (

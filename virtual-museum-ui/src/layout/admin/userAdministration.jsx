@@ -16,9 +16,9 @@ export const UserAdministration = ({registeredUsers}) => {
                 registeredUsers.map(user => {
                     return [
                         user.username,
-                        <Button title="APPROVE" onPress={async () => await userClient.approveRegistration(user.id)}/>,
-                        <Button title="BLOCK" onPress={async () => await userClient.approveRegistration(user.id)}/>,
-                        <Button title="RESET" onPress={async () => await userClient.approveRegistration(user.id)}/>
+                        <Button title="APPROVE" onPress={async () => await userClient.approveUserRegistration(user.id)}/>,
+                        <Button title="BLOCK" onPress={async () => await userClient.blockUser(user.id)}/>,
+                        <Button title="RESET" onPress={async () => await userClient.resetUserPassword(user.id)}/>
                     ]
                 })
             } />

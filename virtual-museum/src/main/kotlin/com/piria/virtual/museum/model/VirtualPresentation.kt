@@ -2,6 +2,7 @@
 
 package com.piria.virtual.museum.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
 @Entity
@@ -12,9 +13,11 @@ data class VirtualPresentation(
     @Column(name = "id", nullable = false)
     var id: Long? = null,
 
-    @OneToMany(mappedBy="virtualPresentation", cascade = [CascadeType.ALL])
+    @JsonIgnore
+    @OneToMany(mappedBy="virtualPresentation", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     val medias: Set<Media>,
 
-    @OneToOne(optional = false, mappedBy = "virtualPresentation")
+    @JsonIgnore
+    @OneToOne(optional = false, mappedBy = "virtualPresentation", fetch = FetchType.EAGER)
     val virtualVisit: VirtualVisit? = null
 )

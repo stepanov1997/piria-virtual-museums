@@ -6,6 +6,8 @@ import com.piria.virtual.museum.model.Response.Companion.generateErrorResponse
 import com.piria.virtual.museum.model.Response.Companion.generateValidResponse
 import com.piria.virtual.museum.model.User
 import com.piria.virtual.museum.model.UserType
+import com.piria.virtual.museum.repository.UserRepository
+import com.piria.virtual.museum.service.EmailService
 import com.piria.virtual.museum.service.UserActivityService
 import com.piria.virtual.museum.service.UserService
 import com.piria.virtual.museum.util.JwtTokenUtil
@@ -27,25 +29,30 @@ import java.io.Serializable
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin(originPatterns = ["*"])
-class UserApi(private val userService: UserService, private val userActivityService: UserActivityService) {
+class UserApi(
+    private val userService: UserService,
+    private val userActivityService: UserActivityService,
+    private val userRepository: UserRepository,
+    private val emailService: EmailService
+) {
 
     @Autowired
-    private lateinit var authenticationManager : AuthenticationManager
+    private lateinit var authenticationManager: AuthenticationManager
 
     @Autowired
-    private lateinit var jwtTokenUtil : JwtTokenUtil
+    private lateinit var jwtTokenUtil: JwtTokenUtil
 
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
 
     @PostMapping("/authenticate", consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
-    fun createAuthenticationToken(@RequestBody authenticationRequest:JwtRequest): ResponseEntity<*> {
+    fun createAuthenticationToken(@RequestBody authenticationRequest: JwtRequest): ResponseEntity<*> {
 
-        if(authenticationRequest.username.isNullOrEmpty()) {
+        if (authenticationRequest.username.isNullOrEmpty()) {
             return generateErrorResponse(status = BAD_REQUEST, error = "Username should not be null or empty.")
         }
 
-        if(authenticationRequest.password.isNullOrEmpty()) {
+        if (authenticationRequest.password.isNullOrEmpty()) {
             return generateErrorResponse(status = BAD_REQUEST, error = "Password should not be null or empty.")
         }
 
@@ -56,17 +63,20 @@ class UserApi(private val userService: UserService, private val userActivityServ
             ResponseEntity.ok(JwtResponse(token, userDetails.role))
         } catch (ex: Exception) {
             log.warn("Error while authentication or token creation. Message: {}", ex.message)
-            generateErrorResponse(BAD_REQUEST, when(ex.localizedMessage) {
-                "USER_DISABLED" -> "User is disabled."
-                "INVALID_CREDENTIALS" -> "Invalid credentials."
-                else -> "Error while authentication."
-            })
+            generateErrorResponse(
+                BAD_REQUEST, when (ex.localizedMessage) {
+                    "USER_DISABLED" -> "User is disabled."
+                    "INVALID_CREDENTIALS" -> "Invalid credentials."
+                    else -> "Error while authentication."
+                }
+            )
         }
     }
 
-    private fun authenticate(username:String, password:String) {
+    private fun authenticate(username: String, password: String) {
         try {
-            val authentication = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
+            val authentication =
+                authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
             SecurityContextHolder.getContext().authentication = authentication
             authentication.principal
         } catch (e: DisabledException) {
@@ -80,11 +90,16 @@ class UserApi(private val userService: UserService, private val userActivityServ
     fun getAllUsers(): ResponseEntity<Response.ValidResponse> = generateValidResponse(userService.getAllUsers())
 
     @GetMapping("/uas/all")
-    fun getActiveUsersByHour(): ResponseEntity<Response.ValidResponse> = generateValidResponse(userActivityService.getActiveUsersByHour())
+    fun getActiveUsersByHour(): ResponseEntity<Response.ValidResponse> =
+        generateValidResponse(userActivityService.getActiveUsersByHour())
+
     @GetMapping("/uas")
-    fun getCurrentlyActiveUsers(): ResponseEntity<Response.ValidResponse> = generateValidResponse(userActivityService.getCurrentlyActiveUsers())
+    fun getCurrentlyActiveUsers(): ResponseEntity<Response.ValidResponse> =
+        generateValidResponse(userActivityService.getCurrentlyActiveUsers())
+
     @GetMapping("/non-admin-users")
-    fun getAllNonAdminUsers(): ResponseEntity<Response.ValidResponse> = generateValidResponse(userService.getAllNonAdminUsers())
+    fun getAllNonAdminUsers(): ResponseEntity<Response.ValidResponse> =
+        generateValidResponse(userService.getAllNonAdminUsers())
 
     @PostMapping("/register", consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
     fun saveUser(@RequestBody user: User): ResponseEntity<*> {
@@ -103,11 +118,73 @@ class UserApi(private val userService: UserService, private val userActivityServ
     }
 
     @GetMapping("/{id}")
-    fun getUserById(@PathVariable id: Long): ResponseEntity<Response.ValidResponse> = generateValidResponse(userService.getUserById(id))
+    fun getUserById(@PathVariable id: Long): ResponseEntity<Response.ValidResponse> =
+        generateValidResponse(userService.getUserById(id))
 
     @DeleteMapping("/{id}")
-    fun deleteUserById(@PathVariable id: Long): ResponseEntity<Response.ValidResponse> = generateValidResponse(userService.deleteUserById(id))
+    fun deleteUserById(@PathVariable id: Long): ResponseEntity<Response.ValidResponse> =
+        generateValidResponse(userService.deleteUserById(id))
 
+    @GetMapping("/approveRegistration/{userId}")
+    fun approveRegistration(@PathVariable userId: Long): ResponseEntity<*> =
+        try {
+            val userById = userService.getUserById(userId)
+            userById.isRegistrationEnabled = true
+            val changedUser = userRepository.saveAndFlush(userById)
+            generateValidResponse(changedUser)
+        } catch (e: Exception) {
+            log.error("User with $userId doesn't exist.", e)
+            generateErrorResponse(BAD_REQUEST, "User with $userId doesn't exist.")
+        }
+
+    @GetMapping("/block/{userId}")
+    fun blockUser(@PathVariable userId: Long): ResponseEntity<*> =
+        try {
+            val userById = userService.getUserById(userId)
+            userById.isBlocked = true
+            val changedUser = userRepository.saveAndFlush(userById)
+            generateValidResponse(changedUser)
+        } catch (e: Exception) {
+            log.error("User with $userId doesn't exist.", e)
+            generateErrorResponse(BAD_REQUEST, "User with $userId doesn't exist.")
+        }
+
+    @Suppress("HtmlRequiredLangAttribute")
+    @GetMapping("/resetPassword/{userId}")
+    fun resetPassword(@PathVariable userId: Long): ResponseEntity<*> =
+        try {
+            val userById = userService.getUserById(userId)
+            val newPassword = generatePassword(8)
+            userById.secret = passwordEncoder.encode(newPassword)
+
+            emailService.sendEmailWithAttachment(
+                to = userById.email,
+                subject = "Virtual Museum Password Reset",
+                body = """
+            <html>
+                <body>
+                    <h2>Dear ${userById.name},</h2>
+                    
+                    <p>Your Virtual Museum account password has been reset. Below is your new password:</p>
+                    
+                    <p><strong>New Password:</strong> ${newPassword}</p>
+                    
+                    <p>Please use this password to log in to your Virtual Museum account.</p>
+                    
+                    <p>Thank you.</p>
+                    
+                    <p>Best regards,</p>
+                    <p>Virtual Museum Support Team</p>
+                </body>
+            </html>
+            """.trimIndent()
+            )
+            val changedUser = userRepository.saveAndFlush(userById)
+            generateValidResponse(changedUser)
+        } catch (e: Exception) {
+            log.error("User with $userId doesn't exist.", e)
+            generateErrorResponse(BAD_REQUEST, "User with $userId doesn't exist.")
+        }
 
     data class JwtRequest(
         val username: String? = null,
@@ -127,6 +204,13 @@ class UserApi(private val userService: UserService, private val userActivityServ
 
     companion object {
         private val log = LoggerFactory.getLogger(UserApi::class.java)
+    }
+
+    private fun generatePassword(length: Int): String {
+        val allowedChars = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
     }
 }
 

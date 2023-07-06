@@ -4,7 +4,10 @@ import {
     USER_API_POST_REGISTER_ENDPOINT,
     USER_API_ACTIVE_USERS_24H_ENDPOINT,
     USER_API_ACTIVE_USERS_NOW_ENDPOINT,
-    USER_API_NON_ADMIN_USERS_ENDPOINT
+    USER_API_NON_ADMIN_USERS_ENDPOINT,
+    USER_API_APPROVE_USER_ENDPOINT,
+    USER_API_BLOCK_USER_ENDPOINT,
+    USER_API_RESET_PASSWORD_USER_ENDPOINT,
 } from '../../config.json'
 
 async function authenticate(username, password) {
@@ -58,7 +61,18 @@ async function getRegisteredUsers() {
     return (await response.json()).content
 }
 async function approveRegistration(userId) {
-    return Promise.resolve(undefined);
+    const response = await fetch(`${SERVER_URL}/${USER_API_APPROVE_USER_ENDPOINT}/${userId}`)
+    return (await response.json()).content
 }
 
-export default {register, authenticate, getActiveUsersByHour, getCurrentlyActiveUsers, getRegisteredUsers, approveRegistration}
+async function blockUser(userId) {
+    const response = await fetch(`${SERVER_URL}/${USER_API_BLOCK_USER_ENDPOINT}/${userId}`)
+    return (await response.json()).content
+}
+
+async function resetUserPassword(userId) {
+    const response = await fetch(`${SERVER_URL}/${USER_API_RESET_PASSWORD_USER_ENDPOINT}/${userId}`)
+    return (await response.json()).content
+}
+
+export default {register, authenticate, getActiveUsersByHour, getCurrentlyActiveUsers, getRegisteredUsers, approveUserRegistration: approveRegistration, blockUser, resetUserPassword}

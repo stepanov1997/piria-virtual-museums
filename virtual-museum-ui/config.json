@@ -4,6 +4,7 @@
   "VIRTUAL_VISIT_API_GET_BY_MUSEUM_ID_ENDPOINT": "api/vvs/museum",
   "VIRTUAL_VISIT_API_GET_BY_ID_ENDPOINT": "api/vvs/",
   "VIRTUAL_VISIT_API_ADD_ENDPOINT": "api/vvs",
+  "VIRTUAL_VISIT_API_WATCH_PRESENTATION_ENDPOINT": "api/vvs/ticketId",
   "MUSEUM_API_GET_ALL_BY_NAME_ENDPOINT": "api/museums/name",
   "MUSEUM_API_GET_ALL_BY_CITY_ENDPOINT": "api/museums/city",
   "MUSEUM_API_ADD_ENDPOINT": "api/museums",
@@ -13,6 +14,9 @@
   "USER_API_ACTIVE_USERS_24H_ENDPOINT": "api/users/uas/all",
   "USER_API_ACTIVE_USERS_NOW_ENDPOINT": "api/users/uas",
   "USER_API_NON_ADMIN_USERS_ENDPOINT": "api/users/non-admin-users",
+  "USER_API_APPROVE_USER_ENDPOINT": "api/users/approveRegistration",
+  "USER_API_BLOCK_USER_ENDPOINT": "api/users/block",
+  "USER_API_RESET_PASSWORD_USER_ENDPOINT": "api/users/resetPassword",
   "NEWS_API_GET_ALL_ENDPOINT": "api/news",
   "TICKET_API_POST_ENDPOINT": "api/ticket",
   "TICKET_API_GET_JOB_ENDPOINT": "api/ticket/job",
@@ -27,5 +31,9 @@
   "OPENWEATHER_API_KEY": "api_key",
   "YOUTUBE_API": "https://www.googleapis.com/youtube/v3/search?key=",
   "YOUTUBE_API_KEY": "api_key",
-  "VIRTUAL_MUSEUM_ACCOUNT_NUMBER": "8765432187654321"
+  "VIRTUAL_MUSEUM_ACCOUNT_NUMBER": "8765432187654321",
+  "BLUE": "#3d5872",
+  "DARKBLUE": "#17273D",
+  "GRAY": "#b7ada1",
+  "GREEN": "#029791"
 }

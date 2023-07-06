@@ -1,8 +1,9 @@
 # Users
 #   - username: stepanov
 #   - password: pass
-INSERT INTO museum.user (id, email, first_name, last_name, password, username, role) VALUES (1, 'kristijan.stepanov95@gmail.com', 'Kristijan', 'Stepanov', '$2a$10$JuoYVcKJCB53KqwVAxRLzOX.NDMQG/LIp5YeofaBt4/2e9l4hnaAy', 'stepanov', 'USER');
-INSERT INTO museum.user (id, email, first_name, last_name, password, username, role) VALUES (2, 'kristijan.stepanov95@gmail.com', 'Kristijan', 'Stepanov', '$2a$10$JuoYVcKJCB53KqwVAxRLzOX.NDMQG/LIp5YeofaBt4/2e9l4hnaAy', 'admin', 'ADMIN');
+INSERT INTO museum.user (id, email, first_name, last_name, password, username, role, is_registration_enabled, is_blocked) VALUES (1, 'kristijan.stepanov95@gmail.com', 'Kristijan', 'Stepanov', '$2a$10$JuoYVcKJCB53KqwVAxRLzOX.NDMQG/LIp5YeofaBt4/2e9l4hnaAy', 'stepanov', 'USER', true, false);
+INSERT INTO museum.user (id, email, first_name, last_name, password, username, role, is_registration_enabled, is_blocked) VALUES (2, 'kristijan.stepanov95@gmail.com', 'Kristijan', 'Stepanov', '$2a$10$JuoYVcKJCB53KqwVAxRLzOX.NDMQG/LIp5YeofaBt4/2e9l4hnaAy', 'user', 'USER', false, false);
+INSERT INTO museum.user (id, email, first_name, last_name, password, username, role, is_registration_enabled, is_blocked) VALUES (3, 'kristijan.stepanov95@gmail.com', 'Kristijan', 'Stepanov', '$2a$10$JuoYVcKJCB53KqwVAxRLzOX.NDMQG/LIp5YeofaBt4/2e9l4hnaAy', 'admin', 'ADMIN', true, false);
 
 # Museums
 INSERT INTO museum.museum (id, address, city, country, latitude, longitude, name, phone_number, type) VALUES (1, '1 Avenue of the Arts', 'Philadelphia', 'USA', 39.95308, -75.164871, 'Philadelphia Museum of Art', '215-763-8100', 'Art Museum');
@@ -67,6 +68,9 @@ INSERT INTO museum.media (id, virtual_presentation_id, type, content) VALUES (5,
 INSERT INTO museum.media (id, virtual_presentation_id, type, content) VALUES (6, 1,'YT_VIDEO_LINK', 'https://www.youtube.com/watch?v=sHOl65ASBwk');
 
 INSERT INTO museum.virtualvisit (id, datetime, duration, price, museum_id, virtual_presentation_id) VALUES (1, '2023-08-02T10:00:00', '2', 15.0, 1, 1);
+
+INSERT INTO museum.ticket (virtual_visit_id, user_id, id, notification_sent_before_start, notification_sent_before_end) VALUES (1, 1, 'e229e6b6-6cb8-4843-b1ae-f66a34c4c3e7', false, false)
+
 # INSERT INTO museum.virtualvisit (id, datetime, duration, price, museum_id, virtual_presentation_id) VALUES (11, '2023-08-02T12:00:00', '2', 15.0, 1,1);
 # INSERT INTO museum.virtualvisit (id, datetime, duration, price, museum_id, virtual_presentation_id) VALUES (12, '2023-08-02T14:00:00', '2', 15.0, 1,1);
 # INSERT INTO museum.virtualvisit (id, datetime, duration, price, museum_id, virtual_presentation_id) VALUES (2, '2023-08-03T14:30:00', '1.5', 10.0, 2,1);
