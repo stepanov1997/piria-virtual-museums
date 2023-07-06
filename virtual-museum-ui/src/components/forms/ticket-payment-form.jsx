@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import {ScrollView, TextInput, Label, View, Button, Text} from 'react-native';
+import {ScrollView, TextInput, Label, View, Button, Text, Platform} from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import {prepareJobToBuyTicket} from '../../api_clients/ticketClient';
 import {VIRTUAL_MUSEUM_ACCOUNT_NUMBER} from '../../../config.json'
 import {useSessionStorageJwt} from "../../util/jwtHook";
+import {Picker} from "react-native-web";
 
 export const TicketPaymentForm = ({selectedVirtualVisit, amount, setBuyingTicketFormHide}) => {
     const [cardHolderFirstName, setCardHolderFirstName] = useState('');
@@ -11,8 +12,8 @@ export const TicketPaymentForm = ({selectedVirtualVisit, amount, setBuyingTicket
     const [cardNumber, setCardNumber] = useState('');
     const [cardType, setCardType] = useState('');
     const [pin, setPin] = useState('');
-    const [monthExpiration, setMonthExpiration] = useState(1);
-    const [yearExpiration, setYearExpiration] = useState(24);
+    const [monthExpiration, setMonthExpiration] = useState("1");
+    const [yearExpiration, setYearExpiration] = useState("24");
     const [redMessage, setRedMessage] = useState("")
     const [greenMessage, setGreenMessage] = useState("")
     const [getSession,] = useSessionStorageJwt()
@@ -63,18 +64,36 @@ export const TicketPaymentForm = ({selectedVirtualVisit, amount, setBuyingTicket
                 onChangeText={setCardNumber}
                 keyboardType="numeric"
             />
-            <RNPickerSelect
-                placeholder={{
-                    label: 'Select Card Type...',
-                    value: null,
-                }}
-                onValueChange={setCardType}
-                items={[
-                    {label: 'Visa', value: 'VISA'},
-                    {label: 'Mastercard', value: 'MASTERCARD'},
-                    {label: 'American Express', value: 'AMERICAN_EXPRESS'}
-                ]}
-            />
+            <View>
+                {
+                    ['ios', 'android'].includes(Platform.OS) ? (
+                        <RNPickerSelect
+                            value={cardType}
+                            placeholder={{
+                                label: 'Select Card Type...',
+                                value: null,
+                            }}
+                            onValueChange={setCardType}
+                            items={[
+                                {label: 'Visa', value: 'VISA'},
+                                {label: 'Mastercard', value: 'MASTERCARD'},
+                                {label: 'American Express', value: 'AMERICAN_EXPRESS'}
+                            ]}
+                        />
+                    ) : (
+                        <Picker
+                            selectedValue={cardType}
+                            onValueChange={(itemValue) => setCardType(itemValue)}
+                        >
+                            <Picker.Item label="Select Card Type..." value={null} />
+                            <Picker.Item label="Visa" value="VISA" />
+                            <Picker.Item label="Mastercard" value="MASTERCARD" />
+                            <Picker.Item label="American Express" value="AMERICAN_EXPRESS" />
+                        </Picker>
+                    )
+                }
+            </View>
+
             <TextInput
                 placeholder="MM"
                 value={monthExpiration}

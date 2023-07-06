@@ -25,5 +25,7 @@
   "OPENWEATHER_API_FORCAST_ENDPOINT": "data/2.5/forecast/daily",
   "OPENWEATHER_API_GEOCODING_ENDPOINT": "geo/1.0/direct",
   "OPENWEATHER_API_KEY": "api_key",
+  "YOUTUBE_API": "https://www.googleapis.com/youtube/v3/search?key=",
+  "YOUTUBE_API_KEY": "api_key",
   "VIRTUAL_MUSEUM_ACCOUNT_NUMBER": "8765432187654321"
 }

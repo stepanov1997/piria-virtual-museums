@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import userClient from '../../api_clients/userClient'
 import {UserAdministration} from "./userAdministration";
 import {MuseumAdministration} from './museumAdministration'
-import {VirtualVisitAdministration} from "./virtualVisitAdministration";
+import {VirtualVisitForm} from "../../components/virtual-visit-form";
 
 export const AdminHomeFeed = () => {
     const [activeUsersByHour, setActiveUsersByHour] = useState([])
@@ -28,7 +28,7 @@ export const AdminHomeFeed = () => {
             <View>
                 <UserAdministration registeredUsers={registeredUsers}/>
                 <MuseumAdministration/>
-                <VirtualVisitAdministration/>
+                <VirtualVisitForm/>
             </View>
         </ScrollView>
     );

@@ -16,7 +16,7 @@ data class VirtualVisit(
     val datetime: String?,
 
     @Column
-    val duration: String?,
+    val duration: Double?,
 
     @Column
     val price: Double,
@@ -28,5 +28,9 @@ data class VirtualVisit(
 
     @JsonIgnore
     @OneToMany(mappedBy = "virtualVisit", cascade = [CascadeType.ALL])
-    val tickets: Set<Ticket> = mutableSetOf()
+    val tickets: Set<Ticket> = mutableSetOf(),
+
+    @OneToOne(cascade = [CascadeType.ALL])
+    @JoinColumn(name = "virtual_presentation_id")
+    val virtualPresentation: VirtualPresentation
 )
