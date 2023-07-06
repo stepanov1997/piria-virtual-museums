@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface VirtualVisitRepository: JpaRepository<VirtualVisit, Long> {
-    fun getAllByMuseumId(museumId: Long): Set<VirtualVisit>
+    fun getAllByMuseumId(museumId: Long): List<VirtualVisit>
 }

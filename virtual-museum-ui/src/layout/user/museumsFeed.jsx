@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
 import {Button, Text, TextInput, View, ScrollView} from 'react-native'
-import museumClient from '../api_clients/museumClient'
-import {useSessionStorageJwt} from "../util/jwtHook";
+import museumClient from '../../api_clients/museumClient'
+import {useSessionStorageJwt} from "../../util/jwtHook";
 import {Link} from '@react-navigation/native';
-import NewsPostsList from "../components/news-posts";
+import NewsPostsList from "../../components/news-posts";
 
 export const MuseumsFeedComponent = () => {
     const [museums, setMuseums] = useState([])

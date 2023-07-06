@@ -28,5 +28,5 @@ data class VirtualVisit(
 
     @JsonIgnore
     @OneToMany(mappedBy = "virtualVisit", cascade = [CascadeType.ALL])
-    val tickets: Set<Ticket>
+    val tickets: Set<Ticket> = mutableSetOf()
 )

@@ -5,7 +5,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "museum")
-class Museum(
+data class Museum(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -20,6 +20,6 @@ class Museum(
 
     @JsonIgnore
     @OneToMany(mappedBy="museum", cascade = [CascadeType.ALL])
-    val items: Set<VirtualVisit>
+    val items: Set<VirtualVisit> = mutableSetOf()
 )
 

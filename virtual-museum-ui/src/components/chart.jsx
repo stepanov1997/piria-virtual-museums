@@ -13,7 +13,7 @@ export const Chart = ({ data }) => {
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         style: {
             borderRadius: 16,
-        },
+        }
     };
 
     return (

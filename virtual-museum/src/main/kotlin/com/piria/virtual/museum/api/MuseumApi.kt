@@ -2,6 +2,7 @@ package com.piria.virtual.museum.api
 
 import com.piria.virtual.museum.model.Museum
 import com.piria.virtual.museum.service.MuseumService
+import org.springframework.http.MediaType.*
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -21,7 +22,7 @@ data class MuseumApi(private val museumService: MuseumService) {
     @GetMapping("/type/{type}")
     fun getMuseumsByType(@PathVariable type: String): List<Museum> = museumService.getMuseumsByType(type)
 
-    @PostMapping
+    @PostMapping(consumes = [APPLICATION_JSON_VALUE])
     fun saveMuseum(@RequestBody museum: Museum): Museum = museumService.saveMuseum(museum)
 
     @DeleteMapping("/{id}")

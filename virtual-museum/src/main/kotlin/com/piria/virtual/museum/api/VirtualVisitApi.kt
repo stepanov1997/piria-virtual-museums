@@ -11,7 +11,9 @@ class VirtualVisitApi(private val virtualVisitService: VirtualVisitService) {
     @GetMapping("/{virtualVisitId}")
     fun getById(@PathVariable virtualVisitId: Long): VirtualVisit = virtualVisitService.getById(virtualVisitId)
     @GetMapping("/museum/{museumId}")
-    fun getByMuseumId(@PathVariable museumId: Long): Set<VirtualVisit> = virtualVisitService.getAllByMuseumId(museumId)
+    fun getByMuseumId(@PathVariable museumId: Long): List<VirtualVisit> = virtualVisitService.getAllByMuseumId(museumId)
     @GetMapping
     fun getAll(): List<VirtualVisit> = virtualVisitService.getAll()
+    @PostMapping
+    fun save(@RequestBody virtualVisit: VirtualVisit): VirtualVisit = virtualVisitService.save(virtualVisit)
 }
