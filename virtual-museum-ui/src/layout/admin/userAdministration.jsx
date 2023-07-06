@@ -11,7 +11,7 @@ export const UserAdministration = ({registeredUsers}) => {
     });
     return (
         <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
-            <Row data={['Username', 'Approve register', 'Block user', 'Reset password']} style={styles.head} textStyle={styles.text}/>
+            <Row data={['Username', 'Approve register', 'Block user', 'Reset password']} style={styles.head} />
             <Rows data={
                 registeredUsers.map(user => {
                     return [
@@ -21,7 +21,7 @@ export const UserAdministration = ({registeredUsers}) => {
                         <Button title="RESET" onPress={async () => await userClient.approveRegistration(user.id)}/>
                     ]
                 })
-            } textStyle={styles.text}/>
+            } />
         </Table>
     )
 }

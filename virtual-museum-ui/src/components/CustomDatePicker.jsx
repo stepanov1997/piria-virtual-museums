@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
+import {CustomPicker} from "./CustomPicker";
 
 const CustomDatePicker = ({ value, onChange }) => {
     const generateYearOptions = () => {
@@ -34,33 +35,49 @@ const CustomDatePicker = ({ value, onChange }) => {
         return dayOptions;
     };
 
+    const valueChange = (index) => {
+        return value => {
+            onChange(prevValue => {
+                prevValue[index] = value
+                console.log(prevValue)
+                return prevValue
+            })
+        }
+    }
+
     return (
         <View>
             <View>
-                <Text>Godina:</Text>
-                <RNPickerSelect
-                    onValueChange={onChange}
+                <Text>Year:</Text>
+                <CustomPicker
+                    onValueChange={valueChange(0)}
                     items={generateYearOptions()}
-                    placeholder={{ label: 'Izaberite godinu', value: null }}
-                    value={value}
+                    labelMapper={item => item.label}
+                    valueMapper={item => item.value}
+                    placeholder={"Choose year:"}
+                    value={value[0]}
                 />
             </View>
             <View>
-                <Text>Mesec:</Text>
-                <RNPickerSelect
-                    onValueChange={onChange}
+                <Text>Month:</Text>
+                <CustomPicker
+                    onValueChange={valueChange(1)}
                     items={generateMonthOptions()}
-                    placeholder={{ label: 'Izaberite mesec', value: null }}
-                    value={value}
+                    labelMapper={item => item.label}
+                    valueMapper={item => item.value}
+                    placeholder={"Choose month:"}
+                    value={value[1]}
                 />
             </View>
             <View>
-                <Text>Dan:</Text>
-                <RNPickerSelect
-                    onValueChange={onChange}
+                <Text>Day:</Text>
+                <CustomPicker
+                    onValueChange={valueChange(2)}
                     items={generateDayOptions()}
-                    placeholder={{ label: 'Izaberite dan', value: null }}
-                    value={value}
+                    labelMapper={item => item.label}
+                    valueMapper={item => item.value}
+                    placeholder={"Choose day:"}
+                    value={value[2]}
                 />
             </View>
             <Text>Izabrani datum: {value}</Text>

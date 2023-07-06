@@ -20,8 +20,6 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.*
 import javax.imageio.ImageIO
-import kotlin.time.Duration
-import kotlin.time.DurationUnit
 
 @Component
 class TicketAsPDFGenerator {
@@ -50,7 +48,7 @@ class TicketAsPDFGenerator {
                 newLineAtOffset(0F, -20F) // Pomeranje na novu liniju
                 showText("Datetime: ${SimpleDateFormat("dd.MM.yyyy. HH:mm").format(Date.from(Instant.parse(virtualVisit.datetime + ".000Z")))}")
                 newLineAtOffset(0F, -20F) // Pomeranje na novu liniju
-                showText("Duration: ${Duration.parse(virtualVisit.duration!!).toInt(DurationUnit.MINUTES)} minutes")
+                showText("Duration: ${virtualVisit.duration!!} hour(s)")
                 endText()
 
                 val qrCodeImage = generateQRCodeImage(ticketId)

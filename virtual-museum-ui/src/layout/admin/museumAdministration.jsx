@@ -2,9 +2,8 @@ import {Platform, Button, View, TextInput, Text} from "react-native";
 import React, {useEffect, useState} from "react";
 import museumClient from "../../api_clients/museumClient";
 import {useSessionStorageJwt} from "../../util/jwtHook";
-import RNPickerSelect from "react-native-picker-select";
 import battutaClient from "../../api_clients/battutaClient";
-import {Picker} from "react-native-web";
+import {CustomPicker} from "../../components/CustomPicker";
 
 export const MuseumAdministration = () => {
     const [formData, setFormData] = useState({
@@ -23,7 +22,7 @@ export const MuseumAdministration = () => {
     const [getSession,] = useSessionStorageJwt();
 
     useEffect(() => {
-        (async function() {
+        (async function () {
             await fetchCountries();
         })()
     }, []);
@@ -33,7 +32,7 @@ export const MuseumAdministration = () => {
     useEffect(() => {
         (async function () {
             console.log(formData.country)
-            if(formData.country) {
+            if (formData.country) {
                 try {
                     setCities(await battutaClient.getAllCities(formData.country))
                 } catch (e) {
@@ -96,100 +95,38 @@ export const MuseumAdministration = () => {
                 onChangeText={(text) => handleChange('address', text)}
             />
 
-            <View>
-                {
-                    ['ios', 'android'].includes(Platform.OS) ? (
-                        <RNPickerSelect
-                            value={formData.country}
-                            placeholder={{
-                                label: 'Select country...',
-                                value: "",
-                            }}
-                            onValueChange={(value) => {
-                                setFormData((prevFormData) => ({
-                                    ...prevFormData,
-                                    country: value,
-                                }));
-                            }}
-                            items={countries.map((country) => (
-                                {
-                                    label: `${country.name.common} (${country.cca2})`,
-                                    value: country.cca2
-                                }
-                            ))}
-                        />
-                    ) : (
-                        <Picker
-                            selectedValue={formData.country}
-                            onValueChange={(value) => {
-                                setFormData((prevFormData) => ({
-                                    ...prevFormData,
-                                    country: value,
-                                }));
-                            }}
-                        >
-                            <Picker.Item label="Select country..." value=""/>
-                            {countries.map((country) => (
-                                <Picker.Item
-                                    key={country.cca2}
-                                    label={`${country.name.common} (${country.cca2})`}
-                                    value={country.cca2}
-                                />
-                            ))}
-                        </Picker>
-                    )
-                }
-            </View>
+            <CustomPicker
+                value={formData.country}
+                onValueChange={(value) => {
+                    setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        country: value,
+                    }));
+                }}
+                placeholder={'Select country...'}
+                items={countries}
+                labelMapper={country => `${country.name.common} (${country.cca2})`}
+                valueMapper={country => country.cca2}
+            />
 
-
-            <View>
-                {
-                    ['ios', 'android'].includes(Platform.OS) ? (
-                        <RNPickerSelect
-                            value={formData.city}
-                            placeholder={{
-                                label: 'Select city...',
-                                value: "",
-                            }}
-                            onValueChange={(value, index) => {
-                                const city = cities.find(e => e.city === value)
-                                console.log(JSON.stringify(city))
-                                console.log(JSON.stringify(formData))
-                                setFormData((prevFormData) => ({
-                                    ...prevFormData,
-                                    city: value,
-                                    latitude: city?.latitude ?? '',
-                                    longitude: city?.longitude ?? '',
-                                }));
-                            }}
-                            items={cities.map((city) => (
-                                {
-                                    label: city.city,
-                                    value: city.city
-                                }
-                            ))}
-                        />
-                    ) : (
-                        <Picker
-                            selectedValue={formData.city}
-                            onValueChange={(value, index) => {
-                                const city = cities.find(e => e.city === value);
-                                setFormData((prevFormData) => ({
-                                    ...prevFormData,
-                                    city: value,
-                                    latitude: city?.latitude ?? '',
-                                    longitude: city?.longitude ?? '',
-                                }));
-                            }}
-                        >
-                            <Picker.Item label="Select city..." value={null}/>
-                            {cities.map((city) => (
-                                <Picker.Item key={city.city} label={city.city} value={city.city}/>
-                            ))}
-                        </Picker>
-                    )
-                }
-            </View>
+            <CustomPicker
+                value={formData.city}
+                onValueChange={(value) => {
+                    const city = cities.find(e => e.city === value)
+                    console.log(JSON.stringify(city))
+                    console.log(JSON.stringify(formData))
+                    setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        city: value,
+                        latitude: city?.latitude ?? '',
+                        longitude: city?.longitude ?? '',
+                    }));
+                }}
+                placeholder={'Select city...'}
+                items={cities}
+                labelMapper={city => city.city}
+                valueMapper={city => city.city}
+            />
 
             <TextInput
                 placeholder="Latitude"

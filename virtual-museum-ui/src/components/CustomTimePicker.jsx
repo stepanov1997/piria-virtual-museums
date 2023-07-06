@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
+import {CustomPicker} from "./CustomPicker";
 
 const CustomTimePicker = ({ value, onChange }) => {
     const generateHourOptions = () => {
@@ -23,27 +24,40 @@ const CustomTimePicker = ({ value, onChange }) => {
         return minuteOptions;
     };
 
+    const valueChange = (index) => {
+        return value => {
+            onChange(prevValue => {
+                prevValue[index] = value
+                return prevValue
+            })
+        }
+    }
+
     return (
         <View>
             <View>
-                <Text>Sat:</Text>
-                <RNPickerSelect
-                    onValueChange={onChange}
+                <Text>Hour:</Text>
+                <CustomPicker
+                    onValueChange={valueChange(0)}
                     items={generateHourOptions()}
-                    placeholder={{ label: 'Izaberite sat', value: null }}
-                    value={value}
+                    labelMapper={item => item.label}
+                    valueMapper={item => item.value}
+                    placeholder={"Choose hour:"}
+                    value={value[0]}
                 />
             </View>
             <View>
-                <Text>Minut:</Text>
-                <RNPickerSelect
-                    onValueChange={onChange}
+                <Text>Minute:</Text>
+                <CustomPicker
+                    onValueChange={valueChange(1)}
                     items={generateMinuteOptions()}
-                    placeholder={{ label: 'Izaberite minut', value: null }}
-                    value={value}
+                    labelMapper={item => item.label}
+                    valueMapper={item => item.value}
+                    placeholder={"Choose minute:"}
+                    value={value[1]}
                 />
             </View>
-            <Text>Izabrano vreme: {value}</Text>
+            <Text>Selected time: {value}</Text>
         </View>
     );
 };
