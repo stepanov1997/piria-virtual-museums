@@ -99,6 +99,5 @@ export const TicketPaymentForm = ({selectedVirtualVisit, amount, setBuyingTicket
             {greenMessage && <Text style={{color: 'green'}}>{greenMessage}</Text>}
             {redMessage && <Text style={{color: 'red'}}>{redMessage}</Text>}
         </ScrollView>
-
     );
 };

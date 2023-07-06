@@ -4,6 +4,7 @@ import userClient from "../api_clients/userClient";
 import {useSessionStorageJwt} from "../util/jwtHook";
 import { BackHandler } from 'react-native';
 import {tr} from "react-native-paper-dates";
+import RNPickerSelect from "react-native-picker-select";
 
 const LoginComponent = ({navigation, route}) => {
     const u = route.params?.username;
@@ -17,6 +18,7 @@ const LoginComponent = ({navigation, route}) => {
     useEffect(() => {
         (async function () {
             try {
+                await removeSession()
                 const {jwt, userType} = await getSession()
                 if (jwt) {
                     navigateFromLoginPage(navigation, userType)
@@ -60,6 +62,14 @@ const LoginComponent = ({navigation, route}) => {
     return (
         <View>
             {showLogin && (<View>
+                    {/*<RNPickerSelect*/}
+                    {/*    onValueChange={(value) => console.log(value)}*/}
+                    {/*    items={[*/}
+                    {/*        { label: 'Football', value: 'football' },*/}
+                    {/*        { label: 'Baseball', value: 'baseball' },*/}
+                    {/*        { label: 'Hockey', value: 'hockey' },*/}
+                    {/*    ]}*/}
+                    {/*/>*/}
                     <Text>Welcome!</Text>
                     <TextInput placeholder="Username" value={username} onChangeText={setUsername}/>
                     <TextInput placeholder="Password" value={password} onChangeText={setPassword}

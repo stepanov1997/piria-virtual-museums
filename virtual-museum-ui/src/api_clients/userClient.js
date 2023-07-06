@@ -57,5 +57,8 @@ async function getRegisteredUsers() {
     const response = await fetch(`${SERVER_URL}/${USER_API_NON_ADMIN_USERS_ENDPOINT}`)
     return (await response.json()).content
 }
+async function approveRegistration(userId) {
+    return Promise.resolve(undefined);
+}
 
-export default {register, authenticate, getActiveUsersByHour, getCurrentlyActiveUsers, getRegisteredUsers}
+export default {register, authenticate, getActiveUsersByHour, getCurrentlyActiveUsers, getRegisteredUsers, approveRegistration}

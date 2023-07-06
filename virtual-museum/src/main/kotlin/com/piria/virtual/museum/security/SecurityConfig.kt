@@ -47,6 +47,7 @@ class SecurityConfig(val userService: UserService,
             }
             .authorizeHttpRequests {
                 it.requestMatchers( HttpMethod.POST, "/api/users/authenticate").permitAll()
+                  .requestMatchers( HttpMethod.GET, "/api/battuta/**").permitAll()
                   .requestMatchers( HttpMethod.POST, "/api/users/register").permitAll()
                   .requestMatchers( HttpMethod.GET, "/api/news").permitAll()
                   .requestMatchers( HttpMethod.GET, "/api/users/**").permitAll()
