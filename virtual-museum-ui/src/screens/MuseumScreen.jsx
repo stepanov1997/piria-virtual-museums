@@ -4,6 +4,7 @@ import {Dimensions} from "react-native";
 import {BLUE, DARKBLUE, GRAY} from '../../config.json'
 import {Link} from "@react-navigation/native";
 import {MuseumsFeedComponent} from "../layout/user/museumsFeed";
+import {MuseumComponent} from "../components/museum";
 
 const {width, height} = Dimensions.get("window");
 
@@ -50,10 +51,11 @@ const styles = StyleSheet.create({
         }
     }
 )
-export const MuseumsScreen = () => {
+export const MuseumScreen = ({route}) => {
+    console.log(route)
     return (
         <View style={styles.container}>
-            <MuseumsFeedComponent/>
+            <MuseumComponent museum={route.params.museum}/>
         </View>
     );
 }

@@ -13,8 +13,13 @@ const NewsPostsList = () => {
         try {
             const response = await fetch(`${SERVER_URL}/${NEWS_API_GET_ALL_ENDPOINT}`);
             const data = await response.json();
-            setPosts(data.items);
+            if(data.status !== "200") {
+                alert(data.message)
+                return
+            }
+            setPosts(data.content.items);
         } catch (error) {
+            alert("Error fetching posts.")
             console.error('Error fetching posts:', error);
         }
     };

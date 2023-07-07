@@ -16,7 +16,6 @@ export const MuseumComponent = ({route}) => {
     const [showVirtualVisits, setShowVirtualVisits] = useState(false)
     const [getSession,] = useSessionStorageJwt()
     const [forcastForThreeCities, setForcastForThreeCities] = useState([])
-    const {museum} = route.params
 
 
     useEffect(() => {
@@ -29,16 +28,22 @@ export const MuseumComponent = ({route}) => {
 
     useEffect(() => {
         (async function () {
-            const gptDetails = await generateMuseumDetails(museum.name, museum.country)
-            setDetails(gptDetails)
+            if(!museum) {
+                const gptDetails = await generateMuseumDetails(museum.name, museum.country)
+                setDetails(gptDetails)
+            }
         })()
     }, [])
 
     const showVirtualVisitsFunction = async () => {
         if (virtualVisits.length === 0) {
             const {jwt} = await getSession();
-            const virtualVisits = await getAllByMuseumId(jwt, museum.id)
-            setVirtualVisits(virtualVisits)
+            const response = await getAllByMuseumId(jwt, museum.id)
+            if(response.status !== '200') {
+                alert(response.message)
+                return
+            }
+            setVirtualVisits(response.content)
         }
         setShowVirtualVisits(prevState => !prevState)
     }

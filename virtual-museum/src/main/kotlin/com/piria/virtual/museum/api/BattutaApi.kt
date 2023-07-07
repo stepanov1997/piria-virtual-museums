@@ -1,9 +1,11 @@
 package com.piria.virtual.museum.api
 
-import com.piria.virtual.museum.model.battuta.BattutaCityResponse
-import com.piria.virtual.museum.model.battuta.BattutaRegionResponse
+import com.piria.virtual.museum.model.Response
 import com.piria.virtual.museum.service.BattutaService
+import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -14,14 +16,38 @@ class BattutaApi(
     val battutaService: BattutaService) {
 
     @GetMapping("/regions/{countryCode}")
-    fun getAllRegionsByCountryCode(@PathVariable countryCode: String): List<BattutaRegionResponse> = battutaService.getRegions(countryCode, battutaApiKey)
+    fun getAllRegionsByCountryCode(@PathVariable countryCode: String): ResponseEntity<*> =
+        try {
+            val content =  battutaService.getRegions(countryCode, battutaApiKey)
+            log.info { "Successfully retrieved regions from Battuta." }
+            Response.generateValidResponse(content)
+        } catch (e: Exception) {
+            log.error("Error while retrieving regions from Battuta", e)
+            Response.generateErrorResponse(
+                HttpStatus.NO_CONTENT,
+                "Error while retrieving regions from Battuta. Error: ${e.message}"
+            )
+        }
+
 
     @GetMapping("/cities/{countryCode}")
-    fun getAllCitiesByCountryCode(@PathVariable countryCode: String): List<BattutaCityResponse> {
-        return battutaService.getRegions(countryCode, battutaApiKey)
-            .flatMap {
-                battutaService.getCities(it.country, it.region, battutaApiKey)
-            }
-    }
+    fun getAllCitiesByCountryCode(@PathVariable countryCode: String): ResponseEntity<*> =
+        try {
+            val content =  battutaService.getRegions(countryCode, battutaApiKey)
+                .flatMap {
+                    battutaService.getCities(it.country, it.region, battutaApiKey)
+                }
+            log.info { "Successfully retrieved cities from Battuta." }
+            Response.generateValidResponse(content)
+        } catch (e: Exception) {
+            log.error("Error while retrieving cities from Battuta", e)
+            Response.generateErrorResponse(
+                HttpStatus.NO_CONTENT,
+                "Error while retrieving cities from Battuta. Error: ${e.message}"
+            )
+        }
 
+    companion object {
+        private val log = KotlinLogging.logger {}
+    }
 }

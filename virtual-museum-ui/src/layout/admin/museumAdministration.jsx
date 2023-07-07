@@ -34,7 +34,12 @@ export const MuseumAdministration = () => {
             console.log(formData.country)
             if (formData.country) {
                 try {
-                    setCities(await battutaClient.getAllCities(formData.country))
+                    const response = await battutaClient.getAllCities(formData.country)
+                    if(response.status !== "200") {
+                        alert(response.message)
+                        return
+                    }
+                    setCities(response.content)
                 } catch (e) {
                     alert(e)
                 }

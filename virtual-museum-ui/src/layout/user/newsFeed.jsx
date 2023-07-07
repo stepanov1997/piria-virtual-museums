@@ -16,7 +16,6 @@ const styles = StyleSheet.create({
         color:BLUE,
         fontSize:width>height ? width*0.02:height*0.03,
         paddingBottom:width>height ? width*0.01:height*0.03
-
     },
 });
 

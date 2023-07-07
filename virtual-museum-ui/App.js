@@ -1,7 +1,4 @@
 import React from 'react';
-import {MuseumsFeedComponent} from "./src/layout/user/museumsFeed";
-
-import RegistrationComponent from "./src/layout/registration";
 
 import {NavigationContainer} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';

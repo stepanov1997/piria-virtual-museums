@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
-import {Button, Text, TextInput, View, ScrollView} from 'react-native'
+import {Button, Text, TextInput, View, ScrollView, StyleSheet, Dimensions} from 'react-native'
 import museumClient from '../../api_clients/museumClient'
 import {useSessionStorageJwt} from "../../util/jwtHook";
+import {BLUE,DARKBLUE,GRAY} from '../../../config.json'
 import {Link} from '@react-navigation/native';
-import NewsPostsList from "../../components/news-posts";
-import {WatchPresentationForm} from "../../components/watch-presentation-form";
+const { width, height } = Dimensions.get("window");
 
 export const MuseumsFeedComponent = () => {
     const [museums, setMuseums] = useState([])
@@ -16,7 +16,12 @@ export const MuseumsFeedComponent = () => {
         if (!searchKeyByName) {
             return;
         }
-        const retrievedMuseums = await museumClient.getAllMuseumsByName((await getSession()).jwt, searchKeyByName);
+        const response = await museumClient.getAllMuseumsByName((await getSession()).jwt, searchKeyByName);
+        if(response.status !== "200") {
+            alert(response.message)
+            return
+        }
+        const retrievedMuseums = response.content
         setMuseums(retrievedMuseums)
     }
 
@@ -24,7 +29,12 @@ export const MuseumsFeedComponent = () => {
         if (!searchKeyByCity) {
             return;
         }
-        const retrievedMuseums = await museumClient.getAllMuseumsByCity((await getSession()).jwt, searchKeyByCity);
+        const response = await museumClient.getAllMuseumsByCity((await getSession()).jwt, searchKeyByCity);
+        if(response.status !== "200") {
+            alert(response.message)
+            return
+        }
+        const retrievedMuseums = response.content
         setMuseums(retrievedMuseums)
     }
 
@@ -33,7 +43,12 @@ export const MuseumsFeedComponent = () => {
             if (searchKeyByName || searchKeyByCity) {
                 return;
             }
-            const retrievedMuseums = await museumClient.getAllMuseums((await getSession()).jwt);
+            const response = await museumClient.getAllMuseums((await getSession()).jwt);
+            if(response.status !== "200") {
+                alert(response.message)
+                return
+            }
+            const retrievedMuseums = response.content
             setMuseums(retrievedMuseums)
         })()
     }, [searchKeyByName, searchKeyByCity])
@@ -41,16 +56,7 @@ export const MuseumsFeedComponent = () => {
 
 
     return (
-        <ScrollView>
-            <Link to={{screen: 'Home'}}>
-                Home
-            </Link>
-            <Text>Watch presentation</Text>
-            <WatchPresentationForm/>
-
-            <Text>News feed</Text>
-            <NewsPostsList/>
-
+        <ScrollView contentContainerStyle={styles.container}>
             <Text>List of Museums</Text>
             <View>
                 <TextInput placeholder="Search by name" value={searchKeyByName}
@@ -62,7 +68,6 @@ export const MuseumsFeedComponent = () => {
                            onChangeText={setSearchKeyByCity}></TextInput>
                 <Button onPress={getAllMuseumsByCity} title={"Search by city"}/>
             </View>
-
 
             {museums ?
                 (
@@ -82,9 +87,38 @@ export const MuseumsFeedComponent = () => {
                         <Text>No data</Text>
                     </View>
                 )
-
             }
-
         </ScrollView>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        justifyContent:"center",
+        alignItems:"center",
+        gap:width>height ? width*0.04 : height*0.01,
+
+    },
+    content:{
+        backgroundColor:GRAY,
+        borderRadius:10,
+        width:width>height?width*0.4:height*0.4,
+        height:width>height?height:height*1.1,
+        alignItems:"center",
+        gap:width>height ? width*0.01 : height*0.02,
+        padding:width>height ? height*0.12 : width*0.12,
+        marginVertical:height*0.04,
+    },
+
+    image:{
+        width:width>height?width*0.2:height*0.4,
+        height:width>height? width*0.2:height*0.4,
+    },
+    title:{
+        fontSize:width>height ? width*0.008:height*0.02,
+        fontWeight:"bold"
+    },
+    text:{
+        fontSize:width>height ? width*0.008:height*0.02
+    }
+});

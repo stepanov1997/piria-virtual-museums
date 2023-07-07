@@ -95,10 +95,10 @@ data class TicketApi(
                 attachmentName = "ticket-${ticketId}.pdf"
             )
 
-            log.info { "Success" }
+            log.info { "Successed buying ticket." }
             return Response.generateValidResponse(mapOf<String, String>())
         } catch (e: Exception) {
-            log.error { "Error - ${e.message}" }
+            log.error { "Error while buying ticket - ${e.message}" }
             return Response.generateErrorResponse(HttpStatus.BAD_REQUEST, e.message!!)
         }
     }
