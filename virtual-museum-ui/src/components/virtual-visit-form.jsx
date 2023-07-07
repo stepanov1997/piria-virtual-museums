@@ -52,7 +52,13 @@ export const VirtualVisitForm = () => {
     const fetchMuseums = async () => {
         try {
             const session = await getSession()
-            setMuseums(await museumClient.getAllMuseums(session.jwt))
+            const response = await museumClient.getAllMuseums(session.jwt)
+            if(response.status !== "200") {
+                alert(response.message)
+                return
+            }
+            const retrievedMuseums = response.content
+            setMuseums(retrievedMuseums)
         } catch (error) {
             console.log('An error occurred while retrieving museums:', error);
         }

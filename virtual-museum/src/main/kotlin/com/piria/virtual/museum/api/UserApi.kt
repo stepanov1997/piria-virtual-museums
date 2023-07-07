@@ -1,6 +1,5 @@
 package com.piria.virtual.museum.api
 
-import com.piria.virtual.museum.model.Response
 import com.piria.virtual.museum.model.Response.Companion.generateCreatedResponse
 import com.piria.virtual.museum.model.Response.Companion.generateErrorResponse
 import com.piria.virtual.museum.model.Response.Companion.generateValidResponse
@@ -11,7 +10,7 @@ import com.piria.virtual.museum.service.EmailService
 import com.piria.virtual.museum.service.UserActivityService
 import com.piria.virtual.museum.service.UserService
 import com.piria.virtual.museum.util.JwtTokenUtil
-import org.slf4j.LoggerFactory
+import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -60,6 +59,7 @@ class UserApi(
             authenticate(authenticationRequest.username, authenticationRequest.password)
             val userDetails: User = userService.loadUserByUsername(authenticationRequest.username)
             val token: String = jwtTokenUtil.generateToken(userDetails)
+            log.warn { "Successful authenticated user ${userDetails.name}" }
             ResponseEntity.ok(JwtResponse(token, userDetails.role))
         } catch (ex: Exception) {
             log.warn("Error while authentication or token creation. Message: {}", ex.message)
@@ -87,43 +87,93 @@ class UserApi(
     }
 
     @GetMapping
-    fun getAllUsers(): ResponseEntity<Response.ValidResponse> = generateValidResponse(userService.getAllUsers())
+    fun getAllUsers(): ResponseEntity<*> =
+        try {
+            val content = userService.getAllUsers()
+            log.info { "Successfully retrieved all users." }
+            generateValidResponse(content)
+        } catch (e: Exception) {
+            log.error("Error while retrieveing all users.", e)
+            generateErrorResponse(NO_CONTENT, "Error while calculating number of active users by hour. Error: ${e.message}")
+        }
 
     @GetMapping("/uas/all")
-    fun getActiveUsersByHour(): ResponseEntity<Response.ValidResponse> =
-        generateValidResponse(userActivityService.getActiveUsersByHour())
+    fun getActiveUsersByHour(): ResponseEntity<*> =
+        try {
+            val content = userActivityService.getActiveUsersByHour()
+            log.info { "Successfully calculated number of active users by hour." }
+            generateValidResponse(content)
+        } catch (e: Exception) {
+            log.error("Error while calculating number of active users by hour...", e)
+            generateErrorResponse(NO_CONTENT, "Error while calculating number of active users by hour. Error: ${e.message}")
+        }
 
     @GetMapping("/uas")
-    fun getCurrentlyActiveUsers(): ResponseEntity<Response.ValidResponse> =
-        generateValidResponse(userActivityService.getCurrentlyActiveUsers())
+    fun getCurrentlyActiveUsers(): ResponseEntity<*> =
+        try {
+            val content = userActivityService.getCurrentlyActiveUsers()
+            log.info { "Successfully calculated number of active users." }
+            generateValidResponse(content)
+        } catch (e: Exception) {
+            log.error("Error while calculating number of active users...", e)
+            generateErrorResponse(NO_CONTENT, "Error while calculating number of active users. Error: ${e.message}")
+        }
 
     @GetMapping("/non-admin-users")
-    fun getAllNonAdminUsers(): ResponseEntity<Response.ValidResponse> =
-        generateValidResponse(userService.getAllNonAdminUsers())
+    fun getAllNonAdminUsers(): ResponseEntity<*> =
+        try {
+            val content = userService.getAllNonAdminUsers()
+            log.info { "Successfully retrieved non-admin users." }
+            generateValidResponse(content)
+        } catch (e: Exception) {
+            log.error("Error while retrieving non-admin users.", e)
+            generateErrorResponse(NO_CONTENT, "Error while retrieving non-admin users. Error: ${e.message}")
+        }
 
     @PostMapping("/register", consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
     fun saveUser(@RequestBody user: User): ResponseEntity<*> {
-        if (userService.userExists(user.username)) {
-            return generateErrorResponse(
-                status = CONFLICT,
-                error = "User with username '${user.username}' already exists."
-            )
+        try {
+            if (userService.userExists(user.username)) {
+                return generateErrorResponse(
+                    status = CONFLICT,
+                    error = "User with username '${user.username}' already exists."
+                )
+            }
+            user.secret = passwordEncoder.encode(user.secret)
+            val savedUser = userService.saveUser(user)
+            val userUrl = ServletUriComponentsBuilder.fromCurrentServletMapping()
+                .path("/api/users/${savedUser.id}")
+                .toUriString()
+
+            log.info { "User with id ${savedUser.id} is successfully registered." }
+            return generateCreatedResponse(resourceUrl = userUrl, content = savedUser)
+        } catch (e: Exception) {
+            log.error("User registration failed.", e)
+            return generateErrorResponse(BAD_REQUEST, "User registration failed. Error: ${e.message}")
         }
-        user.secret = passwordEncoder.encode(user.secret)
-        val savedUser = userService.saveUser(user)
-        val userUrl = ServletUriComponentsBuilder.fromCurrentServletMapping()
-            .path("/api/users/${savedUser.id}")
-            .toUriString()
-        return generateCreatedResponse(resourceUrl = userUrl, content = savedUser)
     }
 
     @GetMapping("/{id}")
-    fun getUserById(@PathVariable id: Long): ResponseEntity<Response.ValidResponse> =
-        generateValidResponse(userService.getUserById(id))
+    fun getUserById(@PathVariable id: Long): ResponseEntity<*> =
+        try {
+            val userById = userService.getUserById(id)
+            log.info { "User $id is successfully retrieved." }
+            generateValidResponse(userById)
+        } catch (e: Exception) {
+            log.error("Error while retrieving user ${id}", e)
+            generateErrorResponse(BAD_REQUEST, "Error while retrieving user ${id}. Error: ${e.message}")
+        }
 
     @DeleteMapping("/{id}")
-    fun deleteUserById(@PathVariable id: Long): ResponseEntity<Response.ValidResponse> =
-        generateValidResponse(userService.deleteUserById(id))
+    fun deleteUserById(@PathVariable id: Long): ResponseEntity<*> =
+        try {
+            userService.deleteUserById(id)
+            log.info { "User $id is successfully deleted." }
+            generateValidResponse(id)
+        } catch (e: Exception) {
+            log.error("Error while deleting user.", e)
+            generateErrorResponse(BAD_REQUEST, "Error while deleting user. Error: ${e.message}")
+        }
 
     @GetMapping("/approveRegistration/{userId}")
     fun approveRegistration(@PathVariable userId: Long): ResponseEntity<*> =
@@ -131,6 +181,7 @@ class UserApi(
             val userById = userService.getUserById(userId)
             userById.isRegistrationEnabled = true
             val changedUser = userRepository.saveAndFlush(userById)
+            log.info { "Registration approval for user ${userById.name} is successfully given." }
             generateValidResponse(changedUser)
         } catch (e: Exception) {
             log.error("User with $userId doesn't exist.", e)
@@ -143,6 +194,7 @@ class UserApi(
             val userById = userService.getUserById(userId)
             userById.isBlocked = true
             val changedUser = userRepository.saveAndFlush(userById)
+            log.info { "User ${userById.name} is blocked successfully." }
             generateValidResponse(changedUser)
         } catch (e: Exception) {
             log.error("User with $userId doesn't exist.", e)
@@ -180,6 +232,7 @@ class UserApi(
             """.trimIndent()
             )
             val changedUser = userRepository.saveAndFlush(userById)
+            log.info { "User password is reseted successfully." }
             generateValidResponse(changedUser)
         } catch (e: Exception) {
             log.error("User with $userId doesn't exist.", e)
@@ -203,7 +256,7 @@ class UserApi(
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(UserApi::class.java)
+        private val log = KotlinLogging.logger {}
     }
 
     private fun generatePassword(length: Int): String {

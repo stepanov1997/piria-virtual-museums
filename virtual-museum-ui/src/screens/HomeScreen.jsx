@@ -74,7 +74,7 @@ return(
                 <Link to={{screen: 'News'}} style={styles.navigationItem}>
                     News
                 </Link>
-                <Link to={{screen: 'Museum'}} style={styles.navigationItem}>
+                <Link to={{screen: 'Museums'}} style={styles.navigationItem}>
                     Museum
                 </Link>
                 <Link to={{screen: 'Presentation'}} style={styles.navigationItem}>

@@ -43,7 +43,7 @@ async function register(firstname, lastname, username, password, email) {
         redirect: 'follow'
     })
     const location = response.headers["Location"]
-    return {location: location, body: await response.json()}
+    return {location: location, body: (await response.json()).content}
 }
 
 async function getActiveUsersByHour() {
