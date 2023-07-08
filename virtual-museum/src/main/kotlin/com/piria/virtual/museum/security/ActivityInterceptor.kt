@@ -8,7 +8,8 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.web.servlet.HandlerInterceptor
-import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 class ActivityInterceptor(
     val jwtTokenUtil: JwtTokenUtil,
@@ -26,7 +27,7 @@ class ActivityInterceptor(
         val user = userService.loadUserByUsername(usernameFromToken)
         userActivityService.save(
             UserActivity(
-                timestamp = Instant.now().epochSecond,
+                timestamp = ZonedDateTime.now(ZoneId.systemDefault()).toEpochSecond(),
                 requestUrl = request.requestURL.toString(),
                 user = user
             )

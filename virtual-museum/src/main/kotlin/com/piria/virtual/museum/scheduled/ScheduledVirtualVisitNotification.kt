@@ -5,10 +5,11 @@ import com.piria.virtual.museum.service.EmailService
 import com.piria.virtual.museum.service.TicketService
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 
@@ -21,8 +22,8 @@ class ScheduledVirtualVisitNotification(
     fun sendNotificationToAllTickerOwners() {
         ticketService.getAllTickets()
             .forEach { ticket ->
-                val now = Instant.now()
-                val startDatetime = Instant.parse(ticket.virtualVisit.datetime + ".000Z")
+                val now = ZonedDateTime.now(ZoneId.systemDefault())
+                val startDatetime = Instant.parse(ticket.virtualVisit.datetime + ".000Z").atZone(ZoneId.systemDefault())
                 val endDateTime = startDatetime.plus((ticket.virtualVisit.duration * 60).toLong(), ChronoUnit.MINUTES)
 
                 val minutesBeforeEnd = Duration.between(now, endDateTime).toMinutes()
@@ -53,9 +54,9 @@ class ScheduledVirtualVisitNotification(
             }
     }
 
-    fun sendNotification(user: User, type: Type, startDatetime: Instant, endDateTime: Instant) {
+    fun sendNotification(user: User, type: Type, startDatetime: ZonedDateTime, endDateTime: ZonedDateTime) {
         val datetime = if (type.isStart()) startDatetime else endDateTime
-        val formattedDatetime = SimpleDateFormat("dd.MM.yyyy. HH:mm").format(datetime.atZone(ZoneId.systemDefault()))
+        val formattedDatetime = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm").format(datetime)
         val duration = if (type.isStart()) "1 hour" else "5 minutes"
         val typeStr = if (type.isStart()) "Start" else "End"
         emailService.sendEmailWithAttachment(

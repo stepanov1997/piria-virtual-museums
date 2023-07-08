@@ -20,4 +20,17 @@ data class VirtualPresentation(
     @JsonIgnore
     @OneToOne(optional = false, mappedBy = "virtualPresentation", fetch = FetchType.EAGER)
     val virtualVisit: VirtualVisit? = null
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as VirtualPresentation
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: 0
+    }
+}

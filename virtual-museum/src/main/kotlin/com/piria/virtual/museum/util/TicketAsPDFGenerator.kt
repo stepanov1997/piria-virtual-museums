@@ -18,7 +18,7 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.time.Instant
-import java.util.*
+import java.time.ZoneId
 import javax.imageio.ImageIO
 
 @Component
@@ -46,9 +46,9 @@ class TicketAsPDFGenerator {
                 newLineAtOffset(0F, -20F) // Pomeranje na novu liniju
                 showText("Location: ${virtualVisit.museum.address}, ${virtualVisit.museum.city}, ${virtualVisit.museum.country}".take(48))
                 newLineAtOffset(0F, -20F) // Pomeranje na novu liniju
-                showText("Datetime: ${SimpleDateFormat("dd.MM.yyyy. HH:mm").format(Date.from(Instant.parse(virtualVisit.datetime + ".000Z")))}")
+                showText("Datetime: ${SimpleDateFormat("dd.MM.yyyy. HH:mm").format(Instant.parse(virtualVisit.datetime + ".000Z").atZone(ZoneId.systemDefault()).toLocalDate())}")
                 newLineAtOffset(0F, -20F) // Pomeranje na novu liniju
-                showText("Duration: ${virtualVisit.duration!!} hour(s)")
+                showText("Duration: ${virtualVisit.duration} hour(s)")
                 endText()
 
                 val qrCodeImage = generateQRCodeImage(ticketId)
