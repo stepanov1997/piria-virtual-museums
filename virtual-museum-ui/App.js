@@ -12,7 +12,7 @@ const App = () => {
     enableScreens()
     return (
         <NavigationContainer>
-            <Stack.Navigator>
+            <Stack.Navigator initialRouteName={"Login"}>
                 <Stack.Screen name={"Login"} component={LoginComponent}/>
                 <Stack.Screen name={"Registration"} component={RegistrationComponent}/>
                 <Stack.Screen name={"MuseumsFeed"} component={MuseumsFeedComponent}/>

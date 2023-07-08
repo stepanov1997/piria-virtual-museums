@@ -2,9 +2,10 @@ import {useEffect, useState} from "react";
 import {Button, Text, TextInput, View, ScrollView, StyleSheet, Dimensions} from 'react-native'
 import museumClient from '../../api_clients/museumClient'
 import {useSessionStorageJwt} from "../../util/jwtHook";
-import {BLUE,DARKBLUE,GRAY} from '../../../config.json'
+import {BLUE, DARKBLUE, GRAY} from '../../../config.json'
 import {Link} from '@react-navigation/native';
-const { width, height } = Dimensions.get("window");
+
+const {width, height} = Dimensions.get("window");
 
 export const MuseumsFeedComponent = () => {
     const [museums, setMuseums] = useState([])

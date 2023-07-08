@@ -95,18 +95,15 @@ class VirtualVisitApi(
             val (_, name, _, _, city, country, _, _, type, _) = virtualVisit?.museum
                 ?: throw RuntimeException("Museum doesn't exist.")
             val virtualPresentationResponse = VirtualPresentationResponse(
-                status = 200,
-                data = VirtualPresentationResponse.Data(
-                    museumName = name,
-                    museumCountry = country,
-                    museumCity = city,
-                    museumType = type,
-                    datetime = datetime,
-                    duration = duration,
-                    images = mediaGroupBy[MediaType.IMAGE] ?: listOf(),
-                    video = mediaGroupBy[MediaType.YT_VIDEO_LINK]?.first()
-                        ?: throw RuntimeException("Youtube video doesn't exist.")
-                )
+                museumName = name,
+                museumCountry = country,
+                museumCity = city,
+                museumType = type,
+                datetime = datetime,
+                duration = duration,
+                images = mediaGroupBy[MediaType.IMAGE] ?: listOf(),
+                video = mediaGroupBy[MediaType.YT_VIDEO_LINK]?.first()
+                    ?: throw RuntimeException("Youtube video doesn't exist.")
             )
             Response.generateValidResponse(virtualPresentationResponse)
         } catch (e: Exception) {
@@ -137,17 +134,12 @@ data class VirtualPresentationRequest(
 )
 
 data class VirtualPresentationResponse(
-    val status: Int,
-    val data: Data
-) {
-    data class Data(
-        val museumName: String,
-        val museumCountry: String,
-        val museumCity: String,
-        val museumType: String,
-        val datetime: String,
-        val duration: Double,
-        val images: List<String>,
-        val video: String
-    )
-}
+    val museumName: String,
+    val museumCountry: String,
+    val museumCity: String,
+    val museumType: String,
+    val datetime: String,
+    val duration: Double,
+    val images: List<String>,
+    val video: String
+)
