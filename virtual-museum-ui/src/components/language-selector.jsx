@@ -7,7 +7,7 @@ import {useSessionStorageJwt} from "../util/jwtHook";
 import {changeLanguage} from "i18next";
 import {useRoute} from "@react-navigation/native";
 const { width, height } = Dimensions.get("window");
-
+import {BLUE} from "../../config.json"
 const LANGUAGES = [
     {
         code: "en",
@@ -45,7 +45,6 @@ const LanguageSelector = ({onlyLocal}) => {
                 return (
                     <Pressable
                         key={code}
-                        style={styles.buttonContainer}
                         disabled={selectedLanguage}
                         onPress={async () => await setLanguage(code)}
                     >
@@ -67,29 +66,27 @@ const LanguageSelector = ({onlyLocal}) => {
 
 const styles =StyleSheet.create( {
     container: {
-        marginTop: width * 0.03,
+        marginTop: width * 0.02,
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-between",
+        gap:width>height? width*0.005:height*0.005
     },
     title: {
-        color: "#000000",
-        fontSize: width * 0.02,
+        fontSize:width>height? width * 0.015:height*0.015,
         fontWeight: "600",
-    },
-    buttonContainer: {
-        marginTop: width * 0.01,
+        color:BLUE
     },
     text: {
-        fontSize: width * 0.02,
+        fontSize:width>height? width * 0.01:height*0.01,
         color: "#000",
-        paddingVertical: width * 0.005,
+
     },
     selectedText: {
-        fontSize: width * 0.02,
+        fontSize:width>height? width * 0.01:height*0.01,
         fontWeight: "600",
         color: "#4b8eff",
-        paddingVertical: width * 0.005,
+
     },
 });
 
