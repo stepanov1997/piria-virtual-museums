@@ -17,6 +17,7 @@
   "USER_API_APPROVE_USER_ENDPOINT": "api/users/approveRegistration",
   "USER_API_BLOCK_USER_ENDPOINT": "api/users/block",
   "USER_API_RESET_PASSWORD_USER_ENDPOINT": "api/users/resetPassword",
+  "LOGS_API_ENDPOINT": "api/logs/pdf",
   "NEWS_API_GET_ALL_ENDPOINT": "api/news",
   "USER_API_GET_LANG_ENDPOINT": "api/users/lang",
   "USER_API_POST_LANG_ENDPOINT": "api/users/lang",

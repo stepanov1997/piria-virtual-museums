@@ -1,6 +1,7 @@
 package com.piria.virtual.museum.security
 
 import com.piria.virtual.museum.model.UserActivity
+import com.piria.virtual.museum.model.UserType.USER
 import com.piria.virtual.museum.service.UserActivityService
 import com.piria.virtual.museum.service.UserService
 import com.piria.virtual.museum.util.JwtTokenUtil
@@ -25,6 +26,7 @@ class ActivityInterceptor(
         val jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION)?.substring(7) ?: return
         val usernameFromToken = jwtTokenUtil.getUsernameFromToken(jwtToken)
         val user = userService.loadUserByUsername(usernameFromToken)
+        if(user.role != USER) return
         userActivityService.save(
             UserActivity(
                 timestamp = ZonedDateTime.now(ZoneId.systemDefault()).toEpochSecond(),

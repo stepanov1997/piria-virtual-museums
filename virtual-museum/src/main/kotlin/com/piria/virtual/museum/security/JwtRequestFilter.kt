@@ -27,15 +27,35 @@ class JwtRequestFilter(private val userService: UserService) : OncePerRequestFil
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
-        val requestTokenHeader = request.getHeader("Authorization")
-        var username: String? = null
         var jwtToken: String? = null
-        // JWT Token is in the form "Bearer token". Remove Bearer word and get
-        // only the Token
+
+        val requestTokenHeader = request.getHeader("Authorization")
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+            // Token found in the Authorization header
             jwtToken = requestTokenHeader.substring(7)
+        } else {
+            // Token not found in the Authorization header, check query parameter
+            val tokenFromQueryParam = request.getParameter("token")
+            if (tokenFromQueryParam != null) {
+                jwtToken = tokenFromQueryParam
+            }
+        }
+
+        if (jwtToken != null) {
             try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken)
+                val username = jwtTokenUtil.getUsernameFromToken(jwtToken)
+
+                if (SecurityContextHolder.getContext().authentication == null) {
+                    val userDetails: UserDetails = userService.loadUserByUsername(username)
+
+                    if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+                        val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.authorities
+                        )
+                        usernamePasswordAuthenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request)
+                        SecurityContextHolder.getContext().authentication = usernamePasswordAuthenticationToken
+                    }
+                }
             } catch (e: IllegalArgumentException) {
                 println("Unable to get JWT Token")
                 log.error { e.stackTraceToString() }
@@ -44,26 +64,9 @@ class JwtRequestFilter(private val userService: UserService) : OncePerRequestFil
                 log.error { e.stackTraceToString() }
             }
         } else {
-            log.warn("JWT Token does not begin with Bearer String")
+            log.warn("JWT Token not found")
         }
 
-        // Once we get the token validate it.
-        if (username != null && SecurityContextHolder.getContext().authentication == null) {
-            val userDetails: UserDetails = userService.loadUserByUsername(username)
-
-            // if token is valid configure Spring Security to manually set
-            // authentication
-            if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-                val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.authorities
-                )
-                usernamePasswordAuthenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-                // After setting the Authentication in the context, we specify
-                // that the current user is authenticated. So it passes the
-                // Spring Security Configurations successfully.
-                SecurityContextHolder.getContext().authentication = usernamePasswordAuthenticationToken
-            }
-        }
         chain.doFilter(request, response)
     }
 }

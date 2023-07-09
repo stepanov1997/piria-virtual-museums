@@ -63,12 +63,21 @@ async function getRegisteredUsers() {
     return (await response.json()).content
 }
 async function getUserLanguage(jwt) {
-    const response = await fetch(`${SERVER_URL}/${USER_API_GET_LANG_ENDPOINT}`)
-    return (await response.json()).content.lang
+    const response = await fetch(`${SERVER_URL}/${USER_API_GET_LANG_ENDPOINT}`, {
+        headers: {'Authorization': `Bearer ${jwt}`},
+        mode: 'cors'
+    })
+    return (await response.json()).content
 }
 async function setUserLanguage(jwt, lang) {
-    const response = await fetch(`${SERVER_URL}/${USER_API_POST_LANG_ENDPOINT}/${lang}`)
-    return (await response.json()).content.lang
+    const response = await fetch(`${SERVER_URL}/${USER_API_POST_LANG_ENDPOINT}/${lang}`,{
+        method: 'POST',
+        headers: {'Authorization': `Bearer ${jwt}`},
+        mode: 'cors'
+    })
+    const content = (await response.json()).content;
+    console.log(content)
+    return content
 }
 
 
@@ -87,4 +96,4 @@ async function resetUserPassword(userId) {
     return (await response.json()).content
 }
 
-export default {register, authenticate, getActiveUsersByHour, getCurrentlyActiveUsers, getRegisteredUsers, approveUserRegistration: approveRegistration, blockUser, resetUserPassword}
+export default {register, authenticate, getActiveUsersByHour, getCurrentlyActiveUsers, getRegisteredUsers, approveRegistration, blockUser, resetUserPassword, getUserLanguage, setUserLanguage}

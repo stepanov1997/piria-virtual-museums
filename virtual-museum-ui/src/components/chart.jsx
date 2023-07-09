@@ -3,6 +3,8 @@ import { View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 
 export const Chart = ({ data }) => {
+    const {t} = useTranslation('chart')
+
     const labels = data.map(([hour]) => hour);
     const values = data.map(([, count]) => count);
 
@@ -31,6 +33,7 @@ export const Chart = ({ data }) => {
                 height={200}
                 chartConfig={chartConfig}
             />
+            <Text style={{ textAlign: 'center', fontWeight: 'bold', color: 'white', margin: 10 }}>{t('chartTitle')}</Text>
         </View>
     );
 };

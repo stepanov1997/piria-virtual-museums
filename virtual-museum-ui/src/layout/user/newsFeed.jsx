@@ -1,6 +1,6 @@
 import {Text, View, ScrollView, StyleSheet} from 'react-native'
 import NewsPostsList from "../../components/news-posts";
-import {BLUE,DARKBLUE,GRAY} from '../../config.json'
+import {BLUE,DARKBLUE,GRAY} from '../../../config.json'
 const { width, height } = Dimensions.get("window");
 const styles = StyleSheet.create({
     container: {
