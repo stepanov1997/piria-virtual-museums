@@ -39,26 +39,26 @@ data class User(
     var secret: String,
 
     @Column(name="isRegistrationEnabled")
-    var isRegistrationEnabled: Boolean,
+    var isRegistrationEnabled: Boolean = false,
 
     @Column(name="isBlocked")
-    var isBlocked: Boolean,
+    var isBlocked: Boolean = false,
 
     @JsonIgnore
     @OneToMany(mappedBy="user", cascade = [CascadeType.ALL])
-    val activities: Set<UserActivity>,
+    val activities: Set<UserActivity> = mutableSetOf(),
 
     @JsonIgnore
     @OneToMany(mappedBy="user", cascade = [CascadeType.ALL])
-    val tickets: Set<Ticket>,
+    val tickets: Set<Ticket> = mutableSetOf(),
 
     @Column(name="role")
     @Enumerated(STRING)
-    val role: UserType,
+    val role: UserType = UserType.USER,
 
     @Column(name="lang")
     @Enumerated(STRING)
-    var lang: Language
+    var lang: Language = Language.en
 
 ) : UserDetails {
     @JsonIgnore(true)

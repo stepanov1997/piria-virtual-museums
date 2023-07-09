@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
 
 });
 const LoginComponent = ({navigation, route}) => {
-    const {t} = useTranslation('login')
+    const {t, i18n} = useTranslation(['login', 'app'])
 
     const u = route.params?.username;
 
@@ -98,9 +98,12 @@ const LoginComponent = ({navigation, route}) => {
         }
         try {
             const {token, userType} = await userClient.authenticate(username, password)
+            alert(JSON.stringify({token, userType}))
             if (token && userType) {
                 setErrorMessage("")
                 await setSession({jwt: token, userType})
+                const languageCode = await userClient.getUserLanguage(token);
+                i18n.changeLanguage(languageCode)
                 navigateFromLoginPage(navigation, userType)
             }
         } catch (e) {
@@ -126,7 +129,6 @@ const LoginComponent = ({navigation, route}) => {
                             <Button title={t('registerButtonTitle')} onPress={() => navigation.push('Registration')}/>
                             {errorMessage && (<Text style={{color: 'red'}}>{errorMessage}</Text>)}
                         </View>
-                        <LanguageSelector/>
                     </View>
                 </View>
             )}

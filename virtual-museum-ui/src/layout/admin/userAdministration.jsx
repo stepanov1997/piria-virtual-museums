@@ -16,13 +16,24 @@ export const UserAdministration = ({registeredUsers}) => {
             <Rows data={
                 registeredUsers.map(user => {
                     return [
-                        user.username,
-                        <Button title={t('approveRegistrationButtonTitle')} onPress={async () => await userClient.approveUserRegistration(user.id)}/>,
-                        <Button title={t('blockUserButtonTitle')} onPress={async () => await userClient.blockUser(user.id)}/>,
-                        <Button title={t('resetPasswordButtonTitle')} onPress={async () => await userClient.resetUserPassword(user.id)}/>
+                        <Text style={styles.text} >{user.username}</Text>,
+                        <Pressable style={styles.button}
+                                   onPress={async () => await userClient.approveRegistration(user.id)}>
+                            <Text style={styles.text}>{t('approveRegistrationButtonTitle')}</Text>
+                        </Pressable>,
+                        <Pressable
+                            style={styles.button}
+                                onPress={async () => await userClient.blockUser(user.id)}>
+                                    <Text style={styles.text}>{t('blockUserButtonTitle')}</Text>
+                                    </Pressable>,
+                        <Pressable
+                            style={styles.button}
+                                onPress={async () => await userClient.resetUserPassword(user.id)}>
+                            <Text style={styles.text}>{t('resetPasswordButtonTitle')}</Text>
+                        </Pressable>
                     ]
                 })
-            } />
+            }/>
         </Table>
     )
 }

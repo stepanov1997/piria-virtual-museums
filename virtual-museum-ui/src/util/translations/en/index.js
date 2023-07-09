@@ -1,10 +1,35 @@
+const app = {
+    Login: "Login",
+    Registration: "Registration",
+    MuseumsFeed: "Museum feed",
+    Home: "Home",
+    Presentation: "Presentation",
+    Museums: "Available museums",
+    Museum: "Museum info",
+    News: "News",
+    AdminScreen: "Admin home",
+    CreateMuseumScreen: "Add museum",
+    StatisticsScreen: "Statistics",
+    UserAccountScreen: "User accounting",
+    LanguageSelector: "Change language"
+}
+
+const chart = {
+    chartTitle: "Number of active users by hour."
+}
+
 const homeScreen = {
     news: 'News',
     museums: 'Museums',
     presentation: 'Presentation',
+    languageSelector: 'Change language',
     welcome: 'Welcome to Virtual Museum',
     introText: 'Here you can buy ticket for virtual visit for one of more than 50 museums. You will receive your ticket on email. Lets dive into:',
-    introTextShorter: 'Lets dive into:'
+    introTextShorter: 'Lets dive into:',
+    statistics: 'Statistics',
+    createMuseum: 'Create museum',
+    downloadLogsText: 'Download logs',
+    userAccount: 'User accounting'
 }
 const ticketPaymentForm = {
     cardHolderFirstNamePlaceholder: "Card Holder First Name",
@@ -31,7 +56,8 @@ const customTimePicker = {
 const languageSelector = {
     en: "English",
     sr: "Serbian",
-    languageSelectorTitle: "Select language:"
+    languageSelectorTitle: "Select language:",
+    changeLanguageAlert: "To change a language you should login again."
 }
 
 const museumComponent = {
@@ -147,7 +173,7 @@ const registration = {
     firstNamePlaceholder: 'Enter first name'
 }
 
-export default {homeScreen, ticketPaymentForm, customDatePicker, customTimePicker,
-    museumComponent, newsPostsList, virtualVisitForm, adminHomeFeed, museumAdministration,
+export default {app, homeScreen, ticketPaymentForm, customDatePicker, customTimePicker,
+    museumComponent, newsPostsList, virtualVisitForm, adminHomeFeed, museumAdministration, chart,
     languageSelector, watchPresentationForm, userAdministration, museumsFeedComponent, login, registration
 }

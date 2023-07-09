@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.testcontainers.containers.MySQLContainer
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 @SpringBootApplication
@@ -17,6 +19,8 @@ import java.io.File
 class VirtualMuseumApplication
 
 fun main(args: Array<String>) {
+    val currentDateTimeFormatted = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss").format(LocalDateTime.now())
+    System.setProperty("log.name", "$currentDateTimeFormatted.log")
     val truststorePath = VirtualMuseumApplication::class.java.classLoader.getResource("truststore.jks")?.path?.let {
         File(it).absolutePath
     }

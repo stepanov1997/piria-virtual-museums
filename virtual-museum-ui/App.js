@@ -10,15 +10,33 @@ import { enableScreens } from 'react-native-screens';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
+    const {t} = useTranslation('app')
+
     enableScreens()
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName={"Login"}>
-                <Stack.Screen name={"Login"} component={LoginComponent}/>
-                <Stack.Screen name={"Registration"} component={RegistrationComponent}/>
-                <Stack.Screen name={"MuseumsFeed"} component={MuseumsFeedComponent}/>
-                <Stack.Screen name={"Museum"} component={MuseumComponent}/>
-                <Stack.Screen name={"AdminHomePage"} component={AdminHomeFeed}/>
+                <Stack.Screen name={"Login"} options={{title: t("Login")}} component={LoginComponent}/>
+                <Stack.Screen name={"Registration"} options={{title: t("Registration")}} component={RegistrationComponent}/>
+                <Stack.Screen name={"MuseumsFeed"} options={{title: t("MuseumsFeed")}}
+                              component={MuseumsFeedComponent}/>
+                <Stack.Screen name={"AdminScreen"} options={{title: t("AdminScreen")}} component={AdminScreen}/>
+                <Stack.Screen name={"Create Museum"} options={{title: t("CreateMuseumScreen")}}
+                              component={CreateMuseumScreen}/>
+                <Stack.Screen name={"Statistics"} options={{title: t("StatisticsScreen")}}
+                              component={StatisticsScreen}/>
+                <Stack.Screen name={"User Account"} options={{title: t("UserAccountScreen")}}
+                              component={UserAccountScreen}/>
+                <Stack.Screen name={"Home"} options={{title: t("Home")}} component={HomeScreen}/>
+                <Stack.Screen name={"Presentation"} options={{title: t("Presentation")}}
+                              component={PresentationScreen}/>
+                <Stack.Screen name={"Create Presentation"} options={{title: t("createPresentation")}}
+                              component={CreatePresentationScreen}/>
+                <Stack.Screen name={"Museums"} options={{title: t("Museums")}} component={MuseumsScreen}/>
+                <Stack.Screen name={"Museum"} options={{title: t("Museum")}} component={MuseumScreen}/>
+                <Stack.Screen name={"News"} options={{title: t("News")}} component={NewsFeedScreen}/>
+                <Stack.Screen name={"LanguageSelector"} options={{title: t("LanguageSelector")}}
+                              component={LanguageSelector}/>
             </Stack.Navigator>
         </NavigationContainer>
     );

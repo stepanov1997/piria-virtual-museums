@@ -1,9 +1,10 @@
-import {ScrollView, Text, View, Image, SafeAreaView} from "react-native";
+import {ScrollView, Text, View, Image, SafeAreaView, Pressable, Linking} from "react-native";
 import {StyleSheet} from "react-native";
 import {Dimensions} from "react-native";
-import {BLUE, DARKBLUE, GRAY} from '../../config.json'
+import {BLUE, DARKBLUE, GRAY, SERVER_URL, LOGS_API_ENDPOINT} from '../../config.json'
 import {Link} from "@react-navigation/native";
 import {useTranslation} from "react-i18next";
+import {useSessionStorageJwt} from "../util/jwtHook";
 
 const {width, height} = Dimensions.get("window");
 
@@ -45,11 +46,12 @@ const styles = StyleSheet.create({
             color: BLUE,
         },
         image: {
-            width: width > height ? width * 0.4 : height * 0.4,
-            height: width > height ? width * 0.4 : height * 0.4
+            width: width > height ? width * 0.5 : height * 0.5,
+            height: width > height ? width * 0.5 : height * 0.5
         },
         navigation: {
             flexDirection: "row",
+            flexWrap: 'wrap',
             width: "100%",
             justifyContent: "space-between",
             paddingBottom: width > height ? width * 0.01 : height * 0.01,
@@ -63,8 +65,20 @@ const styles = StyleSheet.create({
         }
     }
 )
-export const HomeScreen = () => {
-    const {t} = useTranslation(['homeScreen', 'app'])
+export const AdminScreen = () => {
+    const {t} = useTranslation(['homeScreen'])
+    const [getSession,,] = useSessionStorageJwt()
+
+    const saveFile = async () => {
+        try {
+            const jwtToken = (await getSession()).jwt
+            const fileUri = `${SERVER_URL}/${LOGS_API_ENDPOINT}?token=${jwtToken}`;
+            await Linking.openURL(fileUri)
+        } catch (error) {
+            console.error('Error saving file:', error);
+        }
+    }
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.content}>
@@ -75,18 +89,27 @@ export const HomeScreen = () => {
                     <Text style={styles.introText}>{t('introText')}</Text>
                     <Text style={styles.introText}>{t('introTextShorter')}</Text>
                     <SafeAreaView style={styles.navigation}>
-                        <Link to={{screen:'News'}} style={styles.navigationItem}>
-                            {t("news")}
+                        <Link to={{screen: 'Statistics'}} style={styles.navigationItem}>
+                            {t("statistics")}
                         </Link>
-                        <Link to={{screen:'Museums'}} style={styles.navigationItem}>
-                            {t('museums')}
+                        <Link to={{screen: 'Create Museum'}} style={styles.navigationItem}>
+                            {t('createMuseum')}
                         </Link>
-                        <Link to={{screen:'Presentation'}} style={styles.navigationItem}>
-                            {t('presentation')}
+                        <Link to={{screen: 'User Account'}} style={styles.navigationItem}>
+                            {t('userAccount')}
                         </Link>
-                        <Link to={{screen: 'LanguageSelector'}} style={styles.navigationItem}>
+                        <Link to={{screen: 'Create Presentation'}} style={styles.navigationItem}>
+                            {t('createPresentation')}
+                        </Link>
+                        <Link to={{screen: 'LanguageSelector', arguments: {global: true}}}
+                              style={styles.navigationItem}>
                             {t('languageSelector')}
                         </Link>
+                        <Pressable onPress={async () => await saveFile()}>
+                            <Text style={styles.navigationItem}>
+                                {t('downloadLogsText')}
+                            </Text>
+                        </Pressable>
                     </SafeAreaView>
                 </View>
             </View>

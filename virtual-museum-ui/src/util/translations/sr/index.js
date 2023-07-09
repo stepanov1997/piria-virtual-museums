@@ -1,10 +1,34 @@
+const app = {
+    Login: "Prijava",
+    Registration: "Registracija",
+    MuseumsFeed: "Izložba muzeja",
+    Home: "Pocetna strana",
+    Presentation: "Prezentacija",
+    Museums: "Dostupni muzeji",
+    Museum: "Informacije o muzeju",
+    News: "Novosti",
+    AdminScreen: "Početna strana administratora",
+    CreateMuseumScreen: "Dodaj muzej",
+    StatisticsScreen: "Statistike",
+    UserAccountScreen: "Upravljanje korisničkim nalozima",
+    LanguageSelector: "Promjeni jezik"
+}
+
+const chart = {
+    chartTitle: "Broj aktivnih korisnika po satu."
+}
+
 const homeScreen = {
     news: 'Novosti',
     museums: 'Muzeji',
     presentation: 'Prezentacija',
+    languageSelector: 'Promjeni jezik',
     welcome: 'Dobrodošli u Virtuelni Muzej',
     introText: 'Ovdje možete kupiti kartu za virtuelnu posjetu jednom od preko 50 muzeja. Kartu ćete dobiti putem e-maila. Hajde da zaronimo:',
     introTextShorter: 'Hajde da zaronimo:',
+    statistics: 'Statistike',
+    createMuseum: 'Dodaj muzej',
+    userAccount: 'Korisnički nalozi'
 }
 
 const ticketPaymentForm = {
@@ -32,7 +56,8 @@ const customTimePicker = {
 const languageSelector = {
     en: "Engleski",
     sr: "Srpski",
-    languageSelectorTitle: "Izaberite jezik:"
+    languageSelectorTitle: "Izaberite jezik:",
+    changeLanguageAlert: "Da biste promjenili jezik, morate se ponovo prijaviti."
 }
 
 const museumComponent = {
@@ -86,8 +111,8 @@ const watchPresentationForm = {
 }
 
 const adminHomeFeed = {
-    numberOfRegisteredUsersLabel: 'Broj registrovanih korisnika',
-    numberOfActiveUsersLabel: 'Broj aktivnih korisnika',
+    numberOfRegisteredUsersLabel: 'Trenutni broj registrovanih korisnika',
+    numberOfActiveUsersLabel: 'Trenutni broj aktivnih korisnika',
 }
 
 const museumAdministration = {
@@ -149,8 +174,8 @@ const registration = {
 }
 
 export default {
-    homeScreen, ticketPaymentForm, customDatePicker,
+    app, homeScreen, ticketPaymentForm, customDatePicker,
     customTimePicker, languageSelector, museumComponent, newsPostsList, virtualVisitForm,
     watchPresentationForm, adminHomeFeed, museumAdministration, userAdministration, museumsFeedComponent,
-    login, registration
+    login, registration, chart
 }

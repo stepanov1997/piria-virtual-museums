@@ -19,7 +19,7 @@ class JwtAuthenticationEntryPoint : AuthenticationEntryPoint, Serializable {
         request: HttpServletRequest?, response: HttpServletResponse,
         authException: AuthenticationException?
     ) {
-        logger.error { authException?.stackTraceToString() }
+        logger.error { authException?.message }
         if(response.status == 401) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
         }

@@ -9,7 +9,7 @@ import {useTranslation} from "react-i18next";
 const {width, height} = Dimensions.get("window");
 
 export const MuseumsFeedComponent = () => {
-    const {t} = useTranslation('museumsFeedComponent')
+    const {t} = useTranslation(['museumsFeedComponent', 'app'])
 
     const [museums, setMuseums] = useState([])
     const [searchKeyByName, setSearchKeyByName] = useState("")

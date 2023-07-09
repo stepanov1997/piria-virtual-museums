@@ -5,7 +5,7 @@ import com.piria.virtual.museum.model.Response
 import com.piria.virtual.museum.model.Ticket
 import com.piria.virtual.museum.service.*
 import com.piria.virtual.museum.util.JwtTokenUtil
-import com.piria.virtual.museum.util.TicketAsPDFGenerator
+import com.piria.virtual.museum.util.PDFGeneratorComponent
 import mu.KotlinLogging
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -25,7 +25,7 @@ data class TicketApi(
     val ticketService: TicketService,
     val emailService: EmailService,
     val jwtTokenUtil: JwtTokenUtil,
-    val ticketAsPDFGenerator: TicketAsPDFGenerator
+    val PDFGeneratorComponent: PDFGeneratorComponent
 ) {
     private val log = KotlinLogging.logger {}
 
@@ -67,7 +67,7 @@ data class TicketApi(
             val ticket = ticketService.save(Ticket(virtualVisit = virtualVisit, user = user))
 
             val ticketId = ticket.id!!
-            val ticketPdfResource = ticketAsPDFGenerator.generate(
+            val ticketPdfResource = PDFGeneratorComponent.generate(
                 ticketId = ticketId,
                 virtualVisit = virtualVisit
             )
