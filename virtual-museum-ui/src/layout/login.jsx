@@ -27,33 +27,35 @@ const styles = StyleSheet.create({
         gap:width>height ? width*0.04 : height*0.09,
         paddingVertical:height*0.01
     },
-    welcome:{
-        textAlign:"center",
-        color:BLUE,
-        fontSize:width>height ? width*0.02:height*0.03
+    welcome: {
+        textAlign: "center",
+        color: BLUE,
+        fontSize: width > height ? width * 0.02 : height * 0.03
 
     },
     inputs: {
-        gap: height*0.01,
+        gap: height * 0.01,
     },
-    input:{
-        backgroundColor:"#fff",
-        width:width>height ? width*0.15:height*0.3,
-        height:width>height ? height*0.04: width*0.1,
-        paddingLeft:height*0.01,
-        color:BLUE,
-        fontSize:width>height ? height*0.02:width*0.04,
-        borderColor:"transparent"
+    input: {
+        backgroundColor: "#fff",
+        width: width > height ? width * 0.15 : height * 0.3,
+        height: width > height ? height * 0.04 : width * 0.1,
+        paddingLeft: height * 0.01,
+        color: BLUE,
+        fontSize: width > height ? height * 0.02 : width * 0.04,
+        borderColor: "transparent"
     },
-    button:{
-    backgroundColor:DARKBLUE
+    button: {
+        backgroundColor: DARKBLUE
     },
-    buttons:{
-       gap:height*0.01
+    buttons: {
+        gap: height * 0.01
     },
 
 });
 const LoginComponent = ({navigation, route}) => {
+    const {t} = useTranslation('login')
+
     const u = route.params?.username;
 
     const [username, setUsername] = useState(u ?? "");
@@ -91,7 +93,7 @@ const LoginComponent = ({navigation, route}) => {
 
     async function login() {
         if (!username || !password) {
-            setErrorMessage("Username or password must have value.")
+            setErrorMessage(t('loginErrorMessage'))
             return;
         }
         try {
@@ -109,14 +111,23 @@ const LoginComponent = ({navigation, route}) => {
     return (
         <View style={styles.container}>
             {showLogin && (<View style={styles.content}>
-                    <Text style={styles.welcome}>Welcome to Virtual Museum!</Text>
+                    <Text style={styles.welcome}>{t('welcomeMessage')}</Text>
                     <View style={styles.inputs}>
-                    <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername}/>
-                    <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword}
-                               secureTextEntry={true}/>
-                    <Button title="Log in" onPress={login}/>
-                    <Button title="Register" onPress={() => navigation.push('Registration')}/>
-                    {errorMessage && (<Text style={{color: 'red'}}>{errorMessage}</Text>)}
+                        <TextInput style={styles.input} placeholder={t('usernameInputPlaceholder')} value={username}
+                                   onChangeText={setUsername}/>
+                        <TextInput style={styles.input} placeholder={t('passwordInputPlaceholder')} value={password}
+                                   onChangeText={setPassword}
+                                   secureTextEntry={true}/>
+                    </View>
+                    <View style={styles.buttons}>
+                        <Button style={styles.button} title={t('loginButtonTitle')} onPress={login}/>
+                        <View>
+                            <Text>{t('dontHaveAccountQuestion')}</Text>
+                            <Button title={t('registerButtonTitle')} onPress={() => navigation.push('Registration')}/>
+                            {errorMessage && (<Text style={{color: 'red'}}>{errorMessage}</Text>)}
+                        </View>
+                        <LanguageSelector/>
+                    </View>
                 </View>
             )}
         </View>

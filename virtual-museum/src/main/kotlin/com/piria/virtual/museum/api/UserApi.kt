@@ -1,5 +1,6 @@
 package com.piria.virtual.museum.api
 
+import com.piria.virtual.museum.model.Language
 import com.piria.virtual.museum.model.Response.Companion.generateCreatedResponse
 import com.piria.virtual.museum.model.Response.Companion.generateErrorResponse
 import com.piria.virtual.museum.model.Response.Companion.generateValidResponse
@@ -12,6 +13,7 @@ import com.piria.virtual.museum.service.UserService
 import com.piria.virtual.museum.util.JwtTokenUtil
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
@@ -199,6 +201,30 @@ class UserApi(
         } catch (e: Exception) {
             log.error("User with $userId doesn't exist.", e)
             generateErrorResponse(BAD_REQUEST, "User with $userId doesn't exist.")
+        }
+
+    @PostMapping("/lang/{language}")
+    fun blockUser(@PathVariable language: Language, @RequestHeader(HttpHeaders.AUTHORIZATION) authorizationHeader: String): ResponseEntity<*> =
+        try {
+            val username = jwtTokenUtil.getUsernameUsingAuthorizationHeader(authorizationHeader)
+            val user = userService.loadUserByUsername(username)
+            user.lang = language
+            userRepository.saveAndFlush(user)
+            generateValidResponse(user.lang)
+        } catch (e: Exception) {
+            log.error("Token is not valid.", e)
+            generateErrorResponse(BAD_REQUEST, "Token is not valid.")
+        }
+
+    @GetMapping("/lang")
+    fun getLanguage(@RequestHeader(HttpHeaders.AUTHORIZATION) authorizationHeader: String): ResponseEntity<*> =
+        try {
+            val username = jwtTokenUtil.getUsernameUsingAuthorizationHeader(authorizationHeader)
+            val user = userService.loadUserByUsername(username)
+            generateValidResponse(user.lang)
+        } catch (e: Exception) {
+            log.error("Token is not valid.", e)
+            generateErrorResponse(BAD_REQUEST, "Token is not valid.")
         }
 
     @Suppress("HtmlRequiredLangAttribute")

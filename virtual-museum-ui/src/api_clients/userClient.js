@@ -8,6 +8,8 @@ import {
     USER_API_APPROVE_USER_ENDPOINT,
     USER_API_BLOCK_USER_ENDPOINT,
     USER_API_RESET_PASSWORD_USER_ENDPOINT,
+    USER_API_POST_LANG_ENDPOINT,
+    USER_API_GET_LANG_ENDPOINT
 } from '../../config.json'
 
 async function authenticate(username, password) {
@@ -60,6 +62,16 @@ async function getRegisteredUsers() {
     const response = await fetch(`${SERVER_URL}/${USER_API_NON_ADMIN_USERS_ENDPOINT}`)
     return (await response.json()).content
 }
+async function getUserLanguage(jwt) {
+    const response = await fetch(`${SERVER_URL}/${USER_API_GET_LANG_ENDPOINT}`)
+    return (await response.json()).content.lang
+}
+async function setUserLanguage(jwt, lang) {
+    const response = await fetch(`${SERVER_URL}/${USER_API_POST_LANG_ENDPOINT}/${lang}`)
+    return (await response.json()).content.lang
+}
+
+
 async function approveRegistration(userId) {
     const response = await fetch(`${SERVER_URL}/${USER_API_APPROVE_USER_ENDPOINT}/${userId}`)
     return (await response.json()).content

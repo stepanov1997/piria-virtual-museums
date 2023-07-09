@@ -2,8 +2,11 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import {CustomPicker} from "./CustomPicker";
+import {useTranslation} from "react-i18next";
 
 const CustomTimePicker = ({ value, onChange }) => {
+    const {t} = useTranslation('customTimePicker')
+
     const generateHourOptions = () => {
         const hourOptions = [];
 
@@ -42,7 +45,7 @@ const CustomTimePicker = ({ value, onChange }) => {
                     items={generateHourOptions()}
                     labelMapper={item => item.label}
                     valueMapper={item => item.value}
-                    placeholder={"Choose hour:"}
+                    placeholder={t('hourPickerPlaceholder')}
                     value={value[0]}
                 />
             </View>
@@ -53,11 +56,10 @@ const CustomTimePicker = ({ value, onChange }) => {
                     items={generateMinuteOptions()}
                     labelMapper={item => item.label}
                     valueMapper={item => item.value}
-                    placeholder={"Choose minute:"}
+                    placeholder={t('minutePickerPlaceholder')}
                     value={value[1]}
                 />
             </View>
-            <Text>Selected time: {value}</Text>
         </View>
     );
 };

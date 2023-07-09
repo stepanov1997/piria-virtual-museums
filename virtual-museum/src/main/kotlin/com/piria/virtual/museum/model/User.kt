@@ -54,7 +54,11 @@ data class User(
 
     @Column(name="role")
     @Enumerated(STRING)
-    val role: UserType
+    val role: UserType,
+
+    @Column(name="lang")
+    @Enumerated(STRING)
+    var lang: Language
 
 ) : UserDetails {
     @JsonIgnore(true)
@@ -79,4 +83,9 @@ data class User(
     override fun isCredentialsNonExpired(): Boolean = true
 
     override fun isEnabled(): Boolean = role==UserType.ADMIN || isRegistrationEnabled && !isBlocked
+}
+
+enum class Language {
+    sr,
+    en
 }

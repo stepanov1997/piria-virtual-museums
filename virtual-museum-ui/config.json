@@ -1,5 +1,5 @@
 {
-  "SERVER_URL": "http://192.168.100.4:8080",
+  "SERVER_URL": "http://localhost:8080",
   "MUSEUM_API_GET_ALL_ENDPOINT": "api/museums",
   "VIRTUAL_VISIT_API_GET_BY_MUSEUM_ID_ENDPOINT": "api/vvs/museum",
   "VIRTUAL_VISIT_API_GET_BY_ID_ENDPOINT": "api/vvs/",
@@ -18,6 +18,8 @@
   "USER_API_BLOCK_USER_ENDPOINT": "api/users/block",
   "USER_API_RESET_PASSWORD_USER_ENDPOINT": "api/users/resetPassword",
   "NEWS_API_GET_ALL_ENDPOINT": "api/news",
+  "USER_API_GET_LANG_ENDPOINT": "api/users/lang",
+  "USER_API_POST_LANG_ENDPOINT": "api/users/lang",
   "TICKET_API_POST_ENDPOINT": "api/ticket",
   "TICKET_API_GET_JOB_ENDPOINT": "api/ticket/job",
   "BATTUTA_API_GET_CITIES": "api/battuta/cities",

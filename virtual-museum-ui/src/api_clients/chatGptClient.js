@@ -1,6 +1,6 @@
 import {CHAT_GPT_API, CHAT_GPT_API_COMPLETIONS_ENDPOINT, CHAT_GPT_API_KEY} from '../../config.json'
 
-export async function generateMuseumDetails(museumName, museumCountry) {
+export async function generateMuseumDetails(museumName, museumCountry, language) {
     const apiKey = `${CHAT_GPT_API_KEY}`;
     const apiUrl = `${CHAT_GPT_API}/${CHAT_GPT_API_COMPLETIONS_ENDPOINT}`;
 
@@ -8,7 +8,7 @@ export async function generateMuseumDetails(museumName, museumCountry) {
         model: 'gpt-3.5-turbo',
         "messages": [{
             "role": "user",
-            "content": `Give me details about museum ${museumName} from ${museumCountry}.`
+            "content": `Give me details about museum ${museumName} from ${museumCountry} on ${language} language.`
         }],
     });
 

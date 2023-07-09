@@ -1,9 +1,9 @@
 # Users
 #   - username: stepanov
 #   - password: pass
-INSERT INTO museum.user (id, email, first_name, last_name, password, username, role, is_registration_enabled, is_blocked) VALUES (1, 'kristijan.stepanov95@gmail.com', 'Kristijan', 'Stepanov', '$2a$10$JuoYVcKJCB53KqwVAxRLzOX.NDMQG/LIp5YeofaBt4/2e9l4hnaAy', 'stepanov', 'USER', true, false);
-INSERT INTO museum.user (id, email, first_name, last_name, password, username, role, is_registration_enabled, is_blocked) VALUES (2, 'kristijan.stepanov95@gmail.com', 'Kristijan', 'Stepanov', '$2a$10$JuoYVcKJCB53KqwVAxRLzOX.NDMQG/LIp5YeofaBt4/2e9l4hnaAy', 'user', 'USER', false, false);
-INSERT INTO museum.user (id, email, first_name, last_name, password, username, role, is_registration_enabled, is_blocked) VALUES (3, 'kristijan.stepanov95@gmail.com', 'Kristijan', 'Stepanov', '$2a$10$JuoYVcKJCB53KqwVAxRLzOX.NDMQG/LIp5YeofaBt4/2e9l4hnaAy', 'admin', 'ADMIN', true, false);
+INSERT INTO museum.user (id, email, first_name, last_name, password, username, role, is_registration_enabled, is_blocked, lang) VALUES (1, 'kristijan.stepanov95@gmail.com', 'Kristijan', 'Stepanov', '$2a$10$JuoYVcKJCB53KqwVAxRLzOX.NDMQG/LIp5YeofaBt4/2e9l4hnaAy', 'stepanov', 'USER', true, false, 'sr');
+INSERT INTO museum.user (id, email, first_name, last_name, password, username, role, is_registration_enabled, is_blocked, lang) VALUES (2, 'kristijan.stepanov95@gmail.com', 'Kristijan', 'Stepanov', '$2a$10$JuoYVcKJCB53KqwVAxRLzOX.NDMQG/LIp5YeofaBt4/2e9l4hnaAy', 'user', 'USER', false, false, 'en');
+INSERT INTO museum.user (id, email, first_name, last_name, password, username, role, is_registration_enabled, is_blocked, lang) VALUES (3, 'kristijan.stepanov95@gmail.com', 'Kristijan', 'Stepanov', '$2a$10$JuoYVcKJCB53KqwVAxRLzOX.NDMQG/LIp5YeofaBt4/2e9l4hnaAy', 'admin', 'ADMIN', true, false, 'en');
 
 # Museums
 INSERT INTO museum.museum (id, address, city, country, latitude, longitude, name, phone_number, type) VALUES (1, '1 Avenue of the Arts', 'Philadelphia', 'USA', 39.95308, -75.164871, 'Philadelphia Museum of Art', '215-763-8100', 'Art Museum');
