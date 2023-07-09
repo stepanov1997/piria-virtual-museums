@@ -5,6 +5,7 @@ import {Button, Text, TextInput, View, Image, ActivityIndicator, StyleSheet, Dim
 import {YtPlayer} from "./yt-player";
 import {BLUE, DARKBLUE, GRAY} from '../../config.json'
 import {DateTime, Duration} from "luxon";
+import {useTranslation} from "react-i18next";
 
 const {width, height} = Dimensions.get("window");
 
@@ -54,7 +55,9 @@ const styles = StyleSheet.create({
 
 });
 
-export const WatchPresentationForm = ({navigation}) => {
+export const WatchPresentationForm = () => {
+    const {t} = useTranslation('watchPresentationForm')
+
     const [ticketId, setTicketId] = useState("")
     const [data, setData] = useState(undefined)
     const [getSession,,removeSession] = useSessionStorageJwt()
@@ -67,7 +70,7 @@ export const WatchPresentationForm = ({navigation}) => {
             const jwtToken = (await getSession()).jwt;
             const result = await watchVirtualPresentation(jwtToken, ticketId);
             if (result.status !== "200") {
-                console.log("Presentation is not ready, or ticket id is not ok.")
+                console.error("Presentation is not ready, or ticket id is not ok.")
                 return
             }
             const data = result.content
@@ -80,9 +83,6 @@ export const WatchPresentationForm = ({navigation}) => {
             const startDiffMillis = startDatetime.diff(now);
             const endDiffMillis = endDatetime.diff(now);
 
-            console.log(`Duration: ${startDiffMillis.toFormat("dd.MM.yyyy. HH:mm:ss")}`)
-            console.log(`Duration: ${endDiffMillis.toFormat("dd.MM.yyyy. HH:mm:ss")}`)
-
             // Ako jos nije pocela
             if (startDiffMillis.milliseconds > 0) {
                 console.log("Presentation not yet started.")
@@ -93,7 +93,6 @@ export const WatchPresentationForm = ({navigation}) => {
                 }, startDiffMillis.milliseconds)
                 const refreshIntervalId = setInterval(() => {
                     setSecondsRemaining(prevState => {
-                        console.log(prevState)
                         if (prevState === 0) {
                             data.stopInterval()
                             return undefined
@@ -118,8 +117,8 @@ export const WatchPresentationForm = ({navigation}) => {
                 return
             }
             // Ako je zavrsilo
-            console.log("Presentation finihed.")
-            alert("Session is over.")
+            console.log("Presentation finished.")
+            alert(t("sessionIsOverAlert"))
             await removeSession()
             location.reload()
         }
@@ -136,40 +135,46 @@ export const WatchPresentationForm = ({navigation}) => {
                     (
                         <View>
                             <ActivityIndicator size="large"/>
-                            {secondsRemaining && <Text>Presentation is starting in {Duration.fromObject({seconds: secondsRemaining}).toFormat("mm 'minute(s) and 'ss 'second(s)'")}...</Text>}
+                            {secondsRemaining && <Text>\n{t('presentationStartingLabel')} {Duration.fromObject({seconds: secondsRemaining}).toFormat(`mm '${t('minutes')} and 'ss '${t('seconds')}'`)}...</Text>}
                         </View>
                     )
                     :
                     (
                         data ?
                             (
-                                <View>
-                                    <Text>{data.museumCountry}</Text>
-                                    <Text>{data.museumCity}</Text>
-                                    <Text>{data.museumType}</Text>
-                                    <Text>{data.datetime}</Text>
-                                    <Text>{data.duration}</Text>
-                                    <View>
+                                <View >
+                                    <View style={styles.textDetailsContainer}>
+                                    <Text>{t('countryLabel')}: {data.museumCountry}</Text>
+                                    <Text>{t('cityLabel')}: {data.museumCity}</Text>
+                                    <Text>{t('typeLabel')}: {data.museumType}</Text>
+                                    <Text>{t('datetimeLabel')}: {data.datetime}</Text>
+                                    <Text>{t('durationLabel')}: {data.duration}</Text>
+                                    </View>
+                                    <ScrollView contentContainerStyle={styles.content}>
+                                        <ScrollView contentContainerStyle={{overflow:true,flexDirection:"row"}}>
                                         {
                                             data.images.map((image, index) => (
                                                 <Image key={index} source={{uri: image}}
-                                                       style={{width: 200, height: 200}}/>
+                                                       style={styles.image}/>
                                             ))
                                         }
-                                    </View>
-                                    <YtPlayer link={data.video}/>
+
+
+                                    <YtPlayer link={data.video} width={width>height?width*0.4:height*0.4} height={width>height?height*0.4:width*0.4}/>
+                                        </ScrollView>
+                                    </ScrollView>
                                 </View>
                             )
                             :
                             (
                                 <View>
-                                    <Text style={styles.title}>Watch video presentation:</Text>
+                                    <Text style={styles.title}>{t('watchVirtualPresentationTitle')}:</Text>
                                     <TextInput
-                                        placeholder={"Enter virtual visit ticket id"}
+                                        placeholder={`${t('watchVirtualPresentationPlaceholder')}:`}
                                         value={ticketId}
                                         onChangeText={setTicketId}
                                     />
-                                    <Button title={"WATCH PRESENTATION"} onPress={watchPresentation}></Button>
+                                    <Button title={t("watchPresentationButtonTitle")} onPress={watchPresentation}/>
                                 </View>
                             )
                     )

@@ -75,6 +75,10 @@ class JwtTokenUtil : Serializable {
         return username == userDetails.username && !isTokenExpired(token)
     }
 
+    fun getUsernameUsingAuthorizationHeader(authorizationHeader: String): String {
+        return getUsernameFromToken(authorizationHeader.split(" ")[1])
+    }
+
     companion object {
         private const val serialVersionUID = -2550185165626007488L
         const val JWT_TOKEN_VALIDITY = (5 * 60 * 60).toLong()

@@ -3,6 +3,8 @@ import {View, TextInput, Text, Button} from 'react-native'
 import userClient from "../api_clients/userClient";
 
 const RegistrationComponent = ({navigation}) => {
+    const {t} = useTranslation('registration')
+
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [username, setUsername] = useState("");
@@ -14,59 +16,71 @@ const RegistrationComponent = ({navigation}) => {
 
     const handleRegistration = async () => {
         let msg = ""
-        if(!firstName) {
-            msg += "First name must have value."
+        if (!firstName) {
+            msg += t('firstNameErrorMessage')
         }
-        if(!lastName) {
-            msg += "\nLast name must have value."
-        }
-        if(!username) {
-            msg += "\nUsername must have value."
-        }
-        if(!password) {
-            msg += "\nPassword must have value."
-        }
-        if(!newPasswordConfirmation && password === newPasswordConfirmation) {
-            msg += "\nConfirmation of password should be valid."
+        if (!lastName) {
+            msg += `\n${t('lastNameErrorMessage')}`
+            if (!username) {
+                msg += `\n${t('usernameErrorMessage')}`
+            }
+            if (!password) {
+                msg += `\n${t('passwordErrorMessage')}`
+            }
+            if (!newPasswordConfirmation && password === newPasswordConfirmation) {
+                msg += `\n${t('passwordErrorMessage')}`
+            }
+
+            if (!email) {
+                msg += `\n${t('emailErrorMessage')}`
+            }
+
+            if (msg) {
+                setErrorMessage(msg)
+                return;
+            }
+
+            let body = undefined;
+            try {
+                body = (await userClient.register(firstName, lastName, username, password, email)).body;
+            } catch (e) {
+                setErrorMessage(e)
+                return
+            }
+            if (body.status === "201") {
+                setErrorMessage("")
+                navigation.push('Login', {username: username})
+            } else {
+                setErrorMessage(body.error)
+            }
         }
 
-        if (!email) {
-            msg += "\nEmail must have value."
-        }
+        return (
+            <View style={styles.container}>
+                <View style={styles.content}>
+                    <View style={styles.inputs}>
+                        <Text style={styles.enter}>{t('registrationTitle')}!</Text>
+                        <TextInput style={styles.input} placeholder={t('firstNamePlaceholder')} value={firstName}
+                                   onChangeText={setFirstName}/>
+                        <TextInput style={styles.input} placeholder={t('lastNamePlaceholder')} value={lastName}
+                                   onChangeText={setLastName}/>
+                        <TextInput style={styles.input} placeholder={t('usernamePlaceholder')} value={username}
+                                   onChangeText={setUsername}/>
+                        <TextInput style={styles.input} placeholder={t('passwordPlaceholder')} value={password}
+                                   onChangeText={setPassword} secureTextEntry={true}/>
+                        <TextInput style={styles.input} placeholder={t('passwordAgainPlaceholder')}
+                                   value={newPasswordConfirmation} onChangeText={setNewPasswordConfirmation}
+                                   secureTextEntry={true}/>
+                        <TextInput style={styles.input} placeholder={t('emailPlaceholder')} value={email}
+                                   onChangeText={setEmail} inputMode={'email'}/>
+                    </View>
+                    <Button title={t('registerButtonTitle')} onPress={handleRegistration}/>
+                    {errorMessage && <Text>{errorMessage}</Text>}
 
-        if(msg) {
-            setErrorMessage(msg)
-            return;
-        }
-
-        let body = undefined;
-        try {
-            body = (await userClient.register(firstName, lastName, username, password, email)).body;
-        } catch (e) {
-            setErrorMessage(e)
-            return
-        }
-        if(body.status==="201") {
-            setErrorMessage("")
-            navigation.push('Login', {username: username})
-        } else {
-            setErrorMessage(body.error)
-        }
+                </View>
+            </View>
+        )
     }
-
-    return (
-        <View>
-            <Text>Input data for registration!</Text>
-            <TextInput placeholder="Name" value={firstName} onChangeText={setFirstName} />
-            <TextInput placeholder="Surname" value={lastName} onChangeText={setLastName} />
-            <TextInput placeholder="Username" value={username} onChangeText={setUsername} />
-            <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry={true} />
-            <TextInput placeholder="Type password again" value={newPasswordConfirmation} onChangeText={setNewPasswordConfirmation} secureTextEntry={true} />
-            <TextInput placeholder="E-mail address" value={email} onChangeText={setEmail} />
-            <Button title="Register" onPress={handleRegistration} />
-            {errorMessage && <Text>{errorMessage}</Text> }
-        </View>
-    )
 }
 
 export default RegistrationComponent

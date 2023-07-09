@@ -1,5 +1,5 @@
-import {Button, View, TextInput, Text, Image, Platform} from "react-native";
-import React, {useEffect, useState, useCallback} from "react";
+import {Button, View, TextInput, Image} from "react-native";
+import React, {useEffect, useState} from "react";
 import museumClient from "../api_clients/museumClient";
 import {useSessionStorageJwt} from "../util/jwtHook";
 import {addVirtualVisit} from "../api_clients/virtualVisitsClient";
@@ -8,26 +8,18 @@ import CustomDatePicker from "./CustomDatePicker";
 import CustomTimePicker from "./CustomTimePicker";
 import {CustomPicker} from "./CustomPicker";
 import * as ImagePicker from 'expo-image-picker';
-import YoutubePlayer from "react-native-youtube-iframe";
-import {YOUTUBE_API, YOUTUBE_API_KEY} from '../../config.json'
-import {extractIdFromUrl} from "../util/youtube";
-import { WebView } from 'react-native-webview';
 import {YtPlayer} from "./yt-player";
 
 
 export const VirtualVisitForm = () => {
+    const {t} = useTranslation('virtualVisitForm')
+
     const [images, setImages] = useState([]);
     const [formData, setFormData] = useState({
-        museumId: '',
-        date: ['', '', ''],
-        time: ['', ''],
-        duration: '',
-        price: '0.0',
-        yt_link: ''
+        museumId: '', date: ['', '', ''], time: ['', ''], duration: '', price: '0.0', yt_link: ''
     });
     const [museums, setMuseums] = useState([]);
     const [getSession,] = useSessionStorageJwt();
-    const [visible, setVisible] = useState(false)
 
     useEffect(() => {
         fetchMuseums();
@@ -53,7 +45,7 @@ export const VirtualVisitForm = () => {
         try {
             const session = await getSession()
             const response = await museumClient.getAllMuseums(session.jwt)
-            if(response.status !== "200") {
+            if (response.status !== "200") {
                 alert(response.message)
                 return
             }
@@ -76,11 +68,7 @@ export const VirtualVisitForm = () => {
         }).toISO({suppressMilliseconds: true})
         const session = await getSession()
         try {
-            await addVirtualVisit(
-                session.jwt,
-                formData.museumId, datetime, formData.duration, formData.price,
-                images, formData.yt_link
-            )
+            await addVirtualVisit(session.jwt, formData.museumId, datetime, formData.duration, formData.price, images, formData.yt_link)
         } catch (e) {
             console.log(`Error while adding virtual visit. Error: ${e}`)
         }
@@ -88,51 +76,80 @@ export const VirtualVisitForm = () => {
 
     const handleChange = (field, value) => {
         setFormData((prevFormData) => ({
-            ...prevFormData,
-            [field]: value,
+            ...prevFormData, [field]: value,
         }));
     };
-    return (
-        <View>
-            <CustomDatePicker value={formData.date} onChange={setDate => handleChange("date", setDate(formData.date))}/>
-            <CustomTimePicker value={formData.time} onChange={setTime => handleChange("time", setTime(formData.time))}/>
-            <CustomPicker
-                value={formData.museumId}
-                onValueChange={(value) => {
-                    handleChange("museumId", value)
-                }}
-                items={museums}
-                placeholder={'Select museum...'}
-                labelMapper={museum => `${museum.name} (${museum.country})`}
-                valueMapper={museum => museum.id}
-            />
-            <TextInput
-                placeholder="Price"
-                inputMode={"decimal"}
-                value={formData.price.toString()}
-                onChangeText={(price) => handleChange('price', price)}
-            />
-            <TextInput
-                placeholder="Duration"
-                inputMode={"numeric"}
-                value={formData.duration.toString()}
-                onChangeText={(duration) => handleChange('duration', duration)}
-            />
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                <Button title="Pick an image from camera roll" onPress={pickImage}/>
-                {
-                    images.map((image, index) => (
-                        <Image key={index} source={{uri: image}} style={{width: 200, height: 200}}/>
-                    ))
-                }
-            </View>
-            <TextInput
-                placeholder="Youtube link"
-                value={formData.yt_link}
-                onChangeText={(yt_link) => handleChange('yt_link', yt_link)}
-            />
-            <YtPlayer link={formData.yt_link}/>
-            <Button title="Add virtual visit" onPress={handleSubmit}/>
+    return (<View style={{alignItems: "center", gap: width > height ? width * 0.01 : height * 0.01}}>
+        <CustomDatePicker style={{
+            backgroundColor: "#fff",
+            width: width > height ? width * 0.15 : height * 0.3,
+            height: width > height ? height * 0.04 : width * 0.1,
+            paddingLeft: height * 0.01,
+            color: "#000",
+            fontSize: width > height ? height * 0.02 : width * 0.04,
+            borderColor: "transparent"
+        }} value={formData.date} onChange={setDate => handleChange("date", setDate(formData.date))}/>
+        <CustomTimePicker value={formData.time} onChange={setTime => handleChange("time", setTime(formData.time))}/>
+        <CustomPicker
+            value={formData.museumId}
+            onValueChange={(value) => {
+                handleChange("museumId", value)
+            }}
+            items={museums}
+            placeholder={`${t('museumPickerPlaceholder')}:`}
+            labelMapper={museum => `${museum.name} (${museum.country})`}
+            valueMapper={museum => museum.id}
+        />
+        <TextInput
+            placeholder={t('pricePlaceholder')}
+            style={{
+                backgroundColor: "#fff",
+                width: width > height ? width * 0.15 : height * 0.3,
+                height: width > height ? height * 0.04 : width * 0.1,
+                paddingLeft: height * 0.01,
+                color: "#000",
+                fontSize: width > height ? height * 0.02 : width * 0.04,
+                borderColor: "transparent"
+            }}
+            inputMode={"decimal"}
+            value={formData.price.toString()}
+            onChangeText={(price) => handleChange('price', price)}
+        />
+        <TextInput
+            placeholder={t('durationPlaceholder')}
+            style={{
+                backgroundColor: "#fff",
+                width: width > height ? width * 0.15 : height * 0.3,
+                height: width > height ? height * 0.04 : width * 0.1,
+                paddingLeft: height * 0.01,
+                color: "#000",
+                fontSize: width > height ? height * 0.02 : width * 0.04,
+                borderColor: "transparent"
+            }}
+            inputMode={"numeric"}
+            value={formData.duration.toString()}
+            onChangeText={(duration) => handleChange('duration', duration)}
+        />
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <Button title={t('imagePickerPlaceholder')} onPress={pickImage}/>
+            {images.map((image, index) => (
+                <Image key={index} source={{uri: image}} style={{width: 200, height: 200}}/>))}
         </View>
-    );
+        <TextInput
+            style={{
+                backgroundColor: "#fff",
+                width: width > height ? width * 0.15 : height * 0.3,
+                height: width > height ? height * 0.04 : width * 0.1,
+                paddingLeft: height * 0.01,
+                color: "#000",
+                fontSize: width > height ? height * 0.02 : width * 0.04,
+                borderColor: "transparent"
+            }}
+            placeholder={t('youtubeLinkPlaceholder')}
+            value={formData.yt_link}
+            onChangeText={(yt_link) => handleChange('yt_link', yt_link)}
+        />
+        {formData.yt_link !== "" && <YtPlayer link={formData.yt_link}/>}
+        <Button title={t('addVirtualVisitButtonTitle')} onPress={handleSubmit}/>
+    </View>);
 }

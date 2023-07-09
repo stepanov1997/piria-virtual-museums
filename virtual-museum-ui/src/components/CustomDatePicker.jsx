@@ -2,8 +2,11 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import {CustomPicker} from "./CustomPicker";
+import {useTranslation} from "react-i18next";
 
 const CustomDatePicker = ({ value, onChange }) => {
+    const {t} = useTranslation('customDatePicker')
+
     const generateYearOptions = () => {
         const currentYear = new Date().getFullYear();
         const yearOptions = [];
@@ -54,7 +57,7 @@ const CustomDatePicker = ({ value, onChange }) => {
                     items={generateYearOptions()}
                     labelMapper={item => item.label}
                     valueMapper={item => item.value}
-                    placeholder={"Choose year:"}
+                    placeholder={t('yearPickerPlaceholder')}
                     value={value[0]}
                 />
             </View>
@@ -65,7 +68,7 @@ const CustomDatePicker = ({ value, onChange }) => {
                     items={generateMonthOptions()}
                     labelMapper={item => item.label}
                     valueMapper={item => item.value}
-                    placeholder={"Choose month:"}
+                    placeholder={t('monthPickerPlaceholder')}
                     value={value[1]}
                 />
             </View>
@@ -76,11 +79,10 @@ const CustomDatePicker = ({ value, onChange }) => {
                     items={generateDayOptions()}
                     labelMapper={item => item.label}
                     valueMapper={item => item.value}
-                    placeholder={"Choose day:"}
+                    placeholder={t('dayPickerPlaceholder')}
                     value={value[2]}
                 />
             </View>
-            <Text>Izabrani datum: {value}</Text>
         </View>
     );
 };

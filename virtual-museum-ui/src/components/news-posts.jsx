@@ -3,6 +3,8 @@ import {View, Text, Image} from 'react-native';
 import {SERVER_URL, NEWS_API_GET_ALL_ENDPOINT} from '../../config.json'
 
 const NewsPostsList = () => {
+    const {t} = useTranslation('newsPostsList')
+
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {

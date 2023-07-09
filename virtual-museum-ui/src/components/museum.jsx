@@ -39,7 +39,7 @@ export const MuseumComponent = ({route}) => {
         if (virtualVisits.length === 0) {
             const {jwt} = await getSession();
             const response = await getAllByMuseumId(jwt, museum.id)
-            if(response.status !== '200') {
+            if (response.status !== '200') {
                 alert(response.message)
                 return
             }

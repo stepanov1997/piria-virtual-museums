@@ -64,49 +64,34 @@ export const TicketPaymentForm = ({selectedVirtualVisit, amount, setBuyingTicket
                 onChangeText={setCardNumber}
                 keyboardType="numeric"
             />
-            <View>
-                {
-                    ['ios', 'android'].includes(Platform.OS) ? (
-                        <RNPickerSelect
-                            value={cardType}
-                            placeholder={{
-                                label: 'Select Card Type...',
-                                value: null,
-                            }}
-                            onValueChange={setCardType}
-                            items={[
-                                {label: 'Visa', value: 'VISA'},
-                                {label: 'Mastercard', value: 'MASTERCARD'},
-                                {label: 'American Express', value: 'AMERICAN_EXPRESS'}
-                            ]}
-                        />
-                    ) : (
-                        <Picker
-                            selectedValue={cardType}
-                            onValueChange={(itemValue) => setCardType(itemValue)}
-                        >
-                            <Picker.Item label="Select Card Type..." value={null} />
-                            <Picker.Item label="Visa" value="VISA" />
-                            <Picker.Item label="Mastercard" value="MASTERCARD" />
-                            <Picker.Item label="American Express" value="AMERICAN_EXPRESS" />
-                        </Picker>
-                    )
-                }
+            <CustomPicker
+                style={styles.input}
+                items={[{label: 'Visa', value: 'VISA'},
+                    {label: 'Mastercard', value: 'MASTERCARD'},
+                    {label: 'American Express', value: 'AMERICAN_EXPRESS'}]}
+                value={cardType}
+                placeholder={t('cardTypePlaceholder')}
+                onValueChange={setCardType}
+                labelMapper={item => item.label}
+                valueMapper={item => item.value}
+            />
+            <View style={styles.validUntil}>
+                <TextInput
+                    style={styles.num}
+                    placeholder={t('expirationMonthPlaceholder')}
+                    value={monthExpiration}
+                    onChangeText={setMonthExpiration}
+                    keyboardType="numeric"
+                />
+                <Text style={{  height: width > height ? height * 0.04 : width * 0.04,fontSize: width > height ? height * 0.02 : width * 0.04}}>/</Text>
+                <TextInput
+                    style={styles.num}
+                    placeholder={t('expirationYearPlaceholder')}
+                    value={yearExpiration}
+                    onChangeText={setYearExpiration}
+                    keyboardType="numeric"
+                />
             </View>
-
-            <TextInput
-                placeholder="MM"
-                value={monthExpiration}
-                onChangeText={setMonthExpiration}
-                keyboardType="numeric"
-            />
-            <Text>/</Text>
-            <TextInput
-                placeholder="YY"
-                value={yearExpiration}
-                onChangeText={setYearExpiration}
-                keyboardType="numeric"
-            />
             <TextInput
                 placeholder="PIN"
                 value={pin}
@@ -114,7 +99,7 @@ export const TicketPaymentForm = ({selectedVirtualVisit, amount, setBuyingTicket
                 secureTextEntry
                 keyboardType="numeric"
             />
-            <Button title="Submit" onPress={handleSubmit}/>
+            <Button title={t('submitButtonTitle')} onPress={handleSubmit}/>
             {greenMessage && <Text style={{color: 'green'}}>{greenMessage}</Text>}
             {redMessage && <Text style={{color: 'red'}}>{redMessage}</Text>}
         </ScrollView>

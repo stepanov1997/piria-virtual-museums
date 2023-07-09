@@ -7,9 +7,10 @@ import {MuseumAdministration} from './museumAdministration'
 import {VirtualVisitForm} from "../../components/virtual-visit-form";
 
 export const AdminHomeFeed = () => {
+    const {t} = useTranslation('adminHomeFeed')
+
     const [activeUsersByHour, setActiveUsersByHour] = useState([])
     const [currentlyActiveUsers, setCurrentlyActiveUsers] = useState([])
-    const [cardType, setCardType] = useState("")
     const [registeredUsers, setRegisteredUsers] = useState([])
 
     useEffect(() => {

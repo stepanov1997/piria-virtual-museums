@@ -3,7 +3,6 @@ package com.piria.virtual.museum.api
 import com.piria.virtual.museum.model.PaymentRequiredInfo
 import com.piria.virtual.museum.model.Response
 import com.piria.virtual.museum.model.Ticket
-import com.piria.virtual.museum.model.User
 import com.piria.virtual.museum.service.*
 import com.piria.virtual.museum.util.JwtTokenUtil
 import com.piria.virtual.museum.util.TicketAsPDFGenerator
@@ -61,7 +60,8 @@ data class TicketApi(
 
             log.info { "Step 4 - Creating ticket for visit..." }
 
-            val user = getUserUsingAuthorizationHeader(authorizationHeader)
+            val username = jwtTokenUtil.getUsernameUsingAuthorizationHeader(authorizationHeader)
+            val user = userService.loadUserByUsername(username)
 
             val virtualVisit = virtualVisitService.getById(virtualVisitId!!);
             val ticket = ticketService.save(Ticket(virtualVisit = virtualVisit, user = user))
@@ -101,11 +101,6 @@ data class TicketApi(
             log.error { "Error while buying ticket - ${e.message}" }
             return Response.generateErrorResponse(HttpStatus.BAD_REQUEST, e.message!!)
         }
-    }
-
-    private fun getUserUsingAuthorizationHeader(authorizationHeader: String): User {
-        val usernameFromToken = jwtTokenUtil.getUsernameFromToken(authorizationHeader.split(" ")[1])
-        return userService.loadUserByUsername(usernameFromToken)
     }
 
     data class TicketRequest(

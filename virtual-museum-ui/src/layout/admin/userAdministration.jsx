@@ -1,9 +1,10 @@
 import {Text, StyleSheet, Button} from "react-native";
 import {Table, Row, Rows} from 'react-native-table-component';
-import {useEffect} from "react";
 import userClient from "../../api_clients/userClient";
 
 export const UserAdministration = ({registeredUsers}) => {
+    const {t} = useTranslation('userAdministration')
+
     const styles = StyleSheet.create({
         container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
         head: { height: 40, width: 300, backgroundColor: '#f1f8ff' },
@@ -16,9 +17,9 @@ export const UserAdministration = ({registeredUsers}) => {
                 registeredUsers.map(user => {
                     return [
                         user.username,
-                        <Button title="APPROVE" onPress={async () => await userClient.approveUserRegistration(user.id)}/>,
-                        <Button title="BLOCK" onPress={async () => await userClient.blockUser(user.id)}/>,
-                        <Button title="RESET" onPress={async () => await userClient.resetUserPassword(user.id)}/>
+                        <Button title={t('approveRegistrationButtonTitle')} onPress={async () => await userClient.approveUserRegistration(user.id)}/>,
+                        <Button title={t('blockUserButtonTitle')} onPress={async () => await userClient.blockUser(user.id)}/>,
+                        <Button title={t('resetPasswordButtonTitle')} onPress={async () => await userClient.resetUserPassword(user.id)}/>
                     ]
                 })
             } />

@@ -4,10 +4,13 @@ import museumClient from '../../api_clients/museumClient'
 import {useSessionStorageJwt} from "../../util/jwtHook";
 import {BLUE, DARKBLUE, GRAY} from '../../../config.json'
 import {Link} from '@react-navigation/native';
+import {useTranslation} from "react-i18next";
 
 const {width, height} = Dimensions.get("window");
 
 export const MuseumsFeedComponent = () => {
+    const {t} = useTranslation('museumsFeedComponent')
+
     const [museums, setMuseums] = useState([])
     const [searchKeyByName, setSearchKeyByName] = useState("")
     const [searchKeyByCity, setSearchKeyByCity] = useState("")
@@ -85,7 +88,7 @@ export const MuseumsFeedComponent = () => {
                     </View>
                 ) : (
                     <View>
-                        <Text>No data</Text>
+                        <Text>{t('noDataText')}</Text>
                     </View>
                 )
             }

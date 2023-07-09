@@ -6,6 +6,8 @@ import battutaClient from "../../api_clients/battutaClient";
 import {CustomPicker} from "../../components/CustomPicker";
 
 export const MuseumAdministration = () => {
+    const {t} = useTranslation('museumAdministration')
+
     const [formData, setFormData] = useState({
         id: '',
         address: '',
@@ -35,7 +37,7 @@ export const MuseumAdministration = () => {
             if (formData.country) {
                 try {
                     const response = await battutaClient.getAllCities(formData.country)
-                    if(response.status !== "200") {
+                    if (response.status !== "200") {
                         alert(response.message)
                         return
                     }
@@ -108,7 +110,7 @@ export const MuseumAdministration = () => {
                         country: value,
                     }));
                 }}
-                placeholder={'Select country...'}
+                placeholder={t('museumCountryPickerPlaceholder')}
                 items={countries}
                 labelMapper={country => `${country.name.common} (${country.cca2})`}
                 valueMapper={country => country.cca2}
@@ -127,7 +129,7 @@ export const MuseumAdministration = () => {
                         longitude: city?.longitude ?? '',
                     }));
                 }}
-                placeholder={'Select city...'}
+                placeholder={t('museumCityPickerPlaceholder')}
                 items={cities}
                 labelMapper={city => city.city}
                 valueMapper={city => city.city}
@@ -153,7 +155,7 @@ export const MuseumAdministration = () => {
                 value={formData.type}
                 onChangeText={(text) => handleChange('type', text)}
             />
-            <Button title="Add museum" onPress={handleSubmit}/>
+            <Button title={t('addMuseumButtonTitle')} onPress={handleSubmit}/>
         </View>
     );
 
