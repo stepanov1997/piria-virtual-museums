@@ -105,7 +105,7 @@ export const AdminScreen = () => {
                               style={styles.navigationItem}>
                             {t('languageSelector')}
                         </Link>
-                        <Pressable onPress={async () => await saveFile()}>
+                        <Pressable onPress={saveFile}>
                             <Text style={styles.navigationItem}>
                                 {t('downloadLogsText')}
                             </Text>

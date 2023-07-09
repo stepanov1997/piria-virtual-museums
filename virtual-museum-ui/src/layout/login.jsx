@@ -98,7 +98,6 @@ const LoginComponent = ({navigation, route}) => {
         }
         try {
             const {token, userType} = await userClient.authenticate(username, password)
-            alert(JSON.stringify({token, userType}))
             if (token && userType) {
                 setErrorMessage("")
                 await setSession({jwt: token, userType})
