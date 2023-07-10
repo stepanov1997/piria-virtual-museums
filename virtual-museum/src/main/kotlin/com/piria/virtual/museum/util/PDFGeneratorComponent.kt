@@ -22,7 +22,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -59,8 +58,8 @@ class PDFGeneratorComponent {
                 newLineAtOffset(0F, -20F) // Pomeranje na novu liniju
                 showText(
                     "Datetime: ${
-                        SimpleDateFormat("dd.MM.yyyy. HH:mm").format(
-                            Instant.parse(virtualVisit.datetime + ".000Z").atZone(ZoneId.systemDefault()).toLocalDate()
+                        DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm").format(
+                            Instant.parse(virtualVisit.datetime + ".000Z").atZone(ZoneId.systemDefault())
                         )
                     }"
                 )

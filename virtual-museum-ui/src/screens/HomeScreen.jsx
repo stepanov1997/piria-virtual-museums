@@ -7,18 +7,47 @@ import {useTranslation} from "react-i18next";
 
 const {width, height} = Dimensions.get("window");
 
+export const HomeScreen = () => {
+    const {t} = useTranslation(['homeScreen', 'app'])
+    return (
+        <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.content}>
+                <Text style={styles.welcome}>{t('welcome')}</Text>
+                <Image source={require('../../assets/museum.jpg')}
+                       style={styles.image}></Image>
+                <View style={styles.intro}>
+                    <Text style={styles.introText}>{t('introText')}</Text>
+                    <Text style={styles.introText}>{t('introTextShorter')}</Text>
+                    <SafeAreaView style={styles.navigation}>
+                        <Link to={{screen: 'News'}} style={styles.navigationItem}>
+                            {t("news")}
+                        </Link>
+                        <Link to={{screen: 'Museums'}} style={styles.navigationItem}>
+                            {t('museums')}
+                        </Link>
+                        <Link to={{screen: 'Presentation'}} style={styles.navigationItem}>
+                            {t('presentation')}
+                        </Link>
+                        <Link to={{screen: 'LanguageSelector'}} style={styles.navigationItem}>
+                            {t('languageSelector')}
+                        </Link>
+                    </SafeAreaView>
+                </View>
+            </View>
+        </ScrollView>
+    );
+}
+
 const styles = StyleSheet.create({
         container: {
             backgroundColor: "#f2f2f2",
             alignItems: "center",
             paddingTop: width * 0.02,
             width: width,
-            height: height,
             marginBottom: height * 0.04,
         },
         content: {
             borderRadius: 10,
-            flex: true,
             alignItems: "center",
             gap: width > height ? width * 0.04 : height * 0.09,
             paddingVertical: height * 0.04,
@@ -63,33 +92,3 @@ const styles = StyleSheet.create({
         }
     }
 )
-export const HomeScreen = () => {
-    const {t} = useTranslation(['homeScreen', 'app'])
-    return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.content}>
-                <Text style={styles.welcome}>{t('welcome')}</Text>
-                <Image source={require('../../assets/museum.jpg')}
-                       style={styles.image}></Image>
-                <View style={styles.intro}>
-                    <Text style={styles.introText}>{t('introText')}</Text>
-                    <Text style={styles.introText}>{t('introTextShorter')}</Text>
-                    <SafeAreaView style={styles.navigation}>
-                        <Link to={{screen:'News'}} style={styles.navigationItem}>
-                            {t("news")}
-                        </Link>
-                        <Link to={{screen:'Museums'}} style={styles.navigationItem}>
-                            {t('museums')}
-                        </Link>
-                        <Link to={{screen:'Presentation'}} style={styles.navigationItem}>
-                            {t('presentation')}
-                        </Link>
-                        <Link to={{screen: 'LanguageSelector'}} style={styles.navigationItem}>
-                            {t('languageSelector')}
-                        </Link>
-                    </SafeAreaView>
-                </View>
-            </View>
-        </ScrollView>
-    );
-}

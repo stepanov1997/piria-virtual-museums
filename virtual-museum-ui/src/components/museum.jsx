@@ -8,7 +8,46 @@ import {TicketPaymentForm} from './forms/ticket-payment-form'
 import {useSessionStorageJwt} from "../util/jwtHook";
 import {WeatherForcast} from "./weather-forcast";
 
-export const MuseumComponent = ({route}) => {
+        museumCard: {
+            backgroundColor: "#fff",
+            borderRadius: 20,
+            flexDirection: "column",
+            gap: width > height ? height * 0.015 : height * 0.01,
+            width: width > height ? width * 0.8 : height * 0.4,
+            //height: width > height ? width * 0.7 : height * 0.35,
+            padding: height * 0.05,
+            alignItems: "center",
+        },
+        details: {
+            justifyContent: "center",
+            gap: height * 0.01,
+            alignItems: "center"
+
+        },
+        weatherTitle: {
+            textAlign: "center",
+            color: GRAY,
+            fontSize: width > height ? width * 0.02 : height * 0.03,
+            marginBottom: height * 0.03
+        },
+        button: {
+            width:width>height? height * 0.25:height*0.1
+        },
+        image: {
+            width: width > height ? width * 0.2 : height * 0.34,
+            height: width > height ? width * 0.15 : height * 0.35,
+            borderRadius: 20
+        },
+    museumDetails:{
+            fontSize:width>height ? width*0.01:height*0.015
+    },
+
+    }
+)
+
+export const MuseumComponent = ({museum}) => {
+    const {t} = useTranslation('museumComponent')
+
     const [selectedVirtualVisit, selectVirtualVisit] = useState(0);
     const [virtualVisits, setVirtualVisits] = useState([])
     const [details, setDetails] = useState("")

@@ -44,30 +44,38 @@ async function register(firstname, lastname, username, password, email) {
         }),
         redirect: 'follow'
     })
-    const location = response.headers["Location"]
-    return {location: location, body: (await response.json()).content}
+    return await response.json()
 }
 
-async function getActiveUsersByHour() {
-    const response = await fetch(`${SERVER_URL}/${USER_API_ACTIVE_USERS_24H_ENDPOINT}`)
-    return (await response.json()).content
+async function getActiveUsersByHour(jwt) {
+    const response = await fetch(`${SERVER_URL}/${USER_API_ACTIVE_USERS_24H_ENDPOINT}`, {
+        headers: {'Authorization': `Bearer ${jwt}`},
+        mode: 'cors'
+    })
+    return await response.json()
 }
 
-async function getCurrentlyActiveUsers() {
-    const response = await fetch(`${SERVER_URL}/${USER_API_ACTIVE_USERS_NOW_ENDPOINT}`)
-    return (await response.json()).content
+async function getCurrentlyActiveUsers(jwt) {
+    const response = await fetch(`${SERVER_URL}/${USER_API_ACTIVE_USERS_NOW_ENDPOINT}`, {
+        headers: {'Authorization': `Bearer ${jwt}`},
+        mode: 'cors'
+    })
+    return await response.json()
 }
 
-async function getRegisteredUsers() {
-    const response = await fetch(`${SERVER_URL}/${USER_API_NON_ADMIN_USERS_ENDPOINT}`)
-    return (await response.json()).content
+async function getRegisteredUsers(jwt) {
+    const response = await fetch(`${SERVER_URL}/${USER_API_NON_ADMIN_USERS_ENDPOINT}`, {
+        headers: {'Authorization': `Bearer ${jwt}`},
+        mode: 'cors'
+    })
+    return await response.json()
 }
 async function getUserLanguage(jwt) {
     const response = await fetch(`${SERVER_URL}/${USER_API_GET_LANG_ENDPOINT}`, {
         headers: {'Authorization': `Bearer ${jwt}`},
         mode: 'cors'
     })
-    return (await response.json()).content
+    return await response.json()
 }
 async function setUserLanguage(jwt, lang) {
     const response = await fetch(`${SERVER_URL}/${USER_API_POST_LANG_ENDPOINT}/${lang}`,{
@@ -75,25 +83,32 @@ async function setUserLanguage(jwt, lang) {
         headers: {'Authorization': `Bearer ${jwt}`},
         mode: 'cors'
     })
-    const content = (await response.json()).content;
-    console.log(content)
-    return content
+    return await response.json()
 }
 
 
-async function approveRegistration(userId) {
-    const response = await fetch(`${SERVER_URL}/${USER_API_APPROVE_USER_ENDPOINT}/${userId}`)
-    return (await response.json()).content
+async function approveRegistration(jwt, userId) {
+    const response = await fetch(`${SERVER_URL}/${USER_API_APPROVE_USER_ENDPOINT}/${userId}`, {
+        headers: {'Authorization': `Bearer ${jwt}`},
+        mode: 'cors'
+    })
+    return await response.json()
 }
 
-async function blockUser(userId) {
-    const response = await fetch(`${SERVER_URL}/${USER_API_BLOCK_USER_ENDPOINT}/${userId}`)
-    return (await response.json()).content
+async function blockUser(jwt, userId) {
+    const response = await fetch(`${SERVER_URL}/${USER_API_BLOCK_USER_ENDPOINT}/${userId}`, {
+        headers: {'Authorization': `Bearer ${jwt}`},
+        mode: 'cors'
+    })
+    return await response.json()
 }
 
-async function resetUserPassword(userId) {
-    const response = await fetch(`${SERVER_URL}/${USER_API_RESET_PASSWORD_USER_ENDPOINT}/${userId}`)
-    return (await response.json()).content
+async function resetUserPassword(jwt, userId) {
+    const response = await fetch(`${SERVER_URL}/${USER_API_RESET_PASSWORD_USER_ENDPOINT}/${userId}`, {
+        headers: {'Authorization': `Bearer ${jwt}`},
+        mode: 'cors'
+    })
+    return await response.json()
 }
 
 export default {register, authenticate, getActiveUsersByHour, getCurrentlyActiveUsers, getRegisteredUsers, approveRegistration, blockUser, resetUserPassword, getUserLanguage, setUserLanguage}

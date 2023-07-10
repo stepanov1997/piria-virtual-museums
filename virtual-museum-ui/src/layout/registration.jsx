@@ -11,50 +11,73 @@ const RegistrationComponent = ({navigation}) => {
     const [password, setPassword] = useState("");
     const [newPasswordConfirmation, setNewPasswordConfirmation] = useState("");
     const [email, setEmail] = useState("");
-
-    const [errorMessage, setErrorMessage] = useState("");
+    const [alertStyle, setAlertStyle] = useState({});
+    const [message, setMessage] = useState("");
 
     const handleRegistration = async () => {
-        let msg = ""
+        let msg = "";
+
         if (!firstName) {
-            msg += t('firstNameErrorMessage')
+            msg += t('firstNameErrorMessage');
         }
         if (!lastName) {
-            msg += `\n${t('lastNameErrorMessage')}`
+            msg += `\n${t('lastNameErrorMessage')}`;
         }
         if (!username) {
-            msg += `\n${t('usernameErrorMessage')}`
+            msg += `\n${t('usernameErrorMessage')}`;
+        } else if (username.length < 12 || /[@#\/]/.test(username)) {
+            msg += `\n${t('usernameValidationMessage')}`;
         }
+
         if (!password) {
-            msg += `\n${t('passwordErrorMessage')}`
+            msg += `\n${t('passwordErrorMessage')}`;
+        } else if (
+            password.length < 15 ||
+            !/[a-z]/.test(password) ||
+            !/[A-Z]/.test(password) ||
+            !/\d/.test(password)
+        ) {
+            msg += `\n${t('passwordValidationMessage')}`;
         }
-        if (!newPasswordConfirmation && password === newPasswordConfirmation) {
-            msg += `\n${t('passwordErrorMessage')}`
+
+        if (!newPasswordConfirmation || password !== newPasswordConfirmation) {
+            msg += `\n${t('passwordConfirmationMessage')}`;
         }
 
         if (!email) {
-            msg += `\n${t('emailErrorMessage')}`
+            msg += `\n${t('emailErrorMessage')}`;
         }
 
         if (msg) {
-            setErrorMessage(msg)
+            setAlertStyle(styles.error);
+            setMessage(msg);
             return;
         }
 
-        let body = undefined;
+        let response = undefined;
         try {
-            body = (await userClient.register(firstName, lastName, username, password, email)).body;
+            response = await userClient.register(
+                firstName,
+                lastName,
+                username,
+                password,
+                email
+            );
         } catch (e) {
-            setErrorMessage(e)
-            return
+            setAlertStyle(styles.error);
+            setMessage(e);
+            return;
         }
-        if (body.status === "201") {
-            setErrorMessage("")
-            location.reload()
+
+        if (response.status === "201") {
+            setAlertStyle(styles.success);
+            setMessage(t('successMessage'))
+            setTimeout(() => location.reload(), 2000);
         } else {
-            setErrorMessage(body.error)
+            setAlertStyle(styles.error);
+            setMessage(response.message);
         }
-    }
+    };
 
     return (
         <View style={styles.container}>

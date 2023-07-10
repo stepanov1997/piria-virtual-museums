@@ -101,7 +101,7 @@ const LoginComponent = ({navigation, route}) => {
             if (token && userType) {
                 setErrorMessage("")
                 await setSession({jwt: token, userType})
-                const languageCode = await userClient.getUserLanguage(token);
+                const languageCode = await userClient.getUserLanguage(token).content;
                 i18n.changeLanguage(languageCode)
                 navigateFromLoginPage(navigation, userType)
             }
