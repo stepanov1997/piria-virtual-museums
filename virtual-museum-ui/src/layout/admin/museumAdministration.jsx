@@ -12,6 +12,9 @@ export const MuseumAdministration = () => {
     const [cities, setCities] = useState([]);
     const [getSession,] = useSessionStorageJwt();
 
+    const [alertStyle, setAlertStyle] = useState({});
+    const [message, setMessage] = useState("");
+
     useEffect(() => {
         (async function () {
             await fetchCountries();
@@ -26,13 +29,14 @@ export const MuseumAdministration = () => {
             if (formData.country) {
                 try {
                     const response = await battutaClient.getAllCities(jwt, formData.country)
-                    if (response.status !== "200") {
-                        alert(response.message)
-                        return
+                    if (response.status === "200") {
+                        setCities(response.content)
                     }
-                    setCities(response.content)
+                    setAlertStyle(styles.error)
+                    setMessage(response.message)
                 } catch (e) {
-                    alert(e)
+                    setAlertStyle(styles.error)
+                    setMessage(t('errorMessage'))
                 }
             }
         })()
@@ -56,24 +60,91 @@ export const MuseumAdministration = () => {
             })
             setCountries(data);
         } catch (error) {
+            setAlertStyle(styles.error)
+            setMessage(t('countriesErrorMessage'))
             console.log('An error occurred while retrieving states:', error);
         }
     };
     const handleSubmit = async () => {
+        let hasErrors = false;
+        const newFormErrors = {
+            name: false,
+            address: false,
+            country: false,
+            city: false,
+            latitude: false,
+            longitude: false,
+            phone_number: false,
+            type: false,
+        };
+
+        if (formData.name.trim() === "") {
+            newFormErrors.name = true;
+            hasErrors = true;
+        }
+
+        if (formData.address.trim() === "") {
+            newFormErrors.address = true;
+            hasErrors = true;
+        }
+
+        if (formData.country === "") {
+            newFormErrors.country = true;
+            hasErrors = true;
+        }
+
+        if (formData.city === "") {
+            newFormErrors.city = true;
+            hasErrors = true;
+        }
+
+        if (formData.latitude.toString().trim() === "") {
+            newFormErrors.latitude = true;
+            hasErrors = true;
+        }
+
+        if (formData.longitude.toString().trim() === "") {
+            newFormErrors.longitude = true;
+            hasErrors = true;
+        }
+
+        if (formData.phone_number.toString().trim() === "") {
+            newFormErrors.phone_number = true;
+            hasErrors = true;
+        }
+
+        if (formData.type.toString().trim() === "") {
+            newFormErrors.type = true;
+            hasErrors = true;
+        }
+
+        if (hasErrors) {
+            setAlertStyle(styles.error)
+            setMessage(t('formValidationMessage'))
+            return;
+        }
 
         const session = await getSession()
         try {
-            await museumClient.addMuseum(
+            const response = await museumClient.addMuseum(
                 session.jwt,
                 formData.name, formData.address, formData.phone_number, formData.city,
                 formData.country, formData.latitude, formData.longitude, formData.type
             )
+            if (response.status === "200" || response.status === "201") {
+                setAlertStyle(styles.success)
+                setMessage(t('successAddMuseumMessage'))
+                return
+            }
+            setAlertStyle(styles.error)
+            setMessage(response.status)
         } catch (e) {
-            console.log(`Error while adding museum. Error: ${e}`)
+            setAlertStyle(styles.error)
+            setMessage(t('addErrorMessage'))
+            console.log('An error occurred while adding museums:', error);
         }
     };
     const handleChange = (field, value) => {
-
         setFormData((prevFormData) => ({
             ...prevFormData,
             [field]: value,
@@ -111,25 +182,29 @@ export const MuseumAdministration = () => {
                 valueMapper={country => country.cca2}
             />
 
-            <CustomPicker
-                style={styles.input}
-                value={formData.city}
-                onValueChange={(value) => {
-                    const city = cities.find(e => e.city === value)
-                    console.log(JSON.stringify(city))
-                    console.log(JSON.stringify(formData))
-                    setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        city: value,
-                        latitude: city?.latitude ?? '',
-                        longitude: city?.longitude ?? '',
-                    }));
-                }}
-                placeholder={t('museumCityPickerPlaceholder')}
-                items={cities}
-                labelMapper={city => city.city}
-                valueMapper={city => city.city}
-            />
+            {
+                formData.country && (
+                    <CustomPicker
+                        style={styles.input}
+                        value={formData.city}
+                        onValueChange={(value) => {
+                            const city = cities.find(e => e.city === value)
+                            console.log(JSON.stringify(city))
+                            console.log(JSON.stringify(formData))
+                            setFormData((prevFormData) => ({
+                                ...prevFormData,
+                                city: value,
+                                latitude: city?.latitude ?? '',
+                                longitude: city?.longitude ?? '',
+                            }));
+                        }}
+                        placeholder={t('museumCityPickerPlaceholder')}
+                        items={cities}
+                        labelMapper={city => city.city}
+                        valueMapper={city => city.city}
+                    />
+                )
+            }
 
             <TextInput
                 placeholderTextColor="#fff"
@@ -161,6 +236,7 @@ export const MuseumAdministration = () => {
                 onChangeText={(text) => handleChange('type', text)}
             />
             <Button title={t('addMuseumButtonTitle')} onPress={handleSubmit}/>
+            {message && <Alert message={message} style={alertStyle}/>}
         </View>
     );
 }
@@ -181,6 +257,15 @@ const styles = StyleSheet.create({
             width: width > height ? width * 0.15 : height * 0.3,
             height: width > height ? height * 0.04 : width * 0.1,
             alignItems: "center"
+        },
+        error: {
+            fontSize: width > height ? height * 0.02 : width * 0.04,
+            color: "red"
+        }
+        ,
+        success: {
+            fontSize: width > height ? height * 0.02 : width * 0.04,
+            color: "green"
         }
     }
 );

@@ -32,7 +32,7 @@ export const TicketPaymentForm = ({selectedVirtualVisit, amount, setBuyingTicket
         });
         const {jwt} = await getSession()
         try {
-            await buyTicket(
+            const response = await buyTicket(
                 jwt, selectedVirtualVisit, cardHolderFirstName, cardHolderSurname, cardNumber,
                 cardType, cardExpiration, pin, VIRTUAL_MUSEUM_ACCOUNT_NUMBER, amount
             );
