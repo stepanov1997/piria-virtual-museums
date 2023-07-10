@@ -30,7 +30,8 @@ const homeScreen = {
     createMuseum: 'Create museum',
     downloadLogsText: 'Download logs',
     userAccount: 'User accounting',
-    errorSavingFileMessage: 'Error saving file!'
+    errorSavingFileMessage: 'Error saving file!',
+    createPresentation: 'Create presentation'
 }
 const ticketPaymentForm = {
     cardHolderFirstNamePlaceholder: "Card Holder First Name",
@@ -93,7 +94,8 @@ const virtualVisitForm = {
     durationPlaceholder: "Enter duration",
     imagePickerPlaceholder: "Pick an image from camera roll",
     youtubeLinkPlaceholder: "Youtube link",
-    addVirtualVisitButtonTitle: "Add virtual visit"
+    addVirtualVisitButtonTitle: "Add virtual visit",
+    errorWhileAddingVisit: "Error while adding virtual visit."
 }
 
 const watchPresentationForm = {
@@ -126,7 +128,12 @@ const museumAdministration = {
     museumLongitudePlaceholder: 'Enter museum longitude',
     museumPhoneNumberPlaceholder: 'Enter museum phone number',
     museumTypePlaceholder: 'Enter museum type',
-    addMuseumButtonTitle: 'Add museum'
+    addMuseumButtonTitle: 'Add museum',
+    errorMessage: "Error while getting cities.",
+    countriesErrorMessage: "Error while getting countries.",
+    successAddMuseumMessage: "Successful adding museum",
+    addErrorMessage: "Adding museum failed",
+    formValidationMessage: "Each form field have to be filled."
 }
 
 const userAdministration = {
@@ -136,7 +143,12 @@ const userAdministration = {
     resetPasswordHeaderRow: 'Reset password',
     approveRegistrationButtonTitle: 'APPROVE',
     blockUserButtonTitle: 'BLOCK',
-    resetPasswordButtonTitle: 'RESET'
+    resetPasswordButtonTitle: 'RESET',
+    successApproveRegistrationMessage: 'Succeed registration approvement',
+    successBlockUserMessage: 'Succeed block user',
+    failedBlockUserMessage: 'Failed block user',
+    successResetPasswordMessage: 'Succeed reseting password',
+    failedResetRegistrationMessage: 'Failed resseting password'
 }
 
 const museumsFeedComponent = {

@@ -15,6 +15,7 @@ import {useTranslation} from "react-i18next";
 const {width, height} = Dimensions.get("window")
 
 import {BLUE, DARKBLUE, GRAY} from '../../config.json'
+import {Alert} from "./alert";
 
 const styles = StyleSheet.create({
         input: {
@@ -61,6 +62,15 @@ const styles = StyleSheet.create({
             marginBottom: width > height ? width * 0.02 : height * 0.02
 
         },
+        error: {
+            fontSize: width > height ? height * 0.02 : width * 0.04,
+            color: "red"
+        }
+        ,
+        success: {
+            fontSize: width > height ? height * 0.02 : width * 0.04,
+            color: "green"
+        }
     }
 );
 
@@ -73,6 +83,9 @@ export const VirtualVisitForm = () => {
     });
     const [museums, setMuseums] = useState([]);
     const [getSession,] = useSessionStorageJwt();
+
+    const [alertStyle, setAlertStyle] = useState({});
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         fetchMuseums();
@@ -99,12 +112,15 @@ export const VirtualVisitForm = () => {
             const session = await getSession()
             const response = await museumClient.getAllMuseums(session.jwt)
             if (response.status !== "200") {
-                alert(response.message)
+                setAlertStyle(styles.error)
+                setMessage(response.message)
                 return
             }
             const retrievedMuseums = response.content
             setMuseums(retrievedMuseums)
         } catch (error) {
+            setAlertStyle(styles.error)
+            setMessage(error)
             console.log('An error occurred while retrieving museums:', error);
         }
     };
@@ -121,9 +137,18 @@ export const VirtualVisitForm = () => {
         }).toISO({suppressMilliseconds: true})
         const session = await getSession()
         try {
-            await addVirtualVisit(session.jwt, formData.museumId, datetime, formData.duration, formData.price, images, formData.yt_link)
-        } catch (e) {
-            console.log(`Error while adding virtual visit. Error: ${e}`)
+            const response = await addVirtualVisit(session.jwt, formData.museumId, datetime, formData.duration, formData.price, images, formData.yt_link);
+            if (response.status !== "200") {
+                setAlertStyle(styles.error)
+                setMessage(response.message)
+                return
+            }
+            const retrievedMuseums = response.content
+            setMuseums(retrievedMuseums)
+        } catch (error) {
+            setAlertStyle(styles.error)
+            setMessage(t('errorWhileAddingVisit'))
+            console.log('An error occurred while retrieving museums:', error);
         }
     };
 

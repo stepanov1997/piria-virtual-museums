@@ -29,7 +29,9 @@ const homeScreen = {
     statistics: 'Statistike',
     createMuseum: 'Dodaj muzej',
     userAccount: 'Korisnički nalozi',
-    errorSavingFileMessage: 'Greska prilikom cuvanja fajla!'
+    errorSavingFileMessage: 'Greska prilikom cuvanja fajla!',
+    downloadLogsText: 'Preuzmi logove',
+    createPresentation: 'Kreiraj prezentaciju'
 }
 
 const ticketPaymentForm = {
@@ -126,7 +128,12 @@ const museumAdministration = {
     museumLongitudePlaceholder: 'Unesite geografsku dužinu muzeja',
     museumPhoneNumberPlaceholder: 'Unesite broj telefona muzeja',
     museumTypePlaceholder: 'Unesite tip muzeja',
-    addMuseumButtonTitle: 'Dodaj muzej'
+    addMuseumButtonTitle: 'Dodaj muzej',
+    errorMessage: "Greska prilikom dohvatanja gradova",
+    countriesErrorMessage: "Greska prilikom dohvatanja drzava",
+    successAddMuseumMessage: "Uspjesno dodat muzej",
+    addErrorMessage: "Dodavanje muzeja neuspjesno usljed greske",
+    formValidationMessage: "Sva polja forme moraju biti unesena"
 }
 
 const userAdministration = {
@@ -136,7 +143,12 @@ const userAdministration = {
     resetPasswordHeaderRow: 'Resetuj lozinku',
     approveRegistrationButtonTitle: 'ODOBRI',
     blockUserButtonTitle: 'BLOKIRAJ',
-    resetPasswordButtonTitle: 'RESETUJ'
+    resetPasswordButtonTitle: 'RESETUJ',
+    successApproveRegistrationMessage: 'Uspjesna dozvola registracije',
+    successBlockUserMessage: 'Uspjecno blokiranje korisnika',
+    failedBlockUserMessage: 'Neuspjesno blokiranje korisnika.',
+    successResetPasswordMessage: 'Uspjesno resetovanje lozinke.',
+    failedResetRegistrationMessage: 'Neuspjesno resetovanje lozinke',
 }
 
 const museumsFeedComponent = {
@@ -145,7 +157,8 @@ const museumsFeedComponent = {
     searchByCityPlaceholder: 'Pretraži muzeje po gradu',
     searchMuseumsButtonTitle: 'Pretraži',
     openMuseumLinkTitle: 'Istraži sada',
-    noDataText: 'Nema podataka'
+    noDataText: 'Nema podataka',
+    errorWhileAddingVisit: "Greska prilikom dodavanja muzeja"
 }
 
 const login = {

@@ -4,7 +4,7 @@ import {SERVER_URL, NEWS_API_GET_ALL_ENDPOINT} from '../../config.json'
 
 const NewsPostsList = () => {
     const {t} = useTranslation('newsPostsList')
-
+    const [loading, setLoading] = useState(true)
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
@@ -19,11 +19,12 @@ const NewsPostsList = () => {
                 mode: 'cors'
             });
             const data = await response.json();
-            if(data.status !== "200") {
+            if (data.status !== "200") {
                 alert(data.message)
                 return
             }
             setPosts(data.content.items);
+            setLoading(false)
         } catch (error) {
             alert("Error fetching posts.")
             console.error('Error fetching posts:', error);
