@@ -30,7 +30,7 @@ const App = () => {
                 <Stack.Screen name={"Home"} options={{title: t("Home")}} component={HomeScreen}/>
                 <Stack.Screen name={"Presentation"} options={{title: t("Presentation")}}
                               component={PresentationScreen}/>
-                <Stack.Screen name={"Create Presentation"} options={{title: t("createPresentation")}}
+                <Stack.Screen name={"Create Presentation"} options={{title: t("CreatePresentation")}}
                               component={CreatePresentationScreen}/>
                 <Stack.Screen name={"Museums"} options={{title: t("Museums")}} component={MuseumsScreen}/>
                 <Stack.Screen name={"Museum"} options={{title: t("Museum")}} component={MuseumScreen}/>

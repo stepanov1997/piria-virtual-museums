@@ -11,7 +11,8 @@ const app = {
     CreateMuseumScreen: "Add museum",
     StatisticsScreen: "Statistics",
     UserAccountScreen: "User accounting",
-    LanguageSelector: "Change language"
+    LanguageSelector: "Change language",
+    CreatePresentation: "Create presentation"
 }
 
 const chart = {
@@ -95,7 +96,9 @@ const virtualVisitForm = {
     imagePickerPlaceholder: "Pick an image from camera roll",
     youtubeLinkPlaceholder: "Youtube link",
     addVirtualVisitButtonTitle: "Add virtual visit",
-    errorWhileAddingVisit: "Error while adding virtual visit."
+    errorWhileAddingVisit: "Error while adding virtual visit.",
+    createVirtualVisitTitle: "Let's create a virtual visit!",
+    successAddingVirtualVisitMessage: "Successfully added virtual presentation."
 }
 
 const watchPresentationForm = {
