@@ -3,7 +3,7 @@ package com.piria.virtual.museum.api
 import com.piria.virtual.museum.model.*
 import com.piria.virtual.museum.service.*
 import mu.KotlinLogging
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -28,7 +28,7 @@ class VirtualVisitApi(
         } catch (e: Exception) {
             log.error("Error while retrieving virtual visits by id.", e)
             Response.generateErrorResponse(
-                HttpStatus.NO_CONTENT,
+                NO_CONTENT,
                 "Error while retrieving virtual visits by id."
             )
         }
@@ -43,7 +43,7 @@ class VirtualVisitApi(
         } catch (e: Exception) {
             log.error("Error while retrieving virtual visits by museum id.", e)
             Response.generateErrorResponse(
-                HttpStatus.NO_CONTENT,
+                NO_CONTENT,
                 "Error while retrieving virtual visits by museum id."
             )
         }
@@ -59,36 +59,42 @@ class VirtualVisitApi(
         } catch (e: Exception) {
             log.error("Error while retrieving all virtual visits.", e)
             Response.generateErrorResponse(
-                HttpStatus.NO_CONTENT,
+                NO_CONTENT,
                 "Error while retrieving all virtual visits. Error: ${e.message}"
             )
         }
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    fun save(@RequestBody virtualVisitRequest: VirtualVisitRequest): VirtualVisit {
-        val (datetime, duration, price, museumId, presentation) = virtualVisitRequest
-        val (images, video) = presentation
+    fun save(@RequestBody virtualVisitRequest: VirtualVisitRequest): ResponseEntity<*> =
+        try {
+            val (datetime, duration, price, museumId, presentation) = virtualVisitRequest
+            val (images, video) = presentation
 
-        val imagesMedia = images.map { Media(mediaType = MediaType.IMAGE, content = it) }
-        val videoMedia = Media(mediaType = MediaType.YT_VIDEO_LINK, content = video)
+            val imagesMedia = images.map { Media(mediaType = MediaType.IMAGE, content = it) }
+            val videoMedia = Media(mediaType = MediaType.YT_VIDEO_LINK, content = video)
 
-        val savedMedias = mediaService.save(imagesMedia + videoMedia)
-        val savedVirtualPresentation =
-            virtualPresentationService.save(VirtualPresentation(medias = savedMedias.toSet()))
+            val savedMedias = mediaService.save(imagesMedia + videoMedia)
+            val savedVirtualPresentation =
+                virtualPresentationService.save(VirtualPresentation(medias = savedMedias.toSet()))
 
-        val museum = museumService.getMuseumsById(museumId)
+            val museum = museumService.getMuseumsById(museumId)
 
-        return virtualVisitService.save(
-            VirtualVisit(
-                datetime = datetime,
-                duration = duration,
-                price = price,
-                museum = museum,
-                virtualPresentation = savedVirtualPresentation
+            Response.generateValidResponse(
+                virtualVisitService.save(
+                    VirtualVisit(
+                        datetime = datetime,
+                        duration = duration,
+                        price = price,
+                        museum = museum,
+                        virtualPresentation = savedVirtualPresentation
+                    )
+                )
             )
-        )
-    }
+        } catch (e: Exception) {
+            Response.generateErrorResponse(NO_CONTENT, e.message!!)
+        }
+
 
     @GetMapping("/ticketId/{ticketId}")
     @PreAuthorize("hasAuthority('USER')")
@@ -115,7 +121,7 @@ class VirtualVisitApi(
         } catch (e: Exception) {
             log.error("Error while retreiving resources for watching virtual presentation.", e)
             Response.generateErrorResponse(
-                HttpStatus.NO_CONTENT,
+                NO_CONTENT,
                 "Error while retreiving resources for watching virtual presentation."
             )
         }

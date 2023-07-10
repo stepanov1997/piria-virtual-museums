@@ -183,7 +183,7 @@ export const MuseumAdministration = () => {
             />
 
             {
-                formData.country && (
+                formData.country && cities && cities.length &&(
                     <CustomPicker
                         style={styles.input}
                         value={formData.city}

@@ -11,7 +11,8 @@ const app = {
     CreateMuseumScreen: "Dodaj muzej",
     StatisticsScreen: "Statistike",
     UserAccountScreen: "Upravljanje korisničkim nalozima",
-    LanguageSelector: "Promjeni jezik"
+    LanguageSelector: "Promjeni jezik",
+    CreatePresentation: "Kreiraj prezentaciju"
 }
 
 const chart = {
@@ -67,7 +68,7 @@ const museumComponent = {
     detailsLanguage: "serbian",
     datetimeLabel: "Datum i vreme",
     durationLabel: "Trajanje",
-    priceLabel: "Cena",
+    priceLabel: "Cijena",
     buyTicketButtonTitle: "Kupi kartu",
     weatherTitle: "Vrijeme",
     addressLabel: "Adresa",
@@ -95,7 +96,9 @@ const virtualVisitForm = {
     durationPlaceholder: "Unesi trajanje",
     imagePickerPlaceholder: "Izaberi sliku iz galerije",
     youtubeLinkPlaceholder: "Unesi Youtube vezu",
-    addVirtualVisitButtonTitle: "Dodaj virtuelnu posetu"
+    addVirtualVisitButtonTitle: "Dodaj virtuelnu posetu",
+    createVirtualVisitTitle: "Napravi virtuelnu prezentaciju!",
+    successAddingVirtualVisitMessage: "Uspjesno je dodana virtuelna prezentacija."
 }
 
 const watchPresentationForm = {

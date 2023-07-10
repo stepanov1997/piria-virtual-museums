@@ -109,7 +109,7 @@ export const MuseumComponent = ({museum}) => {
                                     (
                                         <RadioButton.Item
                                             key={index}
-                                            label={`${t('datetimeLabel')}: ${item.datetime}, ${t('durationLabel')}: ${item.duration}, ${t('priceLabel')}: ${item.price}€`}
+                                            label={`${t('datetimeLabel')}: ${DateTime.fromISO(item.datetime).toFormat("dd.MM.yyyy. HH:mm")}, ${t('durationLabel')}: ${item.duration}h, ${t('priceLabel')}: ${item.price}€`}
                                             value={item.id}>
                                         </RadioButton.Item>
                                     )

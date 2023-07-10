@@ -143,8 +143,8 @@ export const VirtualVisitForm = () => {
                 setMessage(response.message)
                 return
             }
-            const retrievedMuseums = response.content
-            setMuseums(retrievedMuseums)
+            setAlertStyle(styles.success)
+            setMessage(t('successAddingVirtualVisitMessage'))
         } catch (error) {
             setAlertStyle(styles.error)
             setMessage(t('errorWhileAddingVisit'))
@@ -158,7 +158,7 @@ export const VirtualVisitForm = () => {
         }));
     };
     return (<ScrollView contentContainerStyle={styles.form}>
-        <Text style={styles.title}>Let's create a virtual visit!</Text>
+        <Text style={styles.title}>{t('createVirtualVisitTitle')}</Text>
         <CustomDatePicker style={styles.input} value={formData.date}
                           onChange={setDate => handleChange("date", setDate(formData.date))}/>
         <CustomTimePicker style={styles.input} value={formData.time}
