@@ -4,6 +4,14 @@ import userClient from "../../api_clients/userClient";
 
 export const UserAdministration = ({registeredUsers}) => {
     const {t} = useTranslation('userAdministration')
+    const [getSession] = useSessionStorageJwt()
+    const [jwt, setJwt] = useState('')
+
+    useEffect(() => {
+        (async function() {
+            setJwt((await getSession()).jwt)
+        })()
+    }, [])
 
     const styles = StyleSheet.create({
         container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
@@ -16,19 +24,19 @@ export const UserAdministration = ({registeredUsers}) => {
             <Rows data={
                 registeredUsers.map(user => {
                     return [
-                        <Text style={styles.text} >{user.username}</Text>,
+                        <Text style={styles.text}>{user.username}</Text>,
                         <Pressable style={styles.button}
-                                   onPress={async () => await userClient.approveRegistration(user.id)}>
+                                   onPress={async () => await userClient.approveRegistration(jwt, user.id)}>
                             <Text style={styles.text}>{t('approveRegistrationButtonTitle')}</Text>
                         </Pressable>,
                         <Pressable
                             style={styles.button}
-                                onPress={async () => await userClient.blockUser(user.id)}>
-                                    <Text style={styles.text}>{t('blockUserButtonTitle')}</Text>
-                                    </Pressable>,
+                            onPress={async () => await userClient.blockUser(jwt, user.id)}>
+                            <Text style={styles.text}>{t('blockUserButtonTitle')}</Text>
+                        </Pressable>,
                         <Pressable
                             style={styles.button}
-                                onPress={async () => await userClient.resetUserPassword(user.id)}>
+                            onPress={async () => await userClient.resetUserPassword(jwt, user.id)}>
                             <Text style={styles.text}>{t('resetPasswordButtonTitle')}</Text>
                         </Pressable>
                     ]

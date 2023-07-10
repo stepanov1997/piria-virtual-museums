@@ -5,69 +5,16 @@ import {BLUE, DARKBLUE, GRAY, SERVER_URL, LOGS_API_ENDPOINT} from '../../config.
 import {Link} from "@react-navigation/native";
 import {useTranslation} from "react-i18next";
 import {useSessionStorageJwt} from "../util/jwtHook";
+import {Alert} from "../components/alert";
+import {useState} from "react";
 
 const {width, height} = Dimensions.get("window");
 
-const styles = StyleSheet.create({
-        container: {
-            backgroundColor: "#f2f2f2",
-            alignItems: "center",
-            paddingTop: width * 0.02,
-            width: width,
-            height: height,
-            marginBottom: height * 0.04,
-        },
-        content: {
-            borderRadius: 10,
-            flex: true,
-            alignItems: "center",
-            gap: width > height ? width * 0.04 : height * 0.09,
-            paddingVertical: height * 0.04,
-        },
-        welcome: {
-            textAlign: "center",
-            color: BLUE,
-            fontSize: width > height ? width * 0.02 : height * 0.03
-
-        },
-        intro: {
-            backgroundColor: GRAY,
-            width: width > height ? width * 0.4 : height * 0.4,
-            padding: width > height ? width * 0.01 : height * 0.01,
-            borderRadius: 10,
-            flex: true,
-            justifyContent: "center",
-            alignItems: "center",
-            gap: width > height ? width * 0.01 : height * 0.01,
-
-        },
-        introText: {
-            fontSize: width > height ? width * 0.01 : height * 0.02,
-            color: BLUE,
-        },
-        image: {
-            width: width > height ? width * 0.5 : height * 0.5,
-            height: width > height ? width * 0.5 : height * 0.5
-        },
-        navigation: {
-            flexDirection: "row",
-            flexWrap: 'wrap',
-            width: "100%",
-            justifyContent: "space-between",
-            paddingBottom: width > height ? width * 0.01 : height * 0.01,
-
-        },
-        navigationItem: {
-            color: "#fff",
-            textDecorationLine: "underline",
-            fontWeight: "bold",
-            fontSize: width > height ? width * 0.01 : height * 0.02,
-        }
-    }
-)
 export const AdminScreen = () => {
     const {t} = useTranslation(['homeScreen'])
-    const [getSession,,] = useSessionStorageJwt()
+    const [alertStyle, setAlertStyle] = useState({});
+    const [message, setMessage] = useState("");
+    const [getSession, ,] = useSessionStorageJwt()
 
     const saveFile = async () => {
         try {
@@ -75,6 +22,8 @@ export const AdminScreen = () => {
             const fileUri = `${SERVER_URL}/${LOGS_API_ENDPOINT}?token=${jwtToken}`;
             await Linking.openURL(fileUri)
         } catch (error) {
+            setAlertStyle(styles.error)
+            setMessage(t('errorSavingFileMessage'))
             console.error('Error saving file:', error);
         }
     }
@@ -112,7 +61,71 @@ export const AdminScreen = () => {
                         </Pressable>
                     </SafeAreaView>
                 </View>
+                {message && <Alert message={message} style={alertStyle}/>}
             </View>
         </ScrollView>
     );
 }
+
+const styles = StyleSheet.create({
+        container: {
+            backgroundColor: "#f2f2f2",
+            alignItems: "center",
+            paddingTop: width * 0.02,
+            width: width,
+            marginBottom: height * 0.04,
+        },
+        content: {
+            borderRadius: 10,
+            alignItems: "center",
+            gap: width > height ? width * 0.04 : height * 0.09,
+            paddingVertical: height * 0.04,
+        },
+        welcome: {
+            textAlign: "center",
+            color: BLUE,
+            fontSize: width > height ? width * 0.02 : height * 0.03
+
+        },
+        intro: {
+            backgroundColor: GRAY,
+            width: width > height ? width * 0.5 : height * 0.4,
+            padding: width > height ? width * 0.01 : height * 0.01,
+            borderRadius: 10,
+            justifyContent: "center",
+            alignItems: "center",
+            gap: width > height ? width * 0.01 : height * 0.01,
+
+        },
+        introText: {
+            fontSize: width > height ? width * 0.01 : height * 0.02,
+            color: BLUE,
+        },
+        image: {
+            width: width > height ? width * 0.5 : height * 0.4,
+            height: width > height ? width * 0.5 : height * 0.4
+        },
+        navigation: {
+            flexDirection: width > height ? "row" : "column",
+            width: "100%",
+            alignItems: "center",
+            justifyContent: width > height ? "space-between" : "center",
+            paddingBottom: width > height ? width * 0.01 : height * 0.01,
+
+        },
+        navigationItem: {
+            color: "#fff",
+            textDecorationLine: "underline",
+            fontWeight: "bold",
+            fontSize: width > height ? width * 0.01 : height * 0.02,
+        },
+        error: {
+            fontSize: width > height ? height * 0.02 : width * 0.04,
+            color: "red"
+        },
+        success: {
+            fontSize: width > height ? height * 0.02 : width * 0.04,
+            color: "green"
+        }
+    }
+)

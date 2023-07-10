@@ -19,6 +19,7 @@ repositories {
 dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
     implementation("org.apache.pdfbox:pdfbox:2.0.28")
+    implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
     implementation("com.google.zxing:core:3.5.1")
     implementation("com.google.zxing:javase:3.5.1")
     implementation("org.slf4j:slf4j-api:2.0.7")

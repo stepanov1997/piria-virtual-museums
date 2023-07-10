@@ -2,19 +2,27 @@ import {ScrollView, Text, View, Image} from "react-native";
 import {StyleSheet} from "react-native";
 import {Dimensions} from "react-native";
 import {BLUE, DARKBLUE, GRAY} from '../../config.json'
-import {Link} from "@react-navigation/native";
-import {MuseumsFeedComponent} from "../layout/user/museumsFeed";
 import {MuseumComponent} from "../components/museum";
 
 const {width, height} = Dimensions.get("window");
 
+export const MuseumScreen = ({route}) => {
+    console.log(route)
+    return (
+        <ScrollView contentContainerStyle={styles.container}>
+            <MuseumComponent museum={route.params.museum}/>
+        </ScrollView>
+    );
+}
+
 const styles = StyleSheet.create({
         container: {
-            backgroundColor: "#fff",
+            backgroundColor: GRAY,
             alignItems: "center",
             paddingTop: width * 0.02,
             flex: 1
         },
+
         content: {
             backgroundColor: "#fff",
             width: width > height ? width * 0.3 : width * 0.9,
@@ -51,11 +59,3 @@ const styles = StyleSheet.create({
         }
     }
 )
-export const MuseumScreen = ({route}) => {
-    console.log(route)
-    return (
-        <View style={styles.container}>
-            <MuseumComponent museum={route.params.museum}/>
-        </View>
-    );
-}

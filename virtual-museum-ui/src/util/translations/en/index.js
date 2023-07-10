@@ -29,7 +29,8 @@ const homeScreen = {
     statistics: 'Statistics',
     createMuseum: 'Create museum',
     downloadLogsText: 'Download logs',
-    userAccount: 'User accounting'
+    userAccount: 'User accounting',
+    errorSavingFileMessage: 'Error saving file!'
 }
 const ticketPaymentForm = {
     cardHolderFirstNamePlaceholder: "Card Holder First Name",
@@ -113,6 +114,7 @@ const watchPresentationForm = {
 const adminHomeFeed = {
     numberOfRegisteredUsersLabel: 'Number of registered users',
     numberOfActiveUsersLabel: 'Number of active users',
+    errorMessage: 'Some error happened!'
 }
 
 const museumAdministration = {
@@ -153,7 +155,8 @@ const login = {
     passwordInputPlaceholder: 'Enter password',
     loginButtonTitle: 'Log in',
     dontHaveAccountQuestion: 'Don\'t have an account?',
-    registerButtonTitle: 'Register'
+    registerButtonTitle: 'Register',
+    errorMessage: 'Some error happened!'
 }
 
 const registration = {
@@ -163,6 +166,8 @@ const registration = {
     passwordErrorMessage: "Password must have value.",
     emailErrorMessage: "Email must have value.",
     passwordConfirmationErrorMessage: "Confirmation of password should be valid.",
+    usernameValidationMessage: "Username must have a minimum of 12 characters and cannot contain @, # or /.",
+    passwordValidationMessage: "Password must have a minimum of 15 characters, including uppercase letters, lowercase letters, and numbers.",
     registrationTitle: 'Input data for registration',
     registerButtonTitle: 'Register',
     emailPlaceholder: 'Enter email',
@@ -170,7 +175,8 @@ const registration = {
     passwordPlaceholder: 'Enter password',
     usernamePlaceholder: 'Enter username',
     lastNamePlaceholder: 'Enter last name',
-    firstNamePlaceholder: 'Enter first name'
+    firstNamePlaceholder: 'Enter first name',
+    successMessage: 'Successful registration'
 }
 
 export default {app, homeScreen, ticketPaymentForm, customDatePicker, customTimePicker,

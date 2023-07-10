@@ -5,6 +5,7 @@ import com.piria.virtual.museum.service.*
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -18,6 +19,7 @@ class VirtualVisitApi(
     private val ticketService: TicketService
 ) {
     @GetMapping("/{virtualVisitId}")
+    @PreAuthorize("hasAuthority('USER')")
     fun getById(@PathVariable virtualVisitId: Long): ResponseEntity<*> =
         try {
             val content = virtualVisitService.getById(virtualVisitId)
@@ -32,6 +34,7 @@ class VirtualVisitApi(
         }
 
     @GetMapping("/museum/{museumId}")
+    @PreAuthorize("hasAuthority('USER')")
     fun getByMuseumId(@PathVariable museumId: Long): ResponseEntity<*> =
         try {
             val content = virtualVisitService.getAllByMuseumId(museumId)
@@ -47,6 +50,7 @@ class VirtualVisitApi(
 
 
     @GetMapping
+    @PreAuthorize("hasAuthority('USER')")
     fun getAll(): ResponseEntity<*> =
         try {
             val content = virtualVisitService.getAll()
@@ -61,6 +65,7 @@ class VirtualVisitApi(
         }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun save(@RequestBody virtualVisitRequest: VirtualVisitRequest): VirtualVisit {
         val (datetime, duration, price, museumId, presentation) = virtualVisitRequest
         val (images, video) = presentation
@@ -86,6 +91,7 @@ class VirtualVisitApi(
     }
 
     @GetMapping("/ticketId/{ticketId}")
+    @PreAuthorize("hasAuthority('USER')")
     fun watchVirtualPresentation(@PathVariable ticketId: String): ResponseEntity<*> =
         try {
             val ticket = ticketService.getById(ticketId)

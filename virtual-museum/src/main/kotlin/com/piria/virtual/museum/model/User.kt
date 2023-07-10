@@ -27,15 +27,20 @@ data class User(
     val lastName: String,
 
     @Column(name="email")
+//    @Email(message = "Email should be valid")
     val email: String,
 
     @JsonProperty("username")
     @get:JsonGetter("username")
     @Column(name="username", unique = true)
+//    @Min(value = 12, message = "Username character count should be greater than 12.")
+//    @Pattern(regexp = "^[^@#/]+\$")
     val name: String,
 
     @JsonProperty("password", access = WRITE_ONLY)
     @Column(name="password")
+//    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+\$", message = "The password must contain at least one lowercase letter, one uppercase letter, and one digit.")
+//    @Min(value = 15, message = "Password character count should be greater than 15.")
     var secret: String,
 
     @Column(name="isRegistrationEnabled")

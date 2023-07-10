@@ -13,7 +13,11 @@ const NewsPostsList = () => {
 
     const fetchPosts = async () => {
         try {
-            const response = await fetch(`${SERVER_URL}/${NEWS_API_GET_ALL_ENDPOINT}`);
+            const jwt = (await getSession()).jwt
+            const response = await fetch(`${SERVER_URL}/${NEWS_API_GET_ALL_ENDPOINT}`, {
+                headers: {'Authorization': `Bearer ${jwt}`},
+                mode: 'cors'
+            });
             const data = await response.json();
             if(data.status !== "200") {
                 alert(data.message)

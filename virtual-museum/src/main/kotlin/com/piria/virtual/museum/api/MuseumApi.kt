@@ -7,6 +7,7 @@ import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.*
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*
 data class MuseumApi(private val museumService: MuseumService) {
 
     @GetMapping
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     fun getAllMuseums(): ResponseEntity<*> =
         try {
             val content = museumService.getAllMuseums()
@@ -26,6 +28,7 @@ data class MuseumApi(private val museumService: MuseumService) {
         }
 
     @GetMapping("/name/{name}")
+    @PreAuthorize("hasAuthority('USER')")
     fun getMuseumsByName(@PathVariable name: String): ResponseEntity<*> =
         try {
             val content = museumService.getMuseumsByName(name)
@@ -37,6 +40,7 @@ data class MuseumApi(private val museumService: MuseumService) {
         }
 
     @GetMapping("/city/{city}")
+    @PreAuthorize("hasAuthority('USER')")
     fun getMuseumsByCity(@PathVariable city: String): ResponseEntity<*> =
         try {
             val content =  museumService.getMuseumsByCity(city)
@@ -49,6 +53,7 @@ data class MuseumApi(private val museumService: MuseumService) {
 
 
     @GetMapping("/type/{type}")
+    @PreAuthorize("hasAuthority('USER')")
     fun getMuseumsByType(@PathVariable type: String): ResponseEntity<*> =
         try {
             val content =  museumService.getMuseumsByType(type)
@@ -60,6 +65,7 @@ data class MuseumApi(private val museumService: MuseumService) {
         }
 
     @PostMapping(consumes = [APPLICATION_JSON_VALUE])
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun saveMuseum(@RequestBody museum: Museum): ResponseEntity<*> =
         try {
             val content =  museumService.saveMuseum(museum)

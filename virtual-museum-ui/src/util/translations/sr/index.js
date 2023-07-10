@@ -28,7 +28,8 @@ const homeScreen = {
     introTextShorter: 'Hajde da zaronimo:',
     statistics: 'Statistike',
     createMuseum: 'Dodaj muzej',
-    userAccount: 'Korisnički nalozi'
+    userAccount: 'Korisnički nalozi',
+    errorSavingFileMessage: 'Greska prilikom cuvanja fajla!'
 }
 
 const ticketPaymentForm = {
@@ -113,6 +114,7 @@ const watchPresentationForm = {
 const adminHomeFeed = {
     numberOfRegisteredUsersLabel: 'Trenutni broj registrovanih korisnika',
     numberOfActiveUsersLabel: 'Trenutni broj aktivnih korisnika',
+    errorMessage: 'Desila se greska!'
 }
 
 const museumAdministration = {
@@ -153,7 +155,8 @@ const login = {
     passwordInputPlaceholder: 'Unesite lozinku',
     loginButtonTitle: 'Prijavi se',
     dontHaveAccountQuestion: 'Nemate nalog?',
-    registerButtonTitle: 'Registruj se'
+    registerButtonTitle: 'Registruj se',
+    errorMessage: 'Desila se greska!'
 }
 
 const registration = {
@@ -163,6 +166,8 @@ const registration = {
     passwordErrorMessage: "Lozinka mora imati vrijednost.",
     emailErrorMessage: "Email mora imati vrijednost.",
     passwordConfirmationErrorMessage: "Potvrda lozinke mora biti validna.",
+    usernameValidationMessage: "Korisničko ime mora imati minimalno 12 karaktera i ne smije sadržati @, # ili /.",
+    passwordValidationMessage: "Lozinka mora sadržati najmanje 15 karaktera, uključujući velika slova, mala slova i cifre.",
     registrationTitle: 'Unesite podatke za registraciju',
     registerButtonTitle: 'Registruj se',
     emailPlaceholder: 'Unesite email',
@@ -170,7 +175,8 @@ const registration = {
     passwordPlaceholder: 'Unesite lozinku',
     usernamePlaceholder: 'Unesite korisničko ime',
     lastNamePlaceholder: 'Unesite prezime',
-    firstNamePlaceholder: 'Unesite ime'
+    firstNamePlaceholder: 'Unesite ime',
+    successMessage: 'Uspjesna registracija.'
 }
 
 export default {

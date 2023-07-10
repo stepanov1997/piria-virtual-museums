@@ -6,6 +6,7 @@ import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -16,6 +17,7 @@ class BattutaApi(
     val battutaService: BattutaService) {
 
     @GetMapping("/regions/{countryCode}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun getAllRegionsByCountryCode(@PathVariable countryCode: String): ResponseEntity<*> =
         try {
             val content =  battutaService.getRegions(countryCode, battutaApiKey)
@@ -31,6 +33,7 @@ class BattutaApi(
 
 
     @GetMapping("/cities/{countryCode}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun getAllCitiesByCountryCode(@PathVariable countryCode: String): ResponseEntity<*> =
         try {
             val content =  battutaService.getRegions(countryCode, battutaApiKey)

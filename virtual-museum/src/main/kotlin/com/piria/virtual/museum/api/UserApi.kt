@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.DisabledException
@@ -45,6 +46,29 @@ class UserApi(
 
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
+
+    @PostMapping("/register", consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
+    fun saveUser(@RequestBody user: User): ResponseEntity<*> {
+        try {
+            if (userService.userExists(user.username)) {
+                return generateErrorResponse(
+                    status = CONFLICT,
+                    error = "User with username '${user.username}' already exists."
+                )
+            }
+            user.secret = passwordEncoder.encode(user.secret)
+            val savedUser = userService.saveUser(user)
+            val userUrl = ServletUriComponentsBuilder.fromCurrentServletMapping()
+                .path("/api/users/${savedUser.id}")
+                .toUriString()
+
+            log.info { "User with id ${savedUser.id} is successfully registered." }
+            return generateCreatedResponse(resourceUrl = userUrl, content = savedUser)
+        } catch (e: Exception) {
+            log.error("User registration failed.", e)
+            return generateErrorResponse(BAD_REQUEST, "User registration failed. Error: ${e.message}")
+        }
+    }
 
     @PostMapping("/authenticate", consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
     fun createAuthenticationToken(@RequestBody authenticationRequest: JwtRequest): ResponseEntity<*> {
@@ -75,20 +99,34 @@ class UserApi(
         }
     }
 
-    private fun authenticate(username: String, password: String) {
+    @PostMapping("/lang/{language}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    fun setLanguage(@PathVariable language: Language, @RequestHeader(HttpHeaders.AUTHORIZATION) authorizationHeader: String): ResponseEntity<*> =
         try {
-            val authentication =
-                authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
-            SecurityContextHolder.getContext().authentication = authentication
-            authentication.principal
-        } catch (e: DisabledException) {
-            throw Exception("USER_DISABLED", e)
-        } catch (e: BadCredentialsException) {
-            throw Exception("INVALID_CREDENTIALS", e)
+            val username = jwtTokenUtil.getUsernameUsingAuthorizationHeader(authorizationHeader)
+            val user = userService.loadUserByUsername(username)
+            user.lang = language
+            userRepository.saveAndFlush(user)
+            generateValidResponse(user.lang)
+        } catch (e: Exception) {
+            log.error("Token is not valid.", e)
+            generateErrorResponse(BAD_REQUEST, "Token is not valid.")
         }
-    }
+
+    @GetMapping("/lang")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    fun getLanguage(@RequestHeader(HttpHeaders.AUTHORIZATION) authorizationHeader: String): ResponseEntity<*> =
+        try {
+            val username = jwtTokenUtil.getUsernameUsingAuthorizationHeader(authorizationHeader)
+            val user = userService.loadUserByUsername(username)
+            generateValidResponse(user.lang)
+        } catch (e: Exception) {
+            log.error("Token is not valid.", e)
+            generateErrorResponse(BAD_REQUEST, "Token is not valid.")
+        }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun getAllUsers(): ResponseEntity<*> =
         try {
             val content = userService.getAllUsers()
@@ -100,6 +138,7 @@ class UserApi(
         }
 
     @GetMapping("/uas/all")
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun getActiveUsersByHour(): ResponseEntity<*> =
         try {
             val content = userActivityService.getActiveUsersByHour()
@@ -111,6 +150,7 @@ class UserApi(
         }
 
     @GetMapping("/uas")
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun getCurrentlyActiveUsers(): ResponseEntity<*> =
         try {
             val content = userActivityService.getCurrentlyActiveUsers()
@@ -122,6 +162,7 @@ class UserApi(
         }
 
     @GetMapping("/non-admin-users")
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun getAllNonAdminUsers(): ResponseEntity<*> =
         try {
             val content = userService.getAllNonAdminUsers()
@@ -132,30 +173,8 @@ class UserApi(
             generateErrorResponse(NO_CONTENT, "Error while retrieving non-admin users. Error: ${e.message}")
         }
 
-    @PostMapping("/register", consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
-    fun saveUser(@RequestBody user: User): ResponseEntity<*> {
-        try {
-            if (userService.userExists(user.username)) {
-                return generateErrorResponse(
-                    status = CONFLICT,
-                    error = "User with username '${user.username}' already exists."
-                )
-            }
-            user.secret = passwordEncoder.encode(user.secret)
-            val savedUser = userService.saveUser(user)
-            val userUrl = ServletUriComponentsBuilder.fromCurrentServletMapping()
-                .path("/api/users/${savedUser.id}")
-                .toUriString()
-
-            log.info { "User with id ${savedUser.id} is successfully registered." }
-            return generateCreatedResponse(resourceUrl = userUrl, content = savedUser)
-        } catch (e: Exception) {
-            log.error("User registration failed.", e)
-            return generateErrorResponse(BAD_REQUEST, "User registration failed. Error: ${e.message}")
-        }
-    }
-
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun getUserById(@PathVariable id: Long): ResponseEntity<*> =
         try {
             val userById = userService.getUserById(id)
@@ -167,6 +186,7 @@ class UserApi(
         }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun deleteUserById(@PathVariable id: Long): ResponseEntity<*> =
         try {
             userService.deleteUserById(id)
@@ -178,6 +198,7 @@ class UserApi(
         }
 
     @GetMapping("/approveRegistration/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun approveRegistration(@PathVariable userId: Long): ResponseEntity<*> =
         try {
             val userById = userService.getUserById(userId)
@@ -191,6 +212,7 @@ class UserApi(
         }
 
     @GetMapping("/block/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun blockUser(@PathVariable userId: Long): ResponseEntity<*> =
         try {
             val userById = userService.getUserById(userId)
@@ -203,32 +225,9 @@ class UserApi(
             generateErrorResponse(BAD_REQUEST, "User with $userId doesn't exist.")
         }
 
-    @PostMapping("/lang/{language}")
-    fun blockUser(@PathVariable language: Language, @RequestHeader(HttpHeaders.AUTHORIZATION) authorizationHeader: String): ResponseEntity<*> =
-        try {
-            val username = jwtTokenUtil.getUsernameUsingAuthorizationHeader(authorizationHeader)
-            val user = userService.loadUserByUsername(username)
-            user.lang = language
-            userRepository.saveAndFlush(user)
-            generateValidResponse(user.lang)
-        } catch (e: Exception) {
-            log.error("Token is not valid.", e)
-            generateErrorResponse(BAD_REQUEST, "Token is not valid.")
-        }
-
-    @GetMapping("/lang")
-    fun getLanguage(@RequestHeader(HttpHeaders.AUTHORIZATION) authorizationHeader: String): ResponseEntity<*> =
-        try {
-            val username = jwtTokenUtil.getUsernameUsingAuthorizationHeader(authorizationHeader)
-            val user = userService.loadUserByUsername(username)
-            generateValidResponse(user.lang)
-        } catch (e: Exception) {
-            log.error("Token is not valid.", e)
-            generateErrorResponse(BAD_REQUEST, "Token is not valid.")
-        }
-
     @Suppress("HtmlRequiredLangAttribute")
     @GetMapping("/resetPassword/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun resetPassword(@PathVariable userId: Long): ResponseEntity<*> =
         try {
             val userById = userService.getUserById(userId)
@@ -264,6 +263,19 @@ class UserApi(
             log.error("User with $userId doesn't exist.", e)
             generateErrorResponse(BAD_REQUEST, "User with $userId doesn't exist.")
         }
+
+    private fun authenticate(username: String, password: String) {
+        try {
+            val authentication =
+                authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
+            SecurityContextHolder.getContext().authentication = authentication
+            authentication.principal
+        } catch (e: DisabledException) {
+            throw Exception("USER_DISABLED", e)
+        } catch (e: BadCredentialsException) {
+            throw Exception("INVALID_CREDENTIALS", e)
+        }
+    }
 
     data class JwtRequest(
         val username: String? = null,

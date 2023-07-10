@@ -1,10 +1,17 @@
 import {ScrollView, Text, View, Image, SafeAreaView} from "react-native";
-import { StyleSheet } from "react-native";
-import { Dimensions } from "react-native";
-import {BLUE,DARKBLUE,GRAY} from '../../config.json'
-import {Link} from "@react-navigation/native";
-const { width, height } = Dimensions.get("window");
+import {StyleSheet} from "react-native";
+import {Dimensions} from "react-native";
+import {BLUE, DARKBLUE, GRAY} from '../../config.json'
+const {width, height} = Dimensions.get("window");
 import NewsPostsList from "../../src/components/news-posts";
+
+export const NewsFeedScreen = () => {
+    return (
+        <SafeAreaView style={styles.container}>
+            <NewsPostsList/>
+        </SafeAreaView>
+    );
+}
 
 const styles = StyleSheet.create({
         container: {
@@ -50,10 +57,3 @@ const styles = StyleSheet.create({
         }
     }
 )
-export const NewsFeedScreen = () => {
-    return(
-        <SafeAreaView style={styles.container}>
-           <NewsPostsList/>
-        </SafeAreaView>
-    );
-}
